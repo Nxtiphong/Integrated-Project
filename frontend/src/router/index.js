@@ -1,8 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import HomeView from '@/views/HomeView.vue'
+import SaleItemGallery from '@/views/SaleItemGallery.vue'
+import SaleItemDetails from '@/views/SaleItemDetails.vue'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(),
   routes: [
     {
       path: '/',
@@ -10,11 +12,17 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: '/about',
-      name: 'about',
-      component: () => import('../views/AboutView.vue'),
+      path: '/sale-items',
+      name: "saleItems",
+      component: SaleItemGallery
     },
+    {
+      path: '/sale-items/:id',
+      name: "saleItemDetail",
+      component: SaleItemDetails
+    }
   ],
+  linkActiveClass: "text-black font-semibold"
 })
 
 export default router

@@ -1,1 +1,114 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @import "tailwindcss";
+
+@layer utilities {
+   .container {
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: 1rem;
+      padding-right: 1rem;
+   }
+
+   @media (min-width: 640px) {
+      .container {
+         padding-left: 2rem;
+         padding-right: 2rem;
+      }
+   }
+
+   @media (min-width: 1024px) {
+      .container {
+         padding-left: 3rem;
+         padding-right: 3rem;
+      }
+   }
+
+   @media (min-width: 1280px) {
+      .container {
+         padding-left: 4rem;
+         padding-right: 4rem;
+      }
+   }
+
+   @media (min-width: 1536px) {
+      .container {
+         padding-left: 5rem;
+         padding-right: 5rem;
+      }
+   }
+}
+
+@plugin "daisyui" {
+   themes: applemusic --default;
+}
+
+@plugin "daisyui/theme" {
+   name: "applemusic";
+   default: true;
+   prefersdark: false;
+   color-scheme: light;
+
+   /* Base colors */
+   --color-base-100: oklch(98% 0.02 0);
+   /* White */
+   --color-base-200: oklch(95% 0.02 0);
+   /* Light Grey */
+   --color-base-300: oklch(90% 0.02 0);
+   /* Grey */
+   --color-base-content: oklch(20% 0.05 0);
+   /* Dark Text */
+
+   /* Primary (Pink) */
+   --color-primary: oklch(65% 0.25 20);
+   /* Vibrant Pink */
+   --color-primary-content: oklch(98% 0.01 20);
+   /* Light Text on Pink */
+
+   /* Secondary (Grey) */
+   --color-secondary: oklch(70% 0.02 0);
+   /* Light Grey */
+   --color-secondary-content: oklch(20% 0.05 0);
+   /* Dark Text on Grey */
+
+   /* Accent (Black) */
+   --color-accent: oklch(20% 0.01 0);
+   /* Black */
+   --color-accent-content: oklch(98% 0.01 0);
+   /* Light Text on Black */
+
+   /* Neutral */
+   --color-neutral: oklch(50% 0.02 0);
+   /* Medium Grey */
+   --color-neutral-content: oklch(98% 0.01 0);
+   /* Light Text on Neutral */
+
+   /* Status Colors */
+   --color-info: oklch(70% 0.2 220);
+   --color-info-content: oklch(98% 0.01 220);
+   --color-success: oklch(65% 0.25 140);
+   --color-success-content: oklch(98% 0.01 140);
+   --color-warning: oklch(80% 0.25 80);
+   --color-warning-content: oklch(20% 0.05 80);
+   --color-error: oklch(65% 0.3 30);
+   --color-error-content: oklch(98% 0.01 30);
+
+   /* Border radius */
+   --radius-selector: 1rem;
+   --radius-field: 0.25rem;
+   --radius-box: 0.5rem;
+
+   /* Base sizes */
+   --size-selector: 0.25rem;
+   --size-field: 0.25rem;
+
+   /* Border size */
+   --border: 1px;
+
+   /* Effects */
+   --depth: 1;
+   --noise: 0;
+}
+
+:root {
+   font-family: 'Inter', sans-serif;
+}

@@ -1,13 +1,9 @@
-<script setup>
+<script setup></script>
 
-</script>
- 
 <template>
-<div>
-
-</div>
+  <div>
+    <h1>Home Page</h1>
+  </div>
 </template>
- 
-<style scoped>
 
-</style>
+<style scoped></style>

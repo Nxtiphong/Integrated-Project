@@ -1,7 +1,13 @@
-<script setup></script>
+<script setup>
+import { RouterView } from 'vue-router'
+import Navbar from './components/Navbar.vue'
+</script>
 
 <template>
-  <h1 class="text-2xl text-green-500 font-bold">Hello World</h1>
+  <div>
+    <Navbar />
+    <RouterView />
+  </div>
 </template>
 
 <style scoped></style>

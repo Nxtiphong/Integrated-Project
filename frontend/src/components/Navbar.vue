@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-  <nav class="navbar container border-b border-b-base-300">
+  <nav class="navbar container">
     <div class="flex-1">
       <span class="text-xl font-semibold"><router-link to="/">Logo</router-link></span>
     </div>
@@ -16,6 +16,7 @@
       </ul>
     </div>
   </nav>
+  <div class="border-b border-b-base-300" />
 </template>
 
 <style scoped></style>

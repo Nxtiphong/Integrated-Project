@@ -17,6 +17,7 @@
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
+    "@iconify/vue": "^4.3.0",
     "@vitejs/plugin-vue": "^5.2.3",
     "daisyui": "^5.0.28",
     "prettier": "3.5.3",

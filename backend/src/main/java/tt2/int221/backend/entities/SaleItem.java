@@ -15,10 +15,11 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
-@Table(name = "saleitem")
+@Table(name = "saleItem")
 public class SaleItem {
     @Id
     @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Size(max = 60)

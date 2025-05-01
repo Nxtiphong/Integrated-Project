@@ -3,6 +3,7 @@ import HomeView from '@/views/HomeView.vue'
 import SaleItemGallery from '@/views/SaleItemGallery.vue'
 import SaleItemDetails from '@/views/SaleItemDetails.vue'
 
+
 const router = createRouter({
   history: createWebHistory(),
   routes: [

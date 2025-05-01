@@ -12,6 +12,7 @@ import tt2.int221.backend.services.SaleItemService;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/v1/api")
 public class SaleItemController {
 

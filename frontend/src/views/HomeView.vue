@@ -1,21 +1,48 @@
-<!-- iPhone14Pro.vue -->
+<script setup>
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+
+const isVisible = ref(false);
+const phoneVisible = ref(false);
+const buttonVisible = ref(false);
+
+const router = useRouter();
+
+function getRandomStarStyle() {
+  const startPositionX = Math.random() * 100;
+  const startPositionY = Math.random() * 50;
+  const animationDuration = 0.3 + Math.random() * 0.7;
+  const animationDelay = Math.random() * 5;
+
+  return {
+    left: `${startPositionX}%`,
+    top: `${startPositionY}%`,
+    animationDuration: `${animationDuration}s`,
+    animationDelay: `${animationDelay}s`,
+  };
+}
+
+onMounted(() => {
+  setTimeout(() => (isVisible.value = true), 400);
+  setTimeout(() => (phoneVisible.value = true), 800);
+  setTimeout(() => (buttonVisible.value = true), 1200);
+});
+</script>
+
 <template>
   <div
     class="bg-black text-white min-h-screen flex items-center justify-center overflow-hidden relative"
   >
-    <!-- Shooting stars background animation -->
     <div class="shooting-stars-container">
       <div v-for="n in 30" :key="n" class="shooting-star" :style="getRandomStarStyle()"></div>
     </div>
 
-    <!-- Background gradient effects -->
     <div class="absolute top-1/2 right-1/4 w-64 h-64 bg-purple-600/20 rounded-full blur-3xl"></div>
     <div class="absolute bottom-1/3 left-1/4 w-48 h-48 bg-blue-600/10 rounded-full blur-3xl"></div>
 
     <div
       class="container mx-auto px-4 py-16 flex flex-col md:flex-row items-center justify-between"
     >
-      <!-- Left Section - Text Content -->
       <div class="md:w-1/2 z-10 space-y-6">
         <h3
           :class="[
@@ -51,7 +78,8 @@
           ]"
         >
           <button
-            class="border border-white px-8 py-3 rounded hover:bg-white hover:text-black transition-all duration-300 group"
+            @click="router.push('/sale-items')"
+            class="Itbms-shopnow border border-white px-8 py-3 rounded cursor-pointer hover:bg-white hover:text-black transition-all duration-300 group"
           >
             <span class="flex items-center justify-center">
               Shop Now
@@ -74,44 +102,13 @@
         </div>
       </div>
       <div class="z-999">
-        <img src="@/assets/images/mock_phone.png" alt="IMG" class="IMGPhoneHome" width="375px"/>
+        <img src="@/assets/images/mock_phone.png" alt="IMG" class="IMGPhoneHome" width="375px" />
       </div>
     </div>
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue';
-
-const isVisible = ref(false);
-const phoneVisible = ref(false);
-const buttonVisible = ref(false);
-
-// สร้างสไตล์แบบสุ่มสำหรับดาวตกแต่ละดวง
-function getRandomStarStyle() {
-  const startPositionX = Math.random() * 100;
-  const startPositionY = Math.random() * 50;
-  const animationDuration = 0.3 + Math.random() * 0.7;
-  const animationDelay = Math.random() * 5;
-
-  return {
-    left: `${startPositionX}%`,
-    top: `${startPositionY}%`,
-    animationDuration: `${animationDuration}s`,
-    animationDelay: `${animationDelay}s`,
-  };
-}
-
-onMounted(() => {
-  setTimeout(() => (isVisible.value = true), 400);
-  setTimeout(() => (phoneVisible.value = true), 800);
-  setTimeout(() => (buttonVisible.value = true), 1200);
-});
-</script>
-
-
 <style>
-/* เพิ่ม animation ที่กำหนดเอง */
 @keyframes pulse-slow {
   0%,
   100% {
@@ -126,7 +123,6 @@ onMounted(() => {
   animation: pulse-slow 3s ease-in-out infinite;
 }
 
-/* Animation สำหรับดาวตก */
 .shooting-stars-container {
   position: absolute;
   top: 0;
@@ -165,7 +161,6 @@ onMounted(() => {
   }
 }
 
-/* เพิ่ม glowing effect เมื่อวางเมาส์เหนือปุ่ม */
 button:hover {
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
 }

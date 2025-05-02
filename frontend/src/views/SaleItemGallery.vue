@@ -28,101 +28,121 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import SaleItemCard from '@/components/gallery/SaleItemCard.vue'
-const saleItems = ref([
-  {
-    id: 1,
-    brandName: 'Apple',
-    model: 'iPhone 14 Pro Max',
-    ramGb: '6 GB',
-    price: 42900,
-    storageGb: '512 ',
-    color: 'Space Black',
-    image: '@/assets/images/mock_phone.png'
-  },
-  {
-    id: 2,
-    brandName: 'Apple',
-    model: 'iPhone 14 Pro Max',
-    ramGb: '6 GB',
-    price: 42900,
-    storageGb: '512 ',
-    color: 'Space Black',
-    image: 'https://via.placeholder.com/300x200'
-  },
-  {
-    id: 3,
-    brandName: 'Apple',
-    model: 'iPhone 14 Pro Max',
-    ramGb: '6 GB',
-    price: 42900,
-    storageGb: '512 ',
-    color: 'Space Black',
-    image: 'https://via.placeholder.com/300x200'
-  },
-  {
-    id: 4,
-    brandName: 'Apple',
-    model: 'iPhone 14 Pro Max',
-    ramGb: '6 GB',
-    price: 42900,
-    storageGb: '512 ',
-    color: 'Space Black',
-    image: 'https://via.placeholder.com/300x200'
-  },
-  {
-    id: 5,
-    brandName: 'Apple',
-    model: 'iPhone 14 Pro Max',
-    ramGb: '6 GB',
-    price: 42900,
-    storageGb: '512 ',
-    color: 'Space Black',
-    image: 'https://via.placeholder.com/300x200'
-  },
-  {
-    id: 6,
-    brandName: 'Apple',
-    model: 'iPhone 14 Pro Max',
-    ramGb: '6 GB',
-    price: 42900,
-    storageGb: '512 ',
-    color: 'Space Black',
-    image: 'https://via.placeholder.com/300x200'
-  },
-  {
-    id: 7,
-    brandName: 'Apple',
-    model: 'iPhone 14 Pro Max',
-    ramGb: '6 GB',
-    price: 42900,
-    storageGb: '512 ',
-    color: 'Space Black',
-    image: 'https://via.placeholder.com/300x200'
-  },
-  {
-    id: 8,
-    brandName: 'Apple',
-    model: 'iPhone 14 Pro Max',
-    ramGb: '6 GB',
-    price: 42900,
-    storageGb: '512 ',
-    color: 'Space Black',
-    image: 'https://via.placeholder.com/300x200'
-  },
-  {
-    id: 9,
-    brandName: 'Apple',
-    model: 'iPhone 14 Pro Max',
-    ramGb: '6 GB',
-    price: 42900,
-    storageGb: '512 ',
-    color: 'Space Black',
-    image: 'https://via.placeholder.com/300x200'
-  }
+// const saleItems = ref([
+//   {
+//     id: 1,
+//     brandName: 'Apple',
+//     model: 'iPhone 14 Pro Max',
+//     ramGb: '6 GB',
+//     price: 42900,
+//     storageGb: '512 ',
+//     color: 'Space Black',
+//     image: '@/assets/images/mock_phone.png'
+//   },
+//   {
+//     id: 2,
+//     brandName: 'Apple',
+//     model: 'iPhone 14 Pro Max',
+//     ramGb: '6 GB',
+//     price: 42900,
+//     storageGb: '512 ',
+//     color: 'Space Black',
+//     image: 'https://via.placeholder.com/300x200'
+//   },
+//   {
+//     id: 3,
+//     brandName: 'Apple',
+//     model: 'iPhone 14 Pro Max',
+//     ramGb: '6 GB',
+//     price: 42900,
+//     storageGb: '512 ',
+//     color: 'Space Black',
+//     image: 'https://via.placeholder.com/300x200'
+//   },
+//   {
+//     id: 4,
+//     brandName: 'Apple',
+//     model: 'iPhone 14 Pro Max',
+//     ramGb: '6 GB',
+//     price: 42900,
+//     storageGb: '512 ',
+//     color: 'Space Black',
+//     image: 'https://via.placeholder.com/300x200'
+//   },
+//   {
+//     id: 5,
+//     brandName: 'Apple',
+//     model: 'iPhone 14 Pro Max',
+//     ramGb: '6 GB',
+//     price: 42900,
+//     storageGb: '512 ',
+//     color: 'Space Black',
+//     image: 'https://via.placeholder.com/300x200'
+//   },
+//   {
+//     id: 6,
+//     brandName: 'Apple',
+//     model: 'iPhone 14 Pro Max',
+//     ramGb: '6 GB',
+//     price: 42900,
+//     storageGb: '512 ',
+//     color: 'Space Black',
+//     image: 'https://via.placeholder.com/300x200'
+//   },
+//   {
+//     id: 7,
+//     brandName: 'Apple',
+//     model: 'iPhone 14 Pro Max',
+//     ramGb: '6 GB',
+//     price: 42900,
+//     storageGb: '512 ',
+//     color: 'Space Black',
+//     image: 'https://via.placeholder.com/300x200'
+//   },
+//   {
+//     id: 8,
+//     brandName: 'Apple',
+//     model: 'iPhone 14 Pro Max',
+//     ramGb: '6 GB',
+//     price: 42900,
+//     storageGb: '512 ',
+//     color: 'Space Black',
+//     image: 'https://via.placeholder.com/300x200'
+//   },
+//   {
+//     id: 9,
+//     brandName: 'Apple',
+//     model: 'iPhone 14 Pro Max',
+//     ramGb: '6 GB',
+//     price: 42900,
+//     storageGb: '512 ',
+//     color: 'Space Black',
+//     image: 'https://via.placeholder.com/300x200'
+//   }
   
-])
+// ])
+
+const fetchSaleItems = async () => {
+  const response = await fetch('http://ip24tt2.sit.kmutt.ac.th:8080/v1/api/sale-item')
+  const data = await response.json()
+  return data
+}
+const saleItems = ref([])
+const loadSaleItems = async () => {
+  try {
+    const items = await fetchSaleItems()
+    saleItems.value = items
+    console.log('Sale items:', saleItems.value)
+  } catch (error) {
+    console.error('Error fetching sale items:', error)
+  }
+}
+
+onMounted(() => {
+  loadSaleItems()
+})
 </script>
 
 <style scoped>

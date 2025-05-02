@@ -49,8 +49,6 @@
    color-scheme: light;
 
    /* Base colors */
-   --color-base-100: oklch(98% 0.02 0);
-   /* White */
    --color-base-200: oklch(95% 0.02 0);
    /* Light Grey */
    --color-base-300: oklch(90% 0.02 0);

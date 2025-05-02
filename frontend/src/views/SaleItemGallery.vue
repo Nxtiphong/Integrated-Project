@@ -1,13 +1,12 @@
 <template>
-  <div>
-    <h1 class=" m-3">Sale Items</h1>
-    <div class="breadcrumbs text-sm my-1 m-10">
+  <div class="container">
+    <div class="breadcrumbs text-sm my-4">
       <ul>
         <li><RouterLink to="/">Home</RouterLink></li>
         <li><RouterLink to="/sale-items">Gallery</RouterLink></li>
       </ul>
     </div>
-    <div v-if="saleItems.length > 0" class=" grid grid-cols-5 gap-4 p-5">
+    <div v-if="saleItems.length > 0" class="grid grid-cols-5 gap-4 py-5">
       <SaleItemCard
         v-for="item in saleItems"
         :key="item.id"
@@ -21,15 +20,15 @@
         :id="item.id"
       />
     </div>
-      <div class="Itmbs-" v-else >
-    <p>No sale items</p>
-  </div>
+    <div class="Itmbs-*" v-else>
+      <p>No sale items</p>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import SaleItemCard from '@/components/gallery/SaleItemCard.vue'
+import { ref } from 'vue';
+import SaleItemCard from '@/components/gallery/SaleItemCard.vue';
 const saleItems = ref([
   {
     id: 1,
@@ -39,7 +38,7 @@ const saleItems = ref([
     price: 42900,
     storageGb: '512 ',
     color: 'Space Black',
-    image: '@/assets/images/mock_phone.png'
+    image: '@/assets/images/mock_phone.png',
   },
   {
     id: 2,
@@ -49,7 +48,7 @@ const saleItems = ref([
     price: 42900,
     storageGb: '512 ',
     color: 'Space Black',
-    image: 'https://via.placeholder.com/300x200'
+    image: 'https://via.placeholder.com/300x200',
   },
   {
     id: 3,
@@ -59,7 +58,7 @@ const saleItems = ref([
     price: 42900,
     storageGb: '512 ',
     color: 'Space Black',
-    image: 'https://via.placeholder.com/300x200'
+    image: 'https://via.placeholder.com/300x200',
   },
   {
     id: 4,
@@ -69,7 +68,7 @@ const saleItems = ref([
     price: 42900,
     storageGb: '512 ',
     color: 'Space Black',
-    image: 'https://via.placeholder.com/300x200'
+    image: 'https://via.placeholder.com/300x200',
   },
   {
     id: 5,
@@ -79,7 +78,7 @@ const saleItems = ref([
     price: 42900,
     storageGb: '512 ',
     color: 'Space Black',
-    image: 'https://via.placeholder.com/300x200'
+    image: 'https://via.placeholder.com/300x200',
   },
   {
     id: 6,
@@ -89,7 +88,7 @@ const saleItems = ref([
     price: 42900,
     storageGb: '512 ',
     color: 'Space Black',
-    image: 'https://via.placeholder.com/300x200'
+    image: 'https://via.placeholder.com/300x200',
   },
   {
     id: 7,
@@ -99,7 +98,7 @@ const saleItems = ref([
     price: 42900,
     storageGb: '512 ',
     color: 'Space Black',
-    image: 'https://via.placeholder.com/300x200'
+    image: 'https://via.placeholder.com/300x200',
   },
   {
     id: 8,
@@ -109,7 +108,7 @@ const saleItems = ref([
     price: 42900,
     storageGb: '512 ',
     color: 'Space Black',
-    image: 'https://via.placeholder.com/300x200'
+    image: 'https://via.placeholder.com/300x200',
   },
   {
     id: 9,
@@ -119,11 +118,9 @@ const saleItems = ref([
     price: 42900,
     storageGb: '512 ',
     color: 'Space Black',
-    image: 'https://via.placeholder.com/300x200'
-  }
-  
-])
+    image: 'https://via.placeholder.com/300x200',
+  },
+]);
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

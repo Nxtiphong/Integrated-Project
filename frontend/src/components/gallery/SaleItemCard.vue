@@ -1,5 +1,5 @@
 <template>
-  <div class="Itbms-row border-1 border-base-300 rounded-lg shadow-md p-4">
+  <div class="Itbms-row border-1 border-base-300 rounded-lg shadow-md p-4 bg-[#F6F6F6]">
     <router-link :to="`/sale-items/${id}`" class="block">
       <img :src="mock_phone" alt="product" class="product-image w-full h-auto max-h-[180px] object-contain rounded-md" />
       <div class="mt-4 space-y-1 text-base-content">

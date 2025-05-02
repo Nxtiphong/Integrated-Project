@@ -27,8 +27,8 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
-import SaleItemCard from '@/components/gallery/SaleItemCard.vue'
+import { onMounted, ref } from 'vue';
+import SaleItemCard from '@/components/gallery/SaleItemCard.vue';
 // const saleItems = ref([
 //   {
 //     id: 1,
@@ -120,28 +120,28 @@ import SaleItemCard from '@/components/gallery/SaleItemCard.vue'
 //     color: 'Space Black',
 //     image: 'https://via.placeholder.com/300x200'
 //   }
-  
+
 // ])
 
 const fetchSaleItems = async () => {
-  const response = await fetch('http://ip24tt2.sit.kmutt.ac.th:8080/v1/api/sale-item')
-  const data = await response.json()
-  return data
-}
-const saleItems = ref([])
+  const response = await fetch('http://ip24tt2.sit.kmutt.ac.th:8080/v1/api/sale-item');
+  const data = await response.json();
+  return data;
+};
+const saleItems = ref([]);
 const loadSaleItems = async () => {
   try {
-    const items = await fetchSaleItems()
-    saleItems.value = items
-    console.log('Sale items:', saleItems.value)
+    const items = await fetchSaleItems();
+    saleItems.value = items;
+    console.log('Sale items:', saleItems.value);
   } catch (error) {
-    console.error('Error fetching sale items:', error)
+    console.error('Error fetching sale items:', error);
   }
-}
+};
 
 onMounted(() => {
-  loadSaleItems()
-})
+  loadSaleItems();
+});
 </script>
 
 <style scoped></style>

@@ -20,7 +20,7 @@ const isLoading = ref(false);
 const fetchProductDetail = async (id) => {
   isLoading.value = true;
   try {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/${id}`);
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items/${id}`);
     if (!res.ok) throw new Error('Failed to fetch product id:' + id);
     productDetail.value = await res.json();
   } catch (error) {

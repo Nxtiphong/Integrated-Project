@@ -4,15 +4,15 @@ import lombok.Data;
 
 @Data
 public class DetailDTO {
-    private String id;
+    private int id;
     private String model;
     private String brandName;
     private String description;
-    private String price;
-    private String ramGb;
-    private String screenSizeInch;
-    private String quantity;
-    private String StorageGb;
+    private int price;
+    private int ramGb;
+    private double screenSizeInch;
+    private int quantity;
+    private int StorageGb;
     private String color;
 
 }

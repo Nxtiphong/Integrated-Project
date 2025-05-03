@@ -39,9 +39,9 @@ const specs = ref([
     <div
       v-for="(spec, index) in specs"
       :key="index"
-      class="self-stretch w-full p-4 rounded-md bg-[#F6F6F6] flex items-center gap-4"
+      class="self-stretch w-full px-4 py-2 lg:p-4 rounded-md text-sm lg:text-base bg-[#F6F6F6] flex items-center gap-4"
     >
-      <Icon :icon="spec.icon" width="35" />
+      <Icon :icon="spec.icon" class="text-xl md:text-2xl lg:text-3xl" />
       <div class="flex flex-col">
         <p>{{ spec.label }}</p>
         <div class="flex gap-1">

@@ -9,6 +9,7 @@
     </button>
 
     <router-link :to="`/sale-items/${id}`" class="block">
+    
       <img
         :src="mock_phone"
         alt="product"
@@ -25,7 +26,7 @@
         </p>
         <p class="Itbms-Color">Color: {{ color }}</p>
         <p class="Itbms-price text-black">
-          Price : {{ price }} <span class="Itbms-price-unit">Baht</span>
+          Price : {{ Number(price).toLocaleString() }} <span class="Itbms-price-unit">Baht</span>
         </p>
       </div>
     </router-link>

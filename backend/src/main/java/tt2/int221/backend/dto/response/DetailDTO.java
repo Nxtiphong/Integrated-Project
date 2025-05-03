@@ -2,6 +2,8 @@ package tt2.int221.backend.dto.response;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 public class DetailDTO {
     private Integer id;
@@ -10,7 +12,7 @@ public class DetailDTO {
     private String description;
     private Integer price;
     private Integer ramGb;
-    private double screenSizeInch;
+    private BigDecimal screenSizeInch;
     private Integer quantity;
     private Integer StorageGb;
     private String color;

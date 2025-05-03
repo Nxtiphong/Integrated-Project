@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import SaleItemGallery from '@/views/SaleItemGallery.vue'
 import SaleItemDetails from '@/views/SaleItemDetails.vue'
+import Favorite from '@/views/Favorite.vue'
 
 
 const router = createRouter({
@@ -21,7 +22,13 @@ const router = createRouter({
       path: '/sale-items/:id',
       name: "saleItemDetail",
       component: SaleItemDetails
-    }
+    },
+    {
+      path: '/favorites',
+      name: "favorites",
+      component: Favorite
+    },
+    
   ],
   linkActiveClass: "text-black font-semibold"
 })

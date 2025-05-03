@@ -16,20 +16,20 @@
       <SaleItemCard
         v-for="item in saleItems"
         :key="item.id"
-        :brand="item.brandName"
-        :model="item.model"
-        :ram="item.ramGb"
-        :price="item.price"
-        :storage="item.storageGb"
-        :color="item.color"
-        :image="item.image"
+        :brand="item.brandName ?? '-'"
+        :model="item.model ?? '-'"
+        :ram="item.ramGb ?? '-'"
+        :price="item.price ?? '-'"
+        :storage="item.storageGb ?? '-'"
+        :color="item.color ?? '-'"
+        :image="item.image ?? ''"
         :id="item.id"
         class="w-full"
       />
     </div>
     
     <div
-      class="Itmbs- font-medium text-primary flex justify-center items-center min-h-[300px]"
+      class="font-medium text-primary flex justify-center items-center min-h-[300px]"
       v-else
     >
       <p class="text-center text-lg">! No sale items</p>
@@ -58,18 +58,20 @@ const loadSaleItems = async () => {
   }
 };
 
-onMounted(() => {
-  loadSaleItems();
-  saleItems.value.sort((a, b) => {
-    const updatedB = new Date(a.createdOn);
-    const createdOnA = new Date(b.createdOn);
-    return createdOnA - updatedB;
-  });
+onMounted(async () => {
+  await loadSaleItems();
+  if (saleItems.value.length > 0) {
+    saleItems.value.sort((a, b) => {
+      const updatedA = new Date(b.createdOn);
+      const updatedB = new Date(a.createdOn);
+      return updatedA - updatedB;
+    });
+  }
 });
 </script>
 
 <style scoped>
-/* Add custom responsive styles here if needed */
+
 @media (max-width: 640px) {
   .breadcrumbs {
     padding: 0.5rem 0;

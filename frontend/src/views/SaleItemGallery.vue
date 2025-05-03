@@ -29,6 +29,7 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import SaleItemCard from '@/components/gallery/SaleItemCard.vue'
+
 // const saleItems = ref([
 //   {
 //     id: 1,
@@ -127,7 +128,7 @@ import SaleItemCard from '@/components/gallery/SaleItemCard.vue'
   return createdOnA - updatedB   
 })
 const fetchSaleItems = async () => {
-  const response = await fetch('http://ip24tt2.sit.kmutt.ac.th:8080/v1/api/sale-item');
+  const response = await fetch(${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items);
   const data = await response.json();
   return data;
 };

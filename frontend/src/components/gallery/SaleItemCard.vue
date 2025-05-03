@@ -9,17 +9,16 @@
     </button>
 
     <router-link :to="`/sale-items/${id}`" class="block">
-    
       <img
         :src="mock_phone"
         alt="product"
         class="product-image w-full h-auto max-h-[180px] object-contain rounded-md"
       />
       <div class="mt-4 space-y-1 text-base-content">
-        <p class="itbms-brand">
-          <strong>{{ brand }}</strong>
+        <p class="itbms-model font-bold text-lg">{{ model }}</p>
+        <p class="itbms-brand font-semibold text-sm">
+          {{ brand }}
         </p>
-        <p class="itbms-model">{{ model }}</p>
         <p class="itbms-ramGb">Ram: {{ ram }}</p>
         <p class="itbms-storageGb">
           Storage: {{ storage }} <span class="itbms-storageGb-unit">GB</span>
@@ -56,9 +55,7 @@ const props = defineProps([
   'ramGb',
 ]);
 
-
 const favoriteStore = useFavoriteStore();
-
 
 const product = {
   id: props.id,
@@ -71,9 +68,7 @@ const product = {
   image: props.image,
 };
 
-
 const isFavorite = computed(() => favoriteStore.isFavorite(product.id));
-
 
 const toggleFavorite = () => {
   if (isFavorite.value) {

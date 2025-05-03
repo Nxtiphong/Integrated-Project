@@ -17,7 +17,7 @@ export const useProductDetailStore = defineStore('productDetail', () => {
       productDetail.value = await res.json()
     } catch (error) {
       productDetail.value = null
-      isError.value = error.message || 'Failed to fetch product id: ' + id // 🔁 FIXED here
+      isError.value = error.message || 'Failed to fetch product id: ' + id
       throw error
     } finally {
       isLoading.value = false

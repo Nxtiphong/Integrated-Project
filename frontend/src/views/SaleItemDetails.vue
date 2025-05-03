@@ -2,13 +2,8 @@
 import ProductImage from '@/components/detail/ProductImage.vue';
 import ProductSpec from '@/components/detail/ProductSpec.vue';
 import { useRoute, useRouter } from 'vue-router';
-import { mockData } from '@/data/sample';
 import notFoundImg from '@/assets/images/404.png';
-import { useProductDetailStore } from '@/stores/detailStore';
 import { onMounted, ref } from 'vue';
-
-// const store = useProductDetailStore();
-// const { productDetail, isLoading, isError, fetchProductDetail } = store;
 
 const router = useRouter();
 const route = useRoute();
@@ -20,7 +15,7 @@ const isLoading = ref(false);
 const fetchProductDetail = async (id) => {
   isLoading.value = true;
   try {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items/${id}`);
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-item/${id}`);
     if (!res.ok) throw new Error('Failed to fetch product id:' + id);
     productDetail.value = await res.json();
   } catch (error) {
@@ -52,7 +47,7 @@ onMounted(() => {
       </ul>
     </div>
     <div
-      class="py-6 lg:py-10 self-stretch flex flex-col lg:flex-row items-center lg:justify-start gap-10 lg:gap-12 Itbms-row"
+      class="py-6 lg:py-10 self-stretch flex flex-col lg:flex-row items-center lg:justify-start gap-4 md:gap-6 lg:gap-12 Itbms-row"
     >
       <ProductImage />
       <div class="self-stretch flex-1 flex flex-col justify-start items-start gap-2 lg:gap-4 mt-8">

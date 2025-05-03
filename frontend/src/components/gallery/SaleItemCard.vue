@@ -55,10 +55,10 @@ const props = defineProps([
   'ramGb',
 ]);
 
-// ดึง useFavoritestore จะทำหน้าfavorites
+
 const favoriteStore = useFavoriteStore();
 
-// Objที่จะเข้่า favorite
+
 const product = {
   id: props.id,
   brand: props.brand,
@@ -70,10 +70,10 @@ const product = {
   image: props.image,
 };
 
-// ดูว่าเข้า favorite หรือยัง
+
 const isFavorite = computed(() => favoriteStore.isFavorite(product.id));
 
-// toggle  เอาไว้เพิ่ม ถ้ากด อีกรอบเป็นลบ
+
 const toggleFavorite = () => {
   if (isFavorite.value) {
     favoriteStore.removeFavorite(product.id);

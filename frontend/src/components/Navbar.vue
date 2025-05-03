@@ -1,16 +1,16 @@
 <script setup>
 import { Icon } from '@iconify/vue';
+import { RouterLink } from 'vue-router';
 </script>
 
 <template>
-  <nav class="navbar px-20 flex justify-between border-b-black-200 w-full py-2 shadow-md">
-  <nav class="navbar px-20 flex justify-between border-b-black-200 w-full py-2 shadow-md">
+  <nav class="navbar px-10 lg:px-16 xl:px-20 flex justify-between border-b-black-200 w-full py-2 shadow-md">
     <div class="flex items-center space-x-4">
       <div class="flex">
         <Icon icon="ic:baseline-apple" class="text-2xl " />
-        <span class="text-xl font-semibold"><router-link to="/">Logo</router-link></span>
+        <span class="text-xl font-semibold"><RouterLink to="/">ITBMS</RouterLink></span>
       </div>
-      <div class="relative">
+      <div class="relative hidden md:block">
         <Icon icon="hugeicons:search-02" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
         <input
           type="text"

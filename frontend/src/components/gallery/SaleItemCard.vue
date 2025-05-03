@@ -9,11 +9,7 @@
     </button>
 
     <router-link :to="`/sale-items/${id}`" class="block">
-      <img
-        :src="mock_phone"
-        alt="product"
-        class="product-image w-full h-auto max-h-[180px] object-contain rounded-md"
-      />
+    
       <img
         :src="mock_phone"
         alt="product"

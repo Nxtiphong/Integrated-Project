@@ -81,7 +81,7 @@ onMounted(() => {
         >
           <button
             @click="router.push('/sale-items')"
-            class="Itbms-shopnow border border-white px-6 sm:px-8 py-2 sm:py-3 rounded cursor-pointer hover:bg-white hover:text-black transition-all duration-300 group"
+            class="itbms-shopnow border border-white px-6 sm:px-8 py-2 sm:py-3 rounded cursor-pointer hover:bg-white hover:text-black transition-all duration-300 group"
           >
             <span class="flex items-center justify-center">
               Shop Now

@@ -14,23 +14,23 @@ const specs = ref([
     icon: 'mingcute:chip-line',
     value: props.product.ramGb,
     unit: 'GB',
-    class: 'Itbms-ramGb',
+    class: 'itbms-ramGb',
   },
   {
     label: 'Screen Size',
     icon: 'fluent:phone-32-filled',
     value: props.product.screenSizeInch,
-    unit: 'inches',
-    class: 'Itbms-screenSizeInch',
+    unit: 'Inches',
+    class: 'itbms-screenSizeInch',
   },
   {
     label: 'Storage',
     icon: 'fluent:storage-16-regular',
     value: props.product.storageGb,
     unit: 'GB',
-    class: 'Itbms-storageGb',
+    class: 'itbms-storageGb',
   },
-  { label: 'Color', icon: 'tabler:color-filter', value: props.product.color, class: 'Itbms-color' },
+  { label: 'Color', icon: 'tabler:color-filter', value: props.product.color, class: 'itbms-color' },
 ]);
 </script>
 
@@ -49,7 +49,7 @@ const specs = ref([
             {{ spec.value }}
           </span>
           <span v-if="spec.value" :class="spec.class + '-unit'">{{ spec.unit }}</span>
-          <p v-else class="text-gray-400">-</p>
+          <p v-else class="text-gray-400" :class="spec.class">-</p>
         </div>
       </div>
     </div>

@@ -29,7 +29,7 @@
     </div>
     
     <div
-      class="font-medium text-primary flex justify-center items-center min-h-[300px]"
+      class="itbms-* font-medium text-primary flex justify-center items-center min-h-[300px]"
       v-else
     >
       <p class="text-center text-lg">! No sale items</p>
@@ -71,7 +71,6 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-
 @media (max-width: 640px) {
   .breadcrumbs {
     padding: 0.5rem 0;

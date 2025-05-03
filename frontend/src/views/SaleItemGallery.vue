@@ -124,7 +124,7 @@ import SaleItemCard from '@/components/gallery/SaleItemCard.vue';
 // ])
 
 const fetchSaleItems = async () => {
-  const response = await fetch('http://ip24tt2.sit.kmutt.ac.th:8080/v1/api/sale-item');
+  const response = await fetch('http://ip24tt2.sit.kmutt.ac.th:8080/itb-mshop/v1/sale-item');
   const data = await response.json();
   return data;
 };

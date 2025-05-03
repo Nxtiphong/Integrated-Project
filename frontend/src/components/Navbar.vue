@@ -1,12 +1,14 @@
-<script setup></script>
+<script setup>
+import { RouterLink } from 'vue-router';
+</script>
 
 <template>
-  <nav class="navbar px-20 flex justify-between border-b-black-200 w-full py-2 shadow-md">
+  <nav class="navbar px-10 lg:px-16 xl:px-20 flex justify-between border-b-black-200 w-full py-2 shadow-md">
     <div class="flex items-center space-x-4">
       <div class="flex">
-        <span class="text-xl font-semibold"><router-link to="/">ITBMS</router-link></span>
+        <span class="text-xl font-semibold"><RouterLink to="/">ITBMS</RouterLink></span>
       </div>
-      <div>
+      <div class="hidden md:block">
         <input
           type="text"
           placeholder="Search"

@@ -14,9 +14,4 @@ public class DetailDTO {
     private Integer quantity;
     private Integer StorageGb;
     private String color;
-
-    public double getScreenSizeInch() {
-        return Math.round(screenSizeInch * 10.0) / 10.0;
-    }
-
 }

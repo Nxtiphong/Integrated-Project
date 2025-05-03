@@ -24,7 +24,7 @@ public class SaleItemService {
     }
 
     public List<SaleItem> getAllSaleItemsOrderByCreatedOnAsc() {
-        return saleItemRepository.findAllByOrderByCreatedOnAsc();
+        return saleItemRepository.findAllByOrderByCreatedOnAscIdAsc();
     }
 
 

@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface SaleItemRepository extends JpaRepository<SaleItem,Integer> {
-    List<SaleItem> findAllByOrderByCreatedOnAsc();
+    List<SaleItem> findAllByOrderByCreatedOnAscIdAsc();
 }

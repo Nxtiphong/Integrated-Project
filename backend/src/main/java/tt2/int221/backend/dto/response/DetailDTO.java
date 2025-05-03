@@ -4,15 +4,19 @@ import lombok.Data;
 
 @Data
 public class DetailDTO {
-    private int id;
+    private Integer id;
     private String model;
     private String brandName;
     private String description;
-    private int price;
-    private int ramGb;
+    private Integer price;
+    private Integer ramGb;
     private double screenSizeInch;
-    private int quantity;
-    private int StorageGb;
+    private Integer quantity;
+    private Integer StorageGb;
     private String color;
+
+    public double getScreenSizeInch() {
+        return Math.round(screenSizeInch * 10.0) / 10.0;
+    }
 
 }

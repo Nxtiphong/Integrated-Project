@@ -1,5 +1,5 @@
 <template>
-  <div class="Itbms-row border-1 border-base-300 rounded-lg shadow-md p-4 relative">
+  <div class="itbms-row border-1 border-base-300 rounded-lg shadow-md p-4 relative">
     <button @click="toggleFavorite" class="absolute top-3 right-3 z-10 focus:outline-none">
       <Icon
         :icon="isFavorite ? 'mdi:heart' : 'mdi:heart-outline'"
@@ -16,17 +16,17 @@
         class="product-image w-full h-auto max-h-[180px] object-contain rounded-md"
       />
       <div class="mt-4 space-y-1 text-base-content">
-        <p class="Itbms-brand">
+        <p class="itbms-brand">
           <strong>{{ brand }}</strong>
         </p>
-        <p class="Itbms-model">{{ model }}</p>
-        <p class="Itbms-ramGb">Ram: {{ ram }}</p>
-        <p class="Itbms-storageGb">
-          Storage: {{ storage }} <span class="Itbms-storageGb-unit">GB</span>
+        <p class="itbms-model">{{ model }}</p>
+        <p class="itbms-ramGb">Ram: {{ ram }}</p>
+        <p class="itbms-storageGb">
+          Storage: {{ storage }} <span class="itbms-storageGb-unit">GB</span>
         </p>
-        <p class="Itbms-Color">Color: {{ color }}</p>
-        <p class="Itbms-price text-black">
-          Price : {{ Number(price).toLocaleString() }} <span class="Itbms-price-unit">Baht</span>
+        <p class="itbms-Color">Color: {{ color }}</p>
+        <p class="itbms-price text-black">
+          Price : {{ Number(price).toLocaleString() }} <span class="itbms-price-unit">Baht</span>
         </p>
       </div>
     </router-link>

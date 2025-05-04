@@ -12,7 +12,16 @@
       </ul>
     </div>
     
-    <div v-if="saleItems.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 py-4 sm:py-5">
+    <!-- Loading state -->
+    <div v-if="isLoading" class="flex justify-center items-center min-h-[300px]">
+      <p class="text-center text-lg">Loading...</p>
+    </div>
+    
+    <!-- Display sale items when data is loaded and not empty -->
+    <div 
+      v-else-if="saleItems.length > 0" 
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 py-4 sm:py-5"
+    >
       <SaleItemCard
         v-for="item in saleItems"
         :key="item.id"
@@ -29,8 +38,8 @@
     </div>
     
     <div
-      class="itbms-* font-medium text-primary flex justify-center items-center min-h-[300px]"
       v-else
+      class="itbms-* font-medium text-primary flex justify-center items-center min-h-[300px]"
     >
       <p class="text-center text-lg">! No sale items</p>
     </div>
@@ -48,25 +57,31 @@ const fetchSaleItems = async () => {
 };
 
 const saleItems = ref([]);
+const isLoading = ref(true); 
+
 const loadSaleItems = async () => {
+  isLoading.value = true; 
   try {
     const items = await fetchSaleItems();
     saleItems.value = items;
     console.log('Sale items:', saleItems.value);
+    
+    if (saleItems.value.length > 0) {
+      saleItems.value.sort((a, b) => {
+        const updatedA = new Date(b.createdOn);
+        const updatedB = new Date(a.createdOn);
+        return updatedA - updatedB;
+      });
+    }
   } catch (error) {
     console.error('Error fetching sale items:', error);
+  } finally {
+    isLoading.value = false; 
   }
 };
 
-onMounted(async () => {
-  await loadSaleItems();
-  if (saleItems.value.length > 0) {
-    saleItems.value.sort((a, b) => {
-      const updatedA = new Date(b.createdOn);
-      const updatedB = new Date(a.createdOn);
-      return updatedA - updatedB;
-    });
-  }
+onMounted(() => {
+  loadSaleItems();
 });
 </script>
 

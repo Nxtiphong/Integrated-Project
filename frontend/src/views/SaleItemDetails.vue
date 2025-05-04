@@ -21,7 +21,6 @@ const fetchProductDetail = async (id) => {
   } catch (error) {
     productDetail.value = null;
     console.log('Error:', error);
-    // throw new Error(error);
   } finally {
     isLoading.value = false;
   }
@@ -33,7 +32,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-if="isLoading" class="flex flex-col justify-center items-center h-60 text-primary">
+  <div v-if="isLoading" class="flex flex-col justify-center items-center h-60">
     <span class="loading loading-ball loading-xl"></span>
     <p class="text-lg font-semibold">Loading product details...</p>
   </div>
@@ -85,10 +84,11 @@ onMounted(() => {
     <img :src="notFoundImg" alt="not_found" />
     <h1 class="text-3xl font-bold uppercase">Something is wrong</h1>
     <p class="itbms-message">The requested sale item does not exist.</p>
-    <button @click="router.forward('/sale-items')" class="itbms-button btn btn-primary my-2">
+    <button @click="router.push('/sale-items')" class="itbms-button btn btn-primary my-2">
       Back
     </button>
   </div>
+
 </template>
 
 <style scoped></style>

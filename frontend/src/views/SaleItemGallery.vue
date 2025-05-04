@@ -1,18 +1,22 @@
 <template>
   <div class="container mx-auto px-4 sm:px-6 lg:px-8">
     <div class="breadcrumbs text-sm my-3 overflow-x-auto whitespace-nowrap">
-      <ul class="flex space-x-2">
+      <ul class="flex">
         <li class="flex items-center">
-          <RouterLink to="/" class="hover:text-primary transition-colors">Home</RouterLink>
-          <span class="mx-2 text-gray-400"></span>
+          <RouterLink to="/">Home</RouterLink>
         </li>
         <li>
-          <RouterLink to="/sale-items" class="hover:text-primary transition-colors">Gallery</RouterLink>
+          <RouterLink to="/sale-items"
+            >Gallery</RouterLink
+          >
         </li>
       </ul>
     </div>
-    
-    <div v-if="saleItems.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 py-4 sm:py-5">
+
+    <div
+      v-if="saleItems.length > 0"
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 py-4 sm:py-5"
+    >
       <SaleItemCard
         v-for="item in saleItems"
         :key="item.id"
@@ -27,7 +31,7 @@
         class="w-full"
       />
     </div>
-    
+
     <div
       class="itbms-* font-medium text-primary flex justify-center items-center min-h-[300px]"
       v-else

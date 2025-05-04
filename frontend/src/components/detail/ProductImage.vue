@@ -1,8 +1,11 @@
 <script setup>
-import mockPhoneImage from '@/assets/images/mock_phone.png';
+import mockPhoneImage1 from '@/assets/images/mock_phone.png';
+import mockPhoneImage2 from '@/assets/images/mock_phone2.png';
+import mockPhoneImage3 from '@/assets/images/mock_phone3.png';
+import mockPhoneImage4 from '@/assets/images/mock_phone4.png';
 import { ref } from 'vue';
 
-const images = [mockPhoneImage, mockPhoneImage, mockPhoneImage, mockPhoneImage];
+const images = [mockPhoneImage1, mockPhoneImage2, mockPhoneImage3, mockPhoneImage4];
 const selectedImage = ref(images[0]);
 
 const selectImage = (img) => {
@@ -19,7 +22,7 @@ const selectImage = (img) => {
         class="w-16 h-20 object-contain cursor-pointer transition-opacity duration-200"
         :class="{
           'opacity-100': selectedImage === img,
-          'opacity-40 hover:opacity-70': selectedImage !== img,
+          'opacity-40 hover:opacity-80': selectedImage !== img,
         }"
         :src="img"
         alt="product-thumbnail"

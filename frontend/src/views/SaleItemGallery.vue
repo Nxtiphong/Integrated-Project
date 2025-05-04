@@ -12,12 +12,10 @@
       </ul>
     </div>
     
-    <!-- Loading state -->
     <div v-if="isLoading" class="flex justify-center items-center min-h-[300px]">
       <p class="text-center text-lg">Loading...</p>
     </div>
     
-    <!-- Display sale items when data is loaded and not empty -->
     <div 
       v-else-if="saleItems.length > 0" 
       class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 py-4 sm:py-5"

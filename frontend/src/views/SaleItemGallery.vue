@@ -12,29 +12,33 @@
         </li>
       </ul>
     </div>
-
-    <div
-      v-if="saleItems.length > 0"
+    
+    <div v-if="isLoading" class="flex justify-center items-center min-h-[300px]">
+      <p class="text-center text-lg">Loading...</p>
+    </div>
+    
+    <div 
+      v-else-if="saleItems.length > 0" 
       class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 py-4 sm:py-5"
     >
       <SaleItemCard
         v-for="item in saleItems"
         :key="item.id"
-        :brand="item.brandName"
-        :model="item.model"
-        :ram="item.ramGb"
-        :price="item.price"
-        :storage="item.storageGb"
-        :color="item.color"
-        :image="item.image"
+        :brand="item.brandName ?? '-'"
+        :model="item.model ?? '-'"
+        :ram="item.ramGb ?? '-'"
+        :price="item.price ?? '-'"
+        :storage="item.storageGb ?? '-'"
+        :color="item.color ?? '-'"
+        :image="item.image ?? ''"
         :id="item.id"
         class="w-full"
       />
     </div>
 
     <div
-      class="itbms-* font-medium text-primary flex justify-center items-center min-h-[300px]"
       v-else
+      class="itbms-* font-medium text-primary flex justify-center items-center min-h-[300px]"
     >
       <p class="text-center text-lg">! No sale items</p>
     </div>
@@ -52,23 +56,31 @@ const fetchSaleItems = async () => {
 };
 
 const saleItems = ref([]);
+const isLoading = ref(true); 
+
 const loadSaleItems = async () => {
+  isLoading.value = true; 
   try {
     const items = await fetchSaleItems();
     saleItems.value = items;
     console.log('Sale items:', saleItems.value);
+    
+    if (saleItems.value.length > 0) {
+      saleItems.value.sort((a, b) => {
+        const updatedA = new Date(b.createdOn);
+        const updatedB = new Date(a.createdOn);
+        return updatedA - updatedB;
+      });
+    }
   } catch (error) {
     console.error('Error fetching sale items:', error);
+  } finally {
+    isLoading.value = false; 
   }
 };
 
 onMounted(() => {
   loadSaleItems();
-  saleItems.value.sort((a, b) => {
-    const updatedB = new Date(a.createdOn);
-    const createdOnA = new Date(b.createdOn);
-    return createdOnA - updatedB;
-  });
 });
 </script>
 

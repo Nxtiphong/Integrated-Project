@@ -8,8 +8,8 @@ CREATE TABLE brand (
  websiteUrl VARCHAR(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci CHECK (websiteUrl IS NULL OR (LENGTH(TRIM(websiteUrl)) > 0)),
   isActive BOOLEAN,
   countryOfOrigin VARCHAR(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci CHECK (countryOfOrigin IS NULL OR (LENGTH(TRIM(countryOfOrigin)) > 0)),
-  createdOn DATETIME NOT NULL,
-  updatedOn DATETIME NOT NULL,
+  createdOn DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updatedOn DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   CHECK (updatedOn >= createdOn)
 );
 
@@ -30,8 +30,8 @@ CREATE TABLE saleItem (
         color IS NULL OR LENGTH(TRIM(color)) > 0
     ),
     quantity INT NOT NULL DEFAULT 1,
-    createdOn DATETIME NOT NULL,
-    updatedOn DATETIME NOT NULL,
+    createdOn DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updatedOn DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CHECK (updatedOn >= createdOn),
     FOREIGN KEY (brand_id) REFERENCES brand(id) ON DELETE CASCADE
 );

@@ -37,16 +37,18 @@ onMounted(() => {
       <div v-for="n in 30" :key="n" class="shooting-star" :style="getRandomStarStyle()"></div>
     </div>
 
+    <!-- Background blobs - adjusted for better mobile response -->
     <div class="absolute top-1/2 right-1/4 w-64 h-64 bg-purple-600/20 rounded-full blur-3xl"></div>
     <div class="absolute bottom-1/3 left-1/4 w-48 h-48 bg-blue-600/10 rounded-full blur-3xl"></div>
 
     <div
-      class="container mx-auto px-4 py-16 flex flex-col md:flex-row items-center justify-between"
+      class="container mx-auto px-4 md:px-8 py-8 md:py-16 flex flex-col md:flex-row items-center justify-between"
     >
-      <div class="md:w-1/2 z-10 space-y-6">
+      <!-- Text content section -->
+      <div class="w-full md:w-1/2 z-10 space-y-4 md:space-y-6 text-center md:text-left mb-8 md:mb-0">
         <h3
           :class="[
-            'text-gray-400 text-xl font-light tracking-wider transform transition-all duration-700',
+            'text-gray-400 text-lg md:text-xl font-light tracking-wider transform transition-all duration-700',
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0',
           ]"
         >
@@ -55,7 +57,7 @@ onMounted(() => {
 
         <h1
           :class="[
-            'text-5xl md:text-7xl font-thin tracking-tight transition-all duration-700',
+            'text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-thin tracking-tight transition-all duration-700',
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0',
           ]"
         >
@@ -64,7 +66,7 @@ onMounted(() => {
 
         <p
           :class="[
-            'text-gray-400 text-lg font-light transition-all duration-700 delay-300',
+            'text-gray-400 text-base md:text-lg font-light transition-all duration-700 delay-300 max-w-md mx-auto md:mx-0',
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0',
           ]"
         >
@@ -79,7 +81,7 @@ onMounted(() => {
         >
           <button
             @click="router.push('/sale-items')"
-            class="Itbms-shopnow border border-white px-8 py-3 rounded cursor-pointer hover:bg-white hover:text-black transition-all duration-300 group"
+            class="itbms-shopnow border border-white px-6 sm:px-8 py-2 sm:py-3 rounded cursor-pointer hover:bg-white hover:text-black transition-all duration-300 group"
           >
             <span class="flex items-center justify-center">
               Shop Now
@@ -101,14 +103,26 @@ onMounted(() => {
           </button>
         </div>
       </div>
-      <div class="z-999">
-        <img src="@/assets/images/mock_phone.png" alt="IMG" class="IMGPhoneHome" width="375px" />
+
+      <!-- Phone image section -->
+      <div 
+        class="z-10 w-full md:w-1/2 flex justify-center"
+        :class="[
+          'transition-all duration-700 delay-400',
+          phoneVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0',
+        ]"
+      >
+        <img 
+          src="@/assets/images/mock_phone.png" 
+          alt="iPhone 14 Pro" 
+          class="IMGPhoneHome w-64 sm:w-72 md:w-80 lg:w-96 max-w-full h-auto" 
+        />
       </div>
     </div>
   </div>
 </template>
 
-<style>
+<style scoped>
 @keyframes pulse-slow {
   0%,
   100% {
@@ -163,5 +177,20 @@ onMounted(() => {
 
 button:hover {
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .shooting-stars-container {
+    opacity: 0.7;
+  }
+}
+
+/* Fix for mobile devices in portrait mode */
+@media (max-width: 480px) {
+  .container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
 }
 </style>

@@ -24,7 +24,7 @@ public class SaleItemController {
     public ResponseEntity<List<SaleItem>> findAll() {
         return ResponseEntity.ok(service.getAllSaleItemsOrderByCreatedOnAsc());
     }
-    @GetMapping("/sale-item")
+    @GetMapping("/sale-items")
     public ResponseEntity<List<GelleryDTO>> getGelleryDTO() {
         List<SaleItem> saleItems = service.getAllSaleItemsOrderByCreatedOnAsc();
         List<GelleryDTO> gelleryDTOs = saleItems.stream()
@@ -33,7 +33,7 @@ public class SaleItemController {
         return ResponseEntity.ok(gelleryDTOs);
     }
 
-    @GetMapping("/sale-item/{id}")
+    @GetMapping("/sale-items/{id}")
     public ResponseEntity<DetailDTO> findById(@PathVariable Integer id) {
         SaleItem saleItem = service.getSaleItemById(id);
         if (saleItem == null) {

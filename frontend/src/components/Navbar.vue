@@ -23,7 +23,7 @@ const toggleMobileMenu = () => {
         <input
           type="text"
           placeholder="Search"
-          class="bg-[oklch(90%_0.02_0)] focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 pl-10 pr-4 py-2 rounded-md w-40 lg:w-64 xl:w-96 transition duration-200"
+          class="bg-[#F5F5F5] focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 pl-10 pr-4 py-2 rounded-md w-40 lg:w-64 xl:w-96 transition duration-200"
         />
       </div>
     </div>

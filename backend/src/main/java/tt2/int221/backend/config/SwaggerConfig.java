@@ -11,8 +11,8 @@ public class SwaggerConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Sale Item API")
+                        .title("ITB-MSHOP API")
                         .version("1.0.0")
-                        .description("API สำหรับ Sale Item"));
+                        .description("API for using ITB-MSHOP"));
     }
 }

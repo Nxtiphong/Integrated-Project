@@ -1,6 +1,6 @@
 <template>
   <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="breadcrumbs text-sm my-3 overflow-x-auto whitespace-nowrap">
+    <div class="breadcrumbs text-sm my-4 overflow-x-auto whitespace-nowrap">
       <ul class="flex">
         <li class="flex items-center">
           <RouterLink to="/">Home</RouterLink>

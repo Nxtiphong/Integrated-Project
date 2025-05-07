@@ -1,13 +1,14 @@
 package tt2.int221.backend.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -28,7 +29,6 @@ public class SaleItem {
     private String model;
 
     @NotNull
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "brand_id", nullable = false)
@@ -60,12 +60,14 @@ public class SaleItem {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
-    @NotNull
-    @Column(name = "createdOn", nullable = false)
+
+    @Column(name = "createdOn")
+    @CreationTimestamp
     private Instant createdOn;
 
-    @NotNull
-    @Column(name = "updatedOn", nullable = false)
+
+    @Column(name = "updatedOn")
+    @UpdateTimestamp
     private Instant updatedOn;
 
 }

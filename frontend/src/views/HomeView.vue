@@ -37,14 +37,12 @@ onMounted(() => {
       <div v-for="n in 30" :key="n" class="shooting-star" :style="getRandomStarStyle()"></div>
     </div>
 
-    <!-- Background blobs - adjusted for better mobile response -->
     <div class="absolute top-1/2 right-1/4 w-64 h-64 bg-purple-600/20 rounded-full blur-3xl"></div>
     <div class="absolute bottom-1/3 left-1/4 w-48 h-48 bg-blue-600/10 rounded-full blur-3xl"></div>
 
     <div
       class="container mx-auto px-4 md:px-8 py-8 md:py-16 flex flex-col md:flex-row items-center justify-between"
     >
-      <!-- Text content section -->
       <div class="w-full md:w-1/2 z-10 space-y-4 md:space-y-6 text-center md:text-left mb-8 md:mb-0">
         <h3
           :class="[
@@ -179,14 +177,12 @@ button:hover {
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
 }
 
-/* Responsive adjustments */
 @media (max-width: 640px) {
   .shooting-stars-container {
     opacity: 0.7;
   }
 }
 
-/* Fix for mobile devices in portrait mode */
 @media (max-width: 480px) {
   .container {
     padding-top: 2rem;

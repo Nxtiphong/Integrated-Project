@@ -1,6 +1,6 @@
 <template>
   <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="breadcrumbs text-sm my-4 overflow-x-auto whitespace-nowrap">
+    <div class="breadcrumbs text-sm my-2 overflow-x-auto whitespace-nowrap">
       <ul class="flex">
         <li class="flex items-center">
           <RouterLink to="/">Home</RouterLink>
@@ -9,6 +9,11 @@
           <RouterLink to="/sale-items">Gallery</RouterLink>
         </li>
       </ul>
+      <div class="mt-4">
+        <RouterLink to="/sale-items/add">
+        <button className="btn btn-outline btn-info">Add Sale Item</button>
+      </RouterLink>
+      </div>
     </div>
 
     <div class="flex flex-col lg:flex-row gap-6">

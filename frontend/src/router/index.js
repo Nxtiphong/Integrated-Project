@@ -3,6 +3,7 @@ import HomeView from '@/views/HomeView.vue'
 import SaleItemGallery from '@/views/SaleItemGallery.vue'
 import SaleItemDetails from '@/views/SaleItemDetails.vue'
 import Favorite from '@/views/Favorite.vue'
+import AddSaleItem from '@/views/AddSaleItem.vue'
 
 
 const router = createRouter({
@@ -28,7 +29,16 @@ const router = createRouter({
       name: "favorites",
       component: Favorite
     },
-    
+    {
+      path: '/sale-items/add',
+      name: "addSaleItem",
+      component: AddSaleItem
+    },
+    {
+      path: '/sale-items/:id/edit',
+      name: "editSaleItem",
+      component: AddSaleItem
+    }
   ],
   linkActiveClass: "text-black font-semibold"
 })

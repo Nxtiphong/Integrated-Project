@@ -11,6 +11,13 @@ const selectedImage = ref(images[0]);
 const selectImage = (img) => {
   selectedImage.value = img;
 };
+
+const props = defineProps({
+  isAddPage: {
+    type: Boolean,
+    default: false,
+  },
+});
 </script>
 
 <template>

@@ -1,27 +1,51 @@
 <template>
-  <div class="container">
-    <div class="breadcrumbs text-sm my-4">
-      <ul>
-        <li><RouterLink to="/">Home</RouterLink></li>
-        <li><RouterLink to="/sale-items">Gallery</RouterLink></li>
+  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="breadcrumbs text-sm my-2 overflow-x-auto whitespace-nowrap">
+      <ul class="flex">
+        <li class="flex items-center">
+          <RouterLink to="/">Home</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/sale-items"
+            >Gallery</RouterLink
+          >
+        </li>
       </ul>
+      <div class="mt-4">
+        <RouterLink to="/sale-items/add">
+        <button className="btn btn-outline btn-info">Add Sale Item</button>
+      </RouterLink>
+      </div>
     </div>
-    <div v-if="saleItems.length > 0" class="grid grid-cols-5 gap-4 py-5">
+    
+    <div v-if="isLoading" class="flex justify-center items-center min-h-[300px]">
+      <p class="text-center text-lg">Loading...</p>
+    </div>
+    
+    <div 
+      v-else-if="saleItems.length > 0" 
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 pb-4 pt-0 sm:py-2"
+    >
       <SaleItemCard
         v-for="item in saleItems"
         :key="item.id"
-        :brand="item.brandName"
-        :model="item.model"
-        :ram="item.ramGb"
-        :price="item.price"
-        :storage="item.storageGb"
-        :color="item.color"
-        :image="item.image"
+        :brand="item.brandName ?? '-'"
+        :model="item.model ?? '-'"
+        :ram="item.ramGb ?? '-'"
+        :price="item.price ?? '-'"
+        :storage="item.storageGb ?? '-'"
+        :color="item.color ?? '-'"
+        :image="item.image ?? ''"
         :id="item.id"
+        class="w-full"
       />
     </div>
-    <div class="Itmbs-*" v-else>
-      <p>No sale items</p>
+
+    <div
+      v-else
+      class="itbms-* font-medium text-primary flex justify-center items-center min-h-[300px]"
+    >
+      <p class="text-center text-lg">! No sale items</p>
     </div>
   </div>
 </template>
@@ -29,113 +53,34 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import SaleItemCard from '@/components/gallery/SaleItemCard.vue';
-// const saleItems = ref([
-//   {
-//     id: 1,
-//     brandName: 'Apple',
-//     model: 'iPhone 14 Pro Max',
-//     ramGb: '6 GB',
-//     price: 42900,
-//     storageGb: '512 ',
-//     color: 'Space Black',
-//     image: '@/assets/images/mock_phone.png'
-//   },
-//   {
-//     id: 2,
-//     brandName: 'Apple',
-//     model: 'iPhone 14 Pro Max',
-//     ramGb: '6 GB',
-//     price: 42900,
-//     storageGb: '512 ',
-//     color: 'Space Black',
-//     image: 'https://via.placeholder.com/300x200'
-//   },
-//   {
-//     id: 3,
-//     brandName: 'Apple',
-//     model: 'iPhone 14 Pro Max',
-//     ramGb: '6 GB',
-//     price: 42900,
-//     storageGb: '512 ',
-//     color: 'Space Black',
-//     image: 'https://via.placeholder.com/300x200'
-//   },
-//   {
-//     id: 4,
-//     brandName: 'Apple',
-//     model: 'iPhone 14 Pro Max',
-//     ramGb: '6 GB',
-//     price: 42900,
-//     storageGb: '512 ',
-//     color: 'Space Black',
-//     image: 'https://via.placeholder.com/300x200'
-//   },
-//   {
-//     id: 5,
-//     brandName: 'Apple',
-//     model: 'iPhone 14 Pro Max',
-//     ramGb: '6 GB',
-//     price: 42900,
-//     storageGb: '512 ',
-//     color: 'Space Black',
-//     image: 'https://via.placeholder.com/300x200'
-//   },
-//   {
-//     id: 6,
-//     brandName: 'Apple',
-//     model: 'iPhone 14 Pro Max',
-//     ramGb: '6 GB',
-//     price: 42900,
-//     storageGb: '512 ',
-//     color: 'Space Black',
-//     image: 'https://via.placeholder.com/300x200'
-//   },
-//   {
-//     id: 7,
-//     brandName: 'Apple',
-//     model: 'iPhone 14 Pro Max',
-//     ramGb: '6 GB',
-//     price: 42900,
-//     storageGb: '512 ',
-//     color: 'Space Black',
-//     image: 'https://via.placeholder.com/300x200'
-//   },
-//   {
-//     id: 8,
-//     brandName: 'Apple',
-//     model: 'iPhone 14 Pro Max',
-//     ramGb: '6 GB',
-//     price: 42900,
-//     storageGb: '512 ',
-//     color: 'Space Black',
-//     image: 'https://via.placeholder.com/300x200'
-//   },
-//   {
-//     id: 9,
-//     brandName: 'Apple',
-//     model: 'iPhone 14 Pro Max',
-//     ramGb: '6 GB',
-//     price: 42900,
-//     storageGb: '512 ',
-//     color: 'Space Black',
-//     image: 'https://via.placeholder.com/300x200'
-//   }
-
-// ])
 
 const fetchSaleItems = async () => {
-  const response = await fetch('http://ip24tt2.sit.kmutt.ac.th:8080/v1/api/sale-item');
+  const response = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items`);
   const data = await response.json();
   return data;
 };
+
 const saleItems = ref([]);
+const isLoading = ref(true); 
+
 const loadSaleItems = async () => {
+  isLoading.value = true; 
   try {
     const items = await fetchSaleItems();
     saleItems.value = items;
     console.log('Sale items:', saleItems.value);
+    
+    if (saleItems.value.length > 0) {
+      saleItems.value.sort((a, b) => {
+        const updatedA = new Date(b.createdOn);
+        const updatedB = new Date(a.createdOn);
+        return updatedA - updatedB;
+      });
+    }
   } catch (error) {
     console.error('Error fetching sale items:', error);
+  } finally {
+    isLoading.value = false; 
   }
 };
 
@@ -144,4 +89,10 @@ onMounted(() => {
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+@media (max-width: 640px) {
+  .breadcrumbs {
+    padding: 0.5rem 0;
+  }
+}
+</style>

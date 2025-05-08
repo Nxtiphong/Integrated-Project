@@ -1,4 +1,4 @@
-package tt2.int221.backend.dto.response;
+package tt2.int221.backend.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

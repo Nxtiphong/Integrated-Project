@@ -6,7 +6,8 @@ export const useSaleItemStore = defineStore('saleItem', {
     brands: [],
     saleItems: [],
     isLoading: false,
-    created: false
+    created: false,
+    deleted: false,
   }),
 
   actions: {
@@ -75,6 +76,18 @@ export const useSaleItemStore = defineStore('saleItem', {
       } catch (error) {
         console.error('Error updating sale item:', error)
       }
-    }
+    },
+
+    async deleteSaleItem(id) {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items/${id}`, {
+          method: 'DELETE',
+        })
+        if (!res.ok) throw new Error('Failed to delete sale item')
+        this.saleItems = this.saleItems.filter(item => item.id !== id)
+      } catch (error) {
+        console.error('Error deleting sale item:', error)
+      }
+    },
   }
 })

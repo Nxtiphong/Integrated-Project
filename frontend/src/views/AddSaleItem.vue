@@ -128,12 +128,8 @@ const saveProduct = () => {
     }, 2000);
   } else {
     saleStore.createSaleItem(product.value);
-    router.push({
-      path: '/sale-items',
-      query: {
-        created: true,
-      },
-    });
+    saleStore.created = true;
+    router.push('/sale-items');
   }
 };
 

@@ -6,6 +6,7 @@ export const useSaleItemStore = defineStore('saleItem', {
     brands: [],
     saleItems: [],
     isLoading: false,
+    created: false
   }),
 
   actions: {

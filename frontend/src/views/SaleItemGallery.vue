@@ -228,26 +228,20 @@ onMounted(async () => {
     loadSaleItems();
     console.log('Sale items loaded successfully');
     console.log('Sale items filteredItems:', filteredItems.value);
-    const created = route.query.created === 'true';
-    if (created) {
+    if (saleStore.created) {
       alertMessage.value = {
         type: 'success',
         message: 'Sale item created successfully!',
         visible: true,
+        duration: 3000,
       };
+      saleStore.created = false;
     }
 
   } catch (e) {
-    console.error('Error loading sale items:', e);
-    alertMessage.value = {
-      type: 'error',
-      message: 'Failed to load sale items. Please try again later.',
-      visible: true,
-      duration: 3000,
-    };
-  } finally {
     isLoading.value = false;
-  }
+  } 
+  
 });
 </script>
 

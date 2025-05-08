@@ -20,7 +20,7 @@
           @filter-change="handleBrandFilterChange" 
         />
         
-        <!-- เตรียมพื้นที่สำหรับ Filter อื่นๆ ที่อาจเพิ่มในอนาคต -->
+        <!-- เตรียมพื้นที่สำหรับ Filter อื่นๆ ที่อาจเพิ่มในอนาคต เพราะบางอันเทียนยังไม่ได้ ใช้งานจ้า -->
         <div class="mt-4  rounded-lg shadow-sm">
           <div class="p-4 border-b border-neutral-200">
             <div class="flex justify-between items-center cursor-pointer" @click="toggleFilter('battery')">
@@ -117,7 +117,7 @@ const filteredItems = ref([]);
 const isLoading = ref(true);
 const selectedBrands = ref([]);
 
-// Filter visibility states สำหรับ filter อื่นๆ (ยังไม่ใช้งานจริง)
+// Filter visibility states สำหรับ filter อันอื่นๆ ตอนนี้กยังไม่ได้ใช้นะ
 const showBatteryFilter = ref(false);
 const showScreenFilter = ref(false);
 const showDiagonalFilter = ref(false);
@@ -150,13 +150,13 @@ const handleBrandFilterChange = (brands) => {
 };
 
 const applyFilters = () => {
-  // ถ้าไม่มีแบรนด์ที่เลือก แสดงสินค้าทั้งหมด
+  // ถ้าไม่มีแบรนด์ที่เลือก ก็จะแสดงสินค้าทั้งหมด
   if (selectedBrands.value.length === 0) {
     filteredItems.value = [...saleItems.value];
     return;
   }
   
-  // กรองสินค้าตามแบรนด์ที่เลือก
+  // ตัวกรองสินค้าตามแบรนด์ที่เราเลือก
   filteredItems.value = saleItems.value.filter(item => {
     const brandName = item.brandName || 'Unknown';
     return selectedBrands.value.includes(brandName);
@@ -177,7 +177,7 @@ const loadSaleItems = async () => {
       });
     }
     
-    // เริ่มต้นแสดงสินค้าทั้งหมด
+    // เริ่มต้นแสดงสินค้าทั้งหมดหน้าก่อนเราเลือกแบรนด์อะ
     filteredItems.value = [...saleItems.value];
     
   } catch (error) {

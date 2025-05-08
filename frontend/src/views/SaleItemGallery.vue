@@ -9,10 +9,10 @@
           <RouterLink to="/sale-items">Gallery</RouterLink>
         </li>
       </ul>
-      <div class="mt-4">
+      <div class="itbms-sale-item-add mt-4">
         <RouterLink to="/sale-items/add">
-        <button className="btn btn-outline btn-info">Add Sale Item</button>
-      </RouterLink>
+          <button className="btn btn-outline btn-info">Add Sale Item</button>
+        </RouterLink>
       </div>
     </div>
 
@@ -20,15 +20,15 @@
       <!-- Filters Sidebar -->
       <div class="w-full lg:w-1/4">
         <!-- Brand Filter -->
-        <BrandFilter 
-          :items="saleItems" 
-          @filter-change="handleBrandFilterChange" 
-        />
-        
+        <BrandFilter :items="saleItems" @filter-change="handleBrandFilterChange" />
+
         <!-- เตรียมพื้นที่สำหรับ Filter อื่นๆ ที่อาจเพิ่มในอนาคต เพราะบางอันเทียนยังไม่ได้ ใช้งานจ้า -->
-        <div class="mt-4  rounded-lg shadow-sm">
+        <div class="mt-4 rounded-lg shadow-sm">
           <div class="p-4 border-b border-neutral-200">
-            <div class="flex justify-between items-center cursor-pointer" @click="toggleFilter('battery')">
+            <div
+              class="flex justify-between items-center cursor-pointer"
+              @click="toggleFilter('battery')"
+            >
               <h3 class="font-medium">Battery capacity</h3>
               <Icon icon="lucide:chevron-right" v-if="!isExpanded" class="text-gray-400" />
               <Icon icon="lucide:chevron-down" v-else class="text-gray-400" />
@@ -36,7 +36,10 @@
           </div>
 
           <div class="p-4 border-b border-neutral-200">
-            <div class="flex justify-between items-center cursor-pointer" @click="toggleFilter('screen')">
+            <div
+              class="flex justify-between items-center cursor-pointer"
+              @click="toggleFilter('screen')"
+            >
               <h3 class="font-medium">Screen type</h3>
               <Icon icon="lucide:chevron-right" v-if="!isExpanded" class="text-gray-400" />
               <Icon icon="lucide:chevron-down" v-else class="text-gray-400" />
@@ -44,16 +47,21 @@
           </div>
 
           <div class="p-4 border-b border-neutral-200">
-            <div class="flex justify-between items-center cursor-pointer" @click="toggleFilter('diagonal')">
+            <div
+              class="flex justify-between items-center cursor-pointer"
+              @click="toggleFilter('diagonal')"
+            >
               <h3 class="font-medium">Screen diagonal</h3>
               <Icon icon="lucide:chevron-right" v-if="!isExpanded" class="text-gray-400" />
               <Icon icon="lucide:chevron-down" v-else class="text-gray-400" />
             </div>
           </div>
 
-          <div class="p-4 border-b border-neutral-200
-          ">
-            <div class="flex justify-between items-center cursor-pointer" @click="toggleFilter('protection')">
+          <div class="p-4 border-b border-neutral-200">
+            <div
+              class="flex justify-between items-center cursor-pointer"
+              @click="toggleFilter('protection')"
+            >
               <h3 class="font-medium">Protection class</h3>
               <Icon icon="lucide:chevron-right" v-if="!isExpanded" class="text-gray-400" />
               <Icon icon="lucide:chevron-down" v-else class="text-gray-400" />
@@ -61,7 +69,10 @@
           </div>
 
           <div class="p-4">
-            <div class="flex justify-between items-center cursor-pointer" @click="toggleFilter('memory')">
+            <div
+              class="flex justify-between items-center cursor-pointer"
+              @click="toggleFilter('memory')"
+            >
               <h3 class="font-medium">Built-in memory</h3>
               <Icon icon="lucide:chevron-right" v-if="!isExpanded" class="text-gray-400" />
               <Icon icon="lucide:chevron-down" v-else class="text-gray-400" />
@@ -75,9 +86,9 @@
         <div v-if="isLoading" class="flex justify-center items-center min-h-[300px]">
           <p class="text-center text-lg">Loading...</p>
         </div>
-        
-        <div 
-          v-else-if="filteredItems.length > 0" 
+
+        <div
+          v-else-if="filteredItems.length > 0"
           class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 py-4 sm:py-5"
         >
           <SaleItemCard
@@ -99,11 +110,18 @@
           v-else
           class="itbms-* font-medium text-primary flex justify-center items-center min-h-[300px]"
         >
-          <p class="text-center text-lg">! No sale items </p>
+          <p class="text-center text-lg">! No sale items</p>
         </div>
       </div>
     </div>
   </div>
+  <Alert
+    :show="alertMessage.visible"
+    :type="alertMessage.type"
+    :message="alertMessage.message"
+    @update:show="alertMessage.visible = $event"
+    :duration="alertMessage.duration"
+  />
 </template>
 
 <script setup>
@@ -111,11 +129,26 @@ import { onMounted, ref } from 'vue';
 import SaleItemCard from '@/components/gallery/SaleItemCard.vue';
 import BrandFilter from '@/components/Brand Filter/BrandFilter.vue';
 import { Icon } from '@iconify/vue';
+import { useRoute } from 'vue-router';
+import Alert from '@/components/share/Alert.vue';
+import { useSaleItemStore } from '@/stores/saleItemStore';
+
+const saleStore = useSaleItemStore();
+
 const fetchSaleItems = async () => {
   const response = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items`);
   const data = await response.json();
   return data;
 };
+
+const alertMessage = ref({
+  type: 'error',
+  message: '',
+  visible: false,
+  duration: 3000,
+});
+
+const route = useRoute();
 
 const saleItems = ref([]);
 const filteredItems = ref([]);
@@ -160,20 +193,19 @@ const applyFilters = () => {
     filteredItems.value = [...saleItems.value];
     return;
   }
-  
+
   // ตัวกรองสินค้าตามแบรนด์ที่เราเลือก
-  filteredItems.value = saleItems.value.filter(item => {
+  filteredItems.value = saleItems.value.filter((item) => {
     const brandName = item.brandName || 'Unknown';
     return selectedBrands.value.includes(brandName);
   });
 };
 
 const loadSaleItems = async () => {
-  isLoading.value = true; 
+  isLoading.value = true;
   try {
     const items = await fetchSaleItems();
     saleItems.value = items;
-    
     if (saleItems.value.length > 0) {
       saleItems.value.sort((a, b) => {
         const updatedA = new Date(b.createdOn);
@@ -181,19 +213,41 @@ const loadSaleItems = async () => {
         return updatedA - updatedB;
       });
     }
-    
+
     // เริ่มต้นแสดงสินค้าทั้งหมดหน้าก่อนเราเลือกแบรนด์อะ
     filteredItems.value = [...saleItems.value];
-    
   } catch (error) {
     console.error('Error fetching sale items:', error);
   } finally {
-    isLoading.value = false; 
+    isLoading.value = false;
   }
 };
 
-onMounted(() => {
-  loadSaleItems();
+onMounted(async () => {
+  try {
+    loadSaleItems();
+    console.log('Sale items loaded successfully');
+    console.log('Sale items filteredItems:', filteredItems.value);
+    const created = route.query.created === 'true';
+    if (created) {
+      alertMessage.value = {
+        type: 'success',
+        message: 'Sale item created successfully!',
+        visible: true,
+      };
+    }
+
+  } catch (e) {
+    console.error('Error loading sale items:', e);
+    alertMessage.value = {
+      type: 'error',
+      message: 'Failed to load sale items. Please try again later.',
+      visible: true,
+      duration: 3000,
+    };
+  } finally {
+    isLoading.value = false;
+  }
 });
 </script>
 

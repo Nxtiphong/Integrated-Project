@@ -1,6 +1,6 @@
 <template>
   <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="breadcrumbs text-sm my-4 overflow-x-auto whitespace-nowrap">
+    <div class="breadcrumbs text-sm my-2 overflow-x-auto whitespace-nowrap">
       <ul class="flex">
         <li class="flex items-center">
           <RouterLink to="/">Home</RouterLink>
@@ -11,6 +11,11 @@
           >
         </li>
       </ul>
+      <div class="mt-4">
+        <RouterLink to="/sale-items/add">
+        <button className="btn btn-outline btn-info">Add Sale Item</button>
+      </RouterLink>
+      </div>
     </div>
     
     <div v-if="isLoading" class="flex justify-center items-center min-h-[300px]">
@@ -19,7 +24,7 @@
     
     <div 
       v-else-if="saleItems.length > 0" 
-      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 py-4 sm:py-5"
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 pb-4 pt-0 sm:py-2"
     >
       <SaleItemCard
         v-for="item in saleItems"

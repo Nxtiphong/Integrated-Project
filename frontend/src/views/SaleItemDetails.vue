@@ -26,6 +26,10 @@ const fetchProductDetail = async (id) => {
   }
 };
 
+const handleEdit = () => {
+  router.push(`/sale-items/${params}/edit`);
+};
+
 onMounted(() => {
   fetchProductDetail(params);
 });
@@ -38,7 +42,7 @@ onMounted(() => {
   </div>
 
   <div v-else-if="productDetail" class="container">
-    <div class="breadcrumbs text-sm my-4">
+    <div class="breadcrumbs text-sm my-2">
       <ul>
         <li><RouterLink to="/">Home</RouterLink></li>
         <li><RouterLink to="/sale-items">Gallery</RouterLink></li>
@@ -73,6 +77,18 @@ onMounted(() => {
         <p class="text-sm md:text-lg lg:text-xl text-secondary-accent itbms-description">
           {{ productDetail.description }}
         </p>
+        <div class="mt-4">
+          <div class="flex flex-col md:flex-row gap-2">
+            <div>
+                <button 
+                className="btn btn-outline btn-warning"
+                @click="handleEdit">Edit</button>
+            </div>
+            <div class="">
+                <button className="btn btn-outline btn-error">Delete</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -88,7 +104,6 @@ onMounted(() => {
       Back
     </button>
   </div>
-
 </template>
 
 <style scoped></style>

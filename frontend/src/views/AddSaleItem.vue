@@ -15,6 +15,7 @@ const alertMessage = ref({
   type: 'error',
   message: '',
   visible: false,
+  duration: 3000,
 });
 const product = ref({
   brand: '',
@@ -66,7 +67,7 @@ const validation = (product) => {
 
     return false;
   }
-  if (product.ramGb <= 0) {
+  if (product.ramGb < 0) {
     alertMessage.value = {
       type: 'error',
       message: 'Please enter a valid RAM size, RAM size should be greater than 0',
@@ -74,7 +75,7 @@ const validation = (product) => {
     };
     return false;
   }
-  if (product.screenSizeInch <= 0) {
+  if (product.screenSizeInch < 0) {
     alertMessage.value = {
       type: 'error',
       message: 'Please enter a valid screen size, screen size should be greater than 0',
@@ -82,7 +83,7 @@ const validation = (product) => {
     };
     return false;
   }
-  if (product.storageGb <= 0) {
+  if (product.storageGb < 0) {
     alertMessage.value = {
       type: 'error',
       message: 'Please enter a valid storage size, storage size should be greater than 0',
@@ -109,33 +110,60 @@ const validation = (product) => {
   return true;
 };
 
-const addProduct = () => {
+const saveProduct = () => {
   console.log('Adding product:', product.value);
   if (!validation(product.value)) {
     return;
   }
-  saleStore.createSaleItem(product.value);
-  alertMessage.value = {
-    type: 'success',
-    message: 'Product added successfully',
-    visible: true,
-  };
-  setTimeout(() => {
+  if (params) {
+    saleStore.updateSaleItem(params, product.value);
+    alertMessage.value = {
+      type: 'success',
+      message: 'Product updated successfully',
+      visible: true,
+      duration: 2000,
+    };
+    setTimeout(() => {
+      router.push(`/sale-items/${params}`);
+    }, 2000);
+  } else {
+    saleStore.createSaleItem(product.value);
+    saleStore.created = true;
     router.push('/sale-items');
-  }, 2000);
+  }
 };
 
 const cancel = () => {
-  console.log('Operation cancelled');
+  product.value = {
+    brand: '',
+    model: '',
+    price: null,
+    description: '',
+    ramGb: null,
+    screenSizeInch: null,
+    storageGb: null,
+    color: '',
+    quantity: null,
+  };
+  alertMessage.value = {
+    type: 'info',
+    message: 'Action cancelled',
+    visible: true,
+    duration: 1000,
+    countdownVisible: false,
+  };
+  setTimeout(() => {
+    router.push('/sale-items');
+  }, 1000);
 };
 
 onMounted(async () => {
-await saleStore.fetchBrands();
+  await saleStore.fetchBrands();
 
   if (params) {
     const item = await saleStore.fetchSaleItemById(params);
     if (item) {
-    const matchedBrand = saleStore.brands.find(b => b.name === item.brandName);
+      const matchedBrand = saleStore.brands.find((b) => b.name === item.brandName);
       product.value = {
         brand: matchedBrand || '',
         model: item.model,
@@ -150,34 +178,45 @@ await saleStore.fetchBrands();
     }
     // console.log('Sale item ID:', item);
     // console.log('Sale ID:', saleStore.brands.find(b => b.name === item.brandName));
-
-  } 
+  }
 });
 </script>
 
 <template>
   <div class="bg-gray-50 min-h-screen pb-10">
-    <!-- Header with breadcrumbs -->
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
       <div class="breadcrumbs text-sm my-2 overflow-x-auto whitespace-nowrap">
         <ul class="flex">
           <li class="flex items-center">
-            <RouterLink to="/">Home</RouterLink>
+            <div class="itbms-home-button">
+              <RouterLink to="/">Home</RouterLink>
+            </div>
           </li>
           <li>
-            <RouterLink to="/sale-items/add">New Sale Item</RouterLink>
+            <div class="itbms-back-button">
+              <RouterLink :to="`/sale-items${params ? `/${params}` : ''}`">
+                <b>
+                  {{ params ? product.model : 'New Sale Item' }}
+                </b>
+              </RouterLink>
+            </div>
           </li>
         </ul>
       </div>
     </div>
 
-    <!-- Main content -->
     <div class="lg:max-w-[1450px] mx-auto px-4 sm:px-6 lg:px-8 mt-6">
       <div class="bg-white rounded-lg shadow-md overflow-hidden">
         <div class="p-6 border-b border-gray-200">
-          <h1 class="text-2xl font-bold text-gray-900">Add New Product</h1>
+          <h1 class="text-2xl font-bold text-gray-900">
+            {{ params ? 'Edit Product' : 'Add New Product' }}
+          </h1>
           <p class="text-gray-500 mt-1">
-            Fill in the details to add a new product to your inventory
+            {{
+              params
+                ? 'Edit the product details below'
+                : 'Fill in the details to add a new product to your inventory'
+            }}
           </p>
         </div>
 
@@ -199,9 +238,8 @@ await saleStore.fetchBrands();
                   <div class="flex flex-col gap-2">
                     <label for="brand" class="text-gray-700 font-medium">Brand</label>
                     <select
-                      id="brand"
                       v-model="product.brand"
-                      class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                      class="itbms-brand px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                     >
                       <option disabled value="">Select a brand</option>
                       <option v-for="brand in saleStore.brands" :key="brand.id" :value="brand">
@@ -332,7 +370,7 @@ await saleStore.fetchBrands();
             Cancel
           </button>
           <button
-            @click="addProduct"
+            @click="saveProduct"
             class="itbms-save-button cursor-pointer flex items-center gap-2 px-5 py-2.5 rounded-md bg-primary text-white hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary/50 transition-colors"
           >
             <svg
@@ -355,6 +393,8 @@ await saleStore.fetchBrands();
           :type="alertMessage.type"
           :message="alertMessage.message"
           @update:show="alertMessage.visible = $event"
+          :duration="alertMessage.duration"
+          :countdownVisible="alertMessage.countdownVisible"
         />
       </div>
     </div>

@@ -19,6 +19,10 @@ const props = defineProps({
     type: Number,
     default: 3000, 
   },
+  countdownVisible: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const emit = defineEmits(['update:show', 'close']);
@@ -42,7 +46,7 @@ const startTimer = () => {
   clearTimeout(timer);
   clearInterval(countdownInterval);
 
-  countdown.value = Math.floor(props.duration / 1000);
+  countdown.value = Math.floor(props.duration / 1000)
 
   if (props.duration > 0) {
     countdownInterval = setInterval(() => {
@@ -104,9 +108,9 @@ if (props.show) {
         </div>
         
         <div class="flex-1">
-          <p class="text-sm font-medium">
+          <p class="text-sm font-medium itbms-message">
             {{ message }}
-            <span v-if="countdown > 0" class=" text-xs opacity-80 block">
+            <span v-if="countdownVisible" class=" text-xs opacity-80 block">
               (close in {{ countdown }}s)
             </span>
           </p>

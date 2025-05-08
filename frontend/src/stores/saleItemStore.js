@@ -5,10 +5,14 @@ export const useSaleItemStore = defineStore('saleItem', {
   state: () => ({
     brands: [],
     saleItems: [],
+    isLoading: false,
+    created: false
   }),
 
   actions: {
     async fetchBrands() {
+      if (this.brands.length > 0) return
+      this.isLoading = true
       try {
         const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/brands`)
         if (!res.ok) throw new Error('Failed to fetch brands')
@@ -16,10 +20,12 @@ export const useSaleItemStore = defineStore('saleItem', {
       } catch (error) {
         console.error('Error fetching brands:', error)
       } finally {
+          this.isLoading = false
       }
     },
 
     async fetchSaleItems() {
+      this.isLoading = true
       try {
         const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items`)
         if (!res.ok) throw new Error('Failed to fetch sale items')
@@ -27,6 +33,7 @@ export const useSaleItemStore = defineStore('saleItem', {
       } catch (error) {
         console.error('Error fetching sale items:', error)
       } finally {
+          this.isLoading = false
       }
     },
     async fetchSaleItemById(id) {

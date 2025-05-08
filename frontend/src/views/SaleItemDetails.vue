@@ -30,6 +30,22 @@ const handleEdit = () => {
   router.push(`/sale-items/${params}/edit`);
 };
 
+const handleDelete = () => {
+  if (confirm('Are you sure you want to delete this item?')) {
+    fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items/${params}`, {
+      method: 'DELETE',
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to delete product id:' + params);
+        alert('Product deleted successfully');
+        router.push('/sale-items');
+      })
+      .catch((error) => {
+        console.log('Error:', error);
+      });
+  }
+};
+
 onMounted(() => {
   fetchProductDetail(params);
 });
@@ -79,19 +95,18 @@ onMounted(() => {
         </p>
         <div class="mt-4">
           <div class="flex flex-col md:flex-row gap-2">
-            <div>
-                <button 
-                className="btn btn-outline btn-warning"
-                @click="handleEdit">Edit</button>
+            <div class="itbms-edit-button">
+              <button className="btn btn-outline btn-warning" @click="handleEdit">Edit</button>
             </div>
-            <div class="">
-                <button className="btn btn-outline btn-error">Delete</button>
+            <div class="itbms-delete-button">
+              <button className="btn btn-outline btn-error" @click="handleDelete">Delete</button>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+
 
   <div
     v-else

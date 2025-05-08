@@ -11,9 +11,11 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: int221_tt2
+      TZ: Asia/Bangkok
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
+      interval: 30s
+      timeout: 10s
       retries: 3
       start_period: 5s
     restart: unless-stopped
@@ -31,18 +33,33 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/int221_tt2
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: rootpassword
+    healthcheck:
+      test: ["CMD", "curl"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
     restart: unless-stopped
 
   frontend:
     container_name: frontend_server
     build:
       context: ./frontend
-      dockerfile: Dockerfile
     ports:
-      - "4173:80"
+      - "80:80"
     depends_on:
       - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
     restart: unless-stopped
+
+networks:
+  tt2_network:
+    driver: bridge
 
 volumes:
   mysql_data:

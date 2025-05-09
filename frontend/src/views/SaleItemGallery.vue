@@ -154,7 +154,7 @@ const saleItems = ref([]);
 const filteredItems = ref([]);
 const isLoading = ref(true);
 const selectedBrands = ref([]);
-
+const isExpanded = ref(false);
 // Filter visibility states สำหรับ filter อันอื่นๆ ตอนนี้กยังไม่ได้ใช้นะ
 const showBatteryFilter = ref(false);
 const showScreenFilter = ref(false);
@@ -237,11 +237,20 @@ onMounted(async () => {
       };
       saleStore.created = false;
     }
+    if (saleStore.deleted) {
+      alertMessage.value = {
+        type: 'success',
+        message: 'Sale item deleted successfully!',
+        visible: true,
+        duration: 3000,
+      };
+      saleStore.deleted = false;
+    }
 
   } catch (e) {
     isLoading.value = false;
   } 
-  
+
 });
 </script>
 

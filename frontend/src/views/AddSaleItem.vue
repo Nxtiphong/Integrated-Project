@@ -344,7 +344,6 @@ onMounted(async () => {
           </div>
         </div>
 
-        <!-- Footer with action buttons -->
         <div class="bg-gray-50 px-6 py-4 flex justify-end gap-3 border-t border-gray-200">
           <button
             @click="cancel"

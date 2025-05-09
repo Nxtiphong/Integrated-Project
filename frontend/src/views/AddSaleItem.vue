@@ -367,7 +367,14 @@ onMounted(async () => {
           </button>
           <button
             @click="saveProduct"
-            class="itbms-save-button cursor-pointer flex items-center gap-2 px-5 py-2.5 rounded-md bg-primary text-white hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary/50 transition-colors"
+            class="itbms-save-button cursor-pointer flex items-center gap-2 px-5 py-2.5 rounded-md text-white transition-colors bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:bg-gray-300 disabled:cursor-not-allowed"
+            :disabled="
+              !product.brand ||
+              !product.model ||
+              !product.price ||
+              !product.color ||
+              !product.description
+            "
           >
             <svg
               class="w-4 h-4"

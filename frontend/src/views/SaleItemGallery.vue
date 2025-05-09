@@ -272,7 +272,7 @@ onMounted(() => {
   if (saleStore.created) {
     alertMessage.value = {
       type: 'success',
-      message: 'Sale item created successfully!',
+      message: 'The sale item has been successfully added!',
       visible: true,
       duration: 3000,
     };

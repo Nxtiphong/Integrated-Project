@@ -9,7 +9,7 @@
           <RouterLink to="/sale-items">Gallery</RouterLink>
         </li>
       </ul>
-      <div class="itbms-sale-item-add mt-4">
+      <div class="mt-4">
         <RouterLink to="/sale-items/add">
           <button className="btn btn-outline btn-info">Add Sale Item</button>
         </RouterLink>
@@ -17,65 +17,95 @@
     </div>
 
     <div class="flex flex-col lg:flex-row gap-6">
-      <!-- Filters Sidebar -->
-      <div class="w-full lg:w-1/4">
-        <!-- Brand Filter -->
-        <BrandFilter :items="saleItems" @filter-change="handleBrandFilterChange" />
+      <!-- Mobile Filter Toggle Button -->
+      <div class="lg:hidden w-full mb-4">
+        <button
+          @click="toggleMobileFilters"
+          class="w-full py-2 px-4 bg-gray-100 text-gray-700 rounded-lg flex justify-between items-center shadow-sm"
+        >
+          <span class="font-medium">Filters</span>
+          <Icon
+            :icon="showMobileFilters ? 'lucide:chevron-up' : 'lucide:chevron-down'"
+            class="text-gray-500"
+          />
+        </button>
+      </div>
 
-        <!-- เตรียมพื้นที่สำหรับ Filter อื่นๆ ที่อาจเพิ่มในอนาคต เพราะบางอันเทียนยังไม่ได้ ใช้งานจ้า -->
-        <div class="mt-4 rounded-lg shadow-sm">
-          <div class="p-4 border-b border-neutral-200">
-            <div
-              class="flex justify-between items-center cursor-pointer"
-              @click="toggleFilter('battery')"
-            >
-              <h3 class="font-medium">Battery capacity</h3>
-              <Icon icon="lucide:chevron-right" v-if="!isExpanded" class="text-gray-400" />
-              <Icon icon="lucide:chevron-down" v-else class="text-gray-400" />
+      <!-- Filters Sidebar - Responsive -->
+      <div
+        :class="[
+          'w-full lg:w-1/4 transition-all duration-300 overflow-hidden',
+          showMobileFilters ? 'max-h-screen' : 'max-h-0 lg:max-h-screen',
+        ]"
+      >
+        <div class="bg-white rounded-lg shadow-sm">
+          <!-- Brand Filter -->
+          <BrandFilter :items="saleItems" @filter-change="handleBrandFilterChange" />
+          <div class="mt-4 rounded-lg shadow-sm">
+            <div class="p-4 border-b border-neutral-200">
+              <div
+                class="flex justify-between items-center cursor-pointer"
+                @click="toggleFilter('battery')"
+              >
+                <h3 class="font-medium">Battery capacity</h3>
+                <Icon
+                  :icon="showBatteryFilter ? 'lucide:chevron-down' : 'lucide:chevron-right'"
+                  class="text-gray-400"
+                />
+              </div>
+              <div v-if="showBatteryFilter" class="mt-2"></div>
             </div>
-          </div>
-
-          <div class="p-4 border-b border-neutral-200">
-            <div
-              class="flex justify-between items-center cursor-pointer"
-              @click="toggleFilter('screen')"
-            >
-              <h3 class="font-medium">Screen type</h3>
-              <Icon icon="lucide:chevron-right" v-if="!isExpanded" class="text-gray-400" />
-              <Icon icon="lucide:chevron-down" v-else class="text-gray-400" />
+            <div class="p-4 border-b border-neutral-200">
+              <div
+                class="flex justify-between items-center cursor-pointer"
+                @click="toggleFilter('screen')"
+              >
+                <h3 class="font-medium">Screen type</h3>
+                <Icon
+                  :icon="showScreenFilter ? 'lucide:chevron-down' : 'lucide:chevron-right'"
+                  class="text-gray-400"
+                />
+              </div>
+              <div v-if="showScreenFilter" class="mt-2"></div>
             </div>
-          </div>
-
-          <div class="p-4 border-b border-neutral-200">
-            <div
-              class="flex justify-between items-center cursor-pointer"
-              @click="toggleFilter('diagonal')"
-            >
-              <h3 class="font-medium">Screen diagonal</h3>
-              <Icon icon="lucide:chevron-right" v-if="!isExpanded" class="text-gray-400" />
-              <Icon icon="lucide:chevron-down" v-else class="text-gray-400" />
+            <div class="p-4 border-b border-neutral-200">
+              <div
+                class="flex justify-between items-center cursor-pointer"
+                @click="toggleFilter('diagonal')"
+              >
+                <h3 class="font-medium">Screen diagonal</h3>
+                <Icon
+                  :icon="showDiagonalFilter ? 'lucide:chevron-down' : 'lucide:chevron-right'"
+                  class="text-gray-400"
+                />
+              </div>
+              <div v-if="showDiagonalFilter" class="mt-2"></div>
             </div>
-          </div>
-
-          <div class="p-4 border-b border-neutral-200">
-            <div
-              class="flex justify-between items-center cursor-pointer"
-              @click="toggleFilter('protection')"
-            >
-              <h3 class="font-medium">Protection class</h3>
-              <Icon icon="lucide:chevron-right" v-if="!isExpanded" class="text-gray-400" />
-              <Icon icon="lucide:chevron-down" v-else class="text-gray-400" />
+            <div class="p-4 border-b border-neutral-200">
+              <div
+                class="flex justify-between items-center cursor-pointer"
+                @click="toggleFilter('protection')"
+              >
+                <h3 class="font-medium">Protection class</h3>
+                <Icon
+                  :icon="showProtectionFilter ? 'lucide:chevron-down' : 'lucide:chevron-right'"
+                  class="text-gray-400"
+                />
+              </div>
+              <div v-if="showProtectionFilter" class="mt-2"></div>
             </div>
-          </div>
-
-          <div class="p-4">
-            <div
-              class="flex justify-between items-center cursor-pointer"
-              @click="toggleFilter('memory')"
-            >
-              <h3 class="font-medium">Built-in memory</h3>
-              <Icon icon="lucide:chevron-right" v-if="!isExpanded" class="text-gray-400" />
-              <Icon icon="lucide:chevron-down" v-else class="text-gray-400" />
+            <div class="p-4">
+              <div
+                class="flex justify-between items-center cursor-pointer"
+                @click="toggleFilter('memory')"
+              >
+                <h3 class="font-medium">Built-in memory</h3>
+                <Icon
+                  :icon="showMemoryFilter ? 'lucide:chevron-down' : 'lucide:chevron-right'"
+                  class="text-gray-400"
+                />
+              </div>
+              <div v-if="showMemoryFilter" class="mt-2"></div>
             </div>
           </div>
         </div>
@@ -106,56 +136,38 @@
           />
         </div>
 
-        <div
-          v-else
-          class="itbms-* font-medium text-primary flex justify-center items-center min-h-[300px]"
-        >
+        <div v-else class="font-medium text-primary flex justify-center items-center min-h-[300px]">
           <p class="text-center text-lg">! No sale items</p>
         </div>
       </div>
     </div>
   </div>
-  <Alert
-    :show="alertMessage.visible"
-    :type="alertMessage.type"
-    :message="alertMessage.message"
-    @update:show="alertMessage.visible = $event"
-    :duration="alertMessage.duration"
-  />
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch, onUnmounted } from 'vue';
 import SaleItemCard from '@/components/gallery/SaleItemCard.vue';
 import BrandFilter from '@/components/Brand Filter/BrandFilter.vue';
 import { Icon } from '@iconify/vue';
-import { useRoute } from 'vue-router';
-import Alert from '@/components/share/Alert.vue';
-import { useSaleItemStore } from '@/stores/saleItemStore';
 
-const saleStore = useSaleItemStore();
-
+// API functions
 const fetchSaleItems = async () => {
   const response = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items`);
   const data = await response.json();
   return data;
 };
 
-const alertMessage = ref({
-  type: 'error',
-  message: '',
-  visible: false,
-  duration: 3000,
-});
-
-const route = useRoute();
-
 const saleItems = ref([]);
 const filteredItems = ref([]);
 const isLoading = ref(true);
 const selectedBrands = ref([]);
-const isExpanded = ref(false);
-// Filter visibility states สำหรับ filter อันอื่นๆ ตอนนี้กยังไม่ได้ใช้นะ
+const refreshInterval = ref(null);
+
+const showMobileFilters = ref(false);
+const toggleMobileFilters = () => {
+  showMobileFilters.value = !showMobileFilters.value;
+};
+
 const showBatteryFilter = ref(false);
 const showScreenFilter = ref(false);
 const showDiagonalFilter = ref(false);
@@ -188,13 +200,11 @@ const handleBrandFilterChange = (brands) => {
 };
 
 const applyFilters = () => {
-  // ถ้าไม่มีแบรนด์ที่เลือก ก็จะแสดงสินค้าทั้งหมด
   if (selectedBrands.value.length === 0) {
     filteredItems.value = [...saleItems.value];
     return;
   }
 
-  // ตัวกรองสินค้าตามแบรนด์ที่เราเลือก
   filteredItems.value = saleItems.value.filter((item) => {
     const brandName = item.brandName || 'Unknown';
     return selectedBrands.value.includes(brandName);
@@ -206,6 +216,7 @@ const loadSaleItems = async () => {
   try {
     const items = await fetchSaleItems();
     saleItems.value = items;
+
     if (saleItems.value.length > 0) {
       saleItems.value.sort((a, b) => {
         const updatedA = new Date(b.createdOn);
@@ -214,7 +225,6 @@ const loadSaleItems = async () => {
       });
     }
 
-    // เริ่มต้นแสดงสินค้าทั้งหมดหน้าก่อนเราเลือกแบรนด์อะ
     filteredItems.value = [...saleItems.value];
   } catch (error) {
     console.error('Error fetching sale items:', error);
@@ -223,34 +233,32 @@ const loadSaleItems = async () => {
   }
 };
 
-onMounted(async () => {
-  try {
+// Setup auto-refresh for real-time updates
+const setupRefreshTimer = () => {
+  // Refresh data every 30 seconds to catch new items
+  refreshInterval.value = setInterval(() => {
     loadSaleItems();
-    console.log('Sale items loaded successfully');
-    console.log('Sale items filteredItems:', filteredItems.value);
-    if (saleStore.created) {
-      alertMessage.value = {
-        type: 'success',
-        message: 'Sale item created successfully!',
-        visible: true,
-        duration: 3000,
-      };
-      saleStore.created = false;
-    }
-    if (saleStore.deleted) {
-      alertMessage.value = {
-        type: 'success',
-        message: 'Sale item deleted successfully!',
-        visible: true,
-        duration: 3000,
-      };
-      saleStore.deleted = false;
-    }
+  }, 30000); // 30 seconds
+};
 
-  } catch (e) {
-    isLoading.value = false;
-  } 
+const handleVisibilityChange = () => {
+  if (document.visibilityState === 'visible') {
+    loadSaleItems();
+  }
+};
 
+onMounted(() => {
+  loadSaleItems();
+  setupRefreshTimer();
+
+  document.addEventListener('visibilitychange', handleVisibilityChange);
+});
+
+onUnmounted(() => {
+  if (refreshInterval.value) {
+    clearInterval(refreshInterval.value);
+  }
+  document.removeEventListener('visibilitychange', handleVisibilityChange);
 });
 </script>
 
@@ -258,6 +266,14 @@ onMounted(async () => {
 @media (max-width: 640px) {
   .breadcrumbs {
     padding: 0.5rem 0;
+  }
+}
+@media (max-width: 1023px) {
+  .max-h-0 {
+    margin-bottom: 0;
+  }
+  .max-h-screen {
+    margin-bottom: 1rem;
   }
 }
 </style>

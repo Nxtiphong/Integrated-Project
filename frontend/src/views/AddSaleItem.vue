@@ -58,10 +58,10 @@ const validation = (product) => {
     };
     return false;
   }
-  if (!product.quantity || product.quantity <= 0) {
+  if (product.quantity < 0) {
     alertMessage.value = {
       type: 'error',
-      message: 'Please enter a valid quantity',
+      message: 'Please enter a valid quantity, quantity should be greater than 0',
       visible: true,
     };
 
@@ -121,11 +121,11 @@ const saveProduct = () => {
       type: 'success',
       message: 'Product updated successfully',
       visible: true,
-      duration: 2000,
+      duration: 1000,
     };
     setTimeout(() => {
       router.push(`/sale-items/${params}`);
-    }, 2000);
+    }, 1000);
   } else {
     saleStore.createSaleItem(product.value);
     saleStore.created = true;
@@ -149,7 +149,7 @@ const cancel = () => {
     type: 'info',
     message: 'Action cancelled',
     visible: true,
-    duration: 1000,
+    duration: 500,
     countdownVisible: false,
   };
   setTimeout(() => {
@@ -176,8 +176,6 @@ onMounted(async () => {
         quantity: item.quantity,
       };
     }
-    // console.log('Sale item ID:', item);
-    // console.log('Sale ID:', saleStore.brands.find(b => b.name === item.brandName));
   }
 });
 </script>
@@ -229,7 +227,6 @@ onMounted(async () => {
               </div>
             </div>
 
-            <!-- Form Fields Section -->
             <div class="lg:w-2/4">
               <div class="bg-white rounded-lg border border-gray-200 p-6">
                 <h2 class="font-semibold text-gray-800 mb-6">Product Details</h2>

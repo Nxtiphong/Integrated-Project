@@ -253,7 +253,7 @@ onMounted(async () => {
                     <input
                       id="model"
                       type="text"
-                      v-model="product.model"
+                      v-model.trim="product.model"
                       placeholder="Enter model name"
                       class="itbms-model px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                     />
@@ -264,7 +264,7 @@ onMounted(async () => {
                     <input
                       id="price"
                       type="number"
-                      v-model="product.price"
+                      v-model.trim="product.price"
                       placeholder="0.00"
                       class="itbms-price px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                     />
@@ -275,7 +275,7 @@ onMounted(async () => {
                     <input
                       id="quantity"
                       type="number"
-                      v-model="product.quantity"
+                      v-model.trim="product.quantity"
                       placeholder="0"
                       class="itbms-quantity px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                     />
@@ -286,7 +286,7 @@ onMounted(async () => {
                     <input
                       id="ram"
                       type="number"
-                      v-model="product.ramGb"
+                      v-model.trim="product.ramGb"
                       placeholder="Enter RAM size"
                       class="itbms-ramGb px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                     />
@@ -300,7 +300,7 @@ onMounted(async () => {
                       id="screenSize"
                       type="number"
                       step="0.1"
-                      v-model="product.screenSizeInch"
+                      v-model.trim="product.screenSizeInch"
                       placeholder="0.0"
                       class="itbms-screenSizeInch px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                     />
@@ -311,7 +311,7 @@ onMounted(async () => {
                     <input
                       id="storage"
                       type="number"
-                      v-model="product.storageGb"
+                      v-model.trim="product.storageGb"
                       placeholder="Enter storage size"
                       class="itbms-storageGb px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                     />
@@ -322,7 +322,7 @@ onMounted(async () => {
                     <input
                       id="color"
                       type="text"
-                      v-model="product.color"
+                      v-model.trim="product.color"
                       placeholder="Enter color"
                       class="itbms-color px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                     />

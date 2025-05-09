@@ -4,7 +4,10 @@ import ProductSpec from '@/components/detail/ProductSpec.vue';
 import { useRoute, useRouter } from 'vue-router';
 import notFoundImg from '@/assets/images/404.png';
 import { onMounted, ref } from 'vue';
+import ConfirmDeleteModal from '@/components/share/confirmDeleteModal.vue';
+import { useSaleItemStore } from '@/stores/saleItemStore';
 
+const saleStore = useSaleItemStore();
 const router = useRouter();
 const route = useRoute();
 const params = route.params.id;
@@ -26,23 +29,25 @@ const fetchProductDetail = async (id) => {
   }
 };
 
+const showModal = () => {
+  showDeleteModal.value = true;
+};
+
+const cancelModal = () => {
+  showDeleteModal.value = false;
+};
+
 const handleEdit = () => {
   router.push(`/sale-items/${params}/edit`);
 };
 
+const showDeleteModal = ref(false);
+
 const handleDelete = () => {
-  if (confirm('Are you sure you want to delete this item?')) {
-    fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items/${params}`, {
-      method: 'DELETE',
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error('Failed to delete product id:' + params);
-        alert('Product deleted successfully');
-        router.push('/sale-items');
-      })
-      .catch((error) => {
-        console.log('Error:', error);
-      });
+  if (showDeleteModal.value) {
+    saleStore.deleteSaleItem(params);
+    saleStore.deleted = true
+    router.push('/sale-items');
   }
 };
 
@@ -99,14 +104,20 @@ onMounted(() => {
               <button className="btn btn-outline btn-warning" @click="handleEdit">Edit</button>
             </div>
             <div class="itbms-delete-button">
-              <button className="btn btn-outline btn-error" @click="handleDelete">Delete</button>
+              <button className="btn btn-outline btn-error" @click="showModal">Delete</button>
             </div>
           </div>
         </div>
       </div>
     </div>
+    <ConfirmDeleteModal
+      v-model="showDeleteModal"
+      :title="`Delete ${productDetail.model}`"
+      :message="`Are you sure you want to delete ${productDetail.model}? This action cannot be undone.`"
+      @confirm="handleDelete"
+      @cancel="cancelModal"
+    />
   </div>
-
 
   <div
     v-else

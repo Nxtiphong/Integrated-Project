@@ -4,7 +4,7 @@ import SaleItemGallery from '@/views/SaleItemGallery.vue'
 import SaleItemDetails from '@/views/SaleItemDetails.vue'
 import Favorite from '@/views/Favorite.vue'
 import AddSaleItem from '@/views/AddSaleItem.vue'
-
+import NotFoundPage from '@/components/share/NotFoundPage.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -38,8 +38,13 @@ const router = createRouter({
       path: '/sale-items/:id/edit',
       name: "editSaleItem",
       component: AddSaleItem
+    },
+    {
+      path: '/:pathMatch(.*)*', 
+      name: 'NotFound',
+      component: NotFoundPage,
     }
-  ],
+    ],
   linkActiveClass: "text-black font-semibold"
 })
 

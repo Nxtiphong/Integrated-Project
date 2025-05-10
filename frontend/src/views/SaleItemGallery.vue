@@ -42,7 +42,7 @@
           <!-- Brand Filter -->
           <BrandFilter :items="saleItems" @filter-change="handleBrandFilterChange" />
           <div class="mt-4 rounded-lg shadow-sm">
-            <div class="p-4 border-b border-neutral-200">
+            <div class="p-2 border-b border-neutral-200">
               <div
                 class="flex justify-between items-center cursor-pointer"
                 @click="toggleFilter('battery')"
@@ -126,9 +126,11 @@
             :key="item.id"
             :brand="item.brandName ?? '-'"
             :model="item.model ?? '-'"
-            :ram="item.ramGb ?? '-'"
+            :ram="displayOrDash(item.ramGb)"
+            :screen="displayOrDash(item.screen)"
+            :storage="displayOrDash(item.storageGb)"
+            :quantity="displayOrDash(item.quantity)"
             :price="item.price ?? '-'"
-            :storage="item.storageGb ?? '-'"
             :color="item.color ?? '-'"
             :image="item.image ?? ''"
             :id="item.id"
@@ -245,6 +247,10 @@ const handleVisibilityChange = () => {
   if (document.visibilityState === 'visible') {
     loadSaleItems();
   }
+};
+
+const displayOrDash = (val) => {
+  return val === null || val === undefined || val === '' || val === 0 ? '-' : val;
 };
 
 onMounted(() => {

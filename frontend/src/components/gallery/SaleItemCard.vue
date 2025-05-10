@@ -21,8 +21,10 @@
         </p>
         <p class="itbms-ramGb">Ram: {{ ram }}</p>
         <p class="itbms-storageGb">
-          Storage: {{ storage }} <span class="itbms-storageGb-unit">GB</span>
-        </p>
+  Storage: 
+  <span v-if="Number(storage)">{{ storage }} <span class="itbms-storageGb-unit">GB</span></span>
+  <span v-else>-</span>
+</p>
         <p class="itbms-Color">Color: {{ color }}</p>
         <p class="itbms-price text-black">
           Price : {{ Number(price).toLocaleString() }} <span class="itbms-price-unit">Baht</span>
@@ -53,6 +55,7 @@ const props = defineProps([
   'image',
   'id',
   'ramGb',
+  'screen', 
 ]);
 
 const favoriteStore = useFavoriteStore();
@@ -62,6 +65,7 @@ const product = {
   brand: props.brand,
   model: props.model,
   ram: props.ram,
+  screen: props.screen,  
   storage: props.storage,
   price: props.price,
   color: props.color,

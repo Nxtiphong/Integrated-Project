@@ -258,9 +258,9 @@ const loadSaleItems = async () => {
 // Setup auto-refresh for real-time updates
 const setupRefreshTimer = () => {
   // Refresh data every 30 seconds to catch new items
-  refreshInterval.value = setInterval(() => {
-    loadSaleItems();
-  }, 30000); // 30 seconds
+  // refreshInterval.value = setInterval(() => {
+  //   loadSaleItems();
+  // }, 30000); // 30 seconds
 };
 
 const handleVisibilityChange = () => {
@@ -287,14 +287,13 @@ onMounted(() => {
   if (saleStore.deleted) {
     alertMessage.value = {
       type: 'success',
-      message: 'Sale item deleted successfully!',
+      message: 'The sale item has been deleted.',
       visible: true,
       duration: 3000,
     };
     saleStore.deleted = false;
   }
   setupRefreshTimer();
-
 
   document.addEventListener('visibilitychange', handleVisibilityChange);
 });

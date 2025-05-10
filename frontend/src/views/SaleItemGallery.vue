@@ -144,6 +144,16 @@
       </div>
     </div>
   </div>
+  <div class="itbms-message">
+    <Alert
+    :show="alertMessage.visible"
+    :type="alertMessage.type"
+    :message="alertMessage.message"
+    @update:show="alertMessage.visible = $event"
+    :duration="alertMessage.duration"
+  />
+
+  </div>
 </template>
 
 <script setup>
@@ -151,8 +161,18 @@ import { onMounted, ref, watch, onUnmounted } from 'vue';
 import SaleItemCard from '@/components/gallery/SaleItemCard.vue';
 import BrandFilter from '@/components/Brand Filter/BrandFilter.vue';
 import { Icon } from '@iconify/vue';
+import { useSaleItemStore } from '@/stores/saleItemStore';
+import Alert from '@/components/share/Alert.vue';
 
-// API functions
+const saleStore = useSaleItemStore();
+
+const alertMessage = ref({
+  type: '',
+  message: '',
+  visible: false,
+  duration: 3000,
+});
+
 const fetchSaleItems = async () => {
   const response = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items`);
   const data = await response.json();
@@ -255,7 +275,26 @@ const displayOrDash = (val) => {
 
 onMounted(() => {
   loadSaleItems();
+  if (saleStore.created) {
+    alertMessage.value = {
+      type: 'success',
+      message: 'The sale item has been successfully added!',
+      visible: true,
+      duration: 3000,
+    };
+    saleStore.created = false;
+  }
+  if (saleStore.deleted) {
+    alertMessage.value = {
+      type: 'success',
+      message: 'Sale item deleted successfully!',
+      visible: true,
+      duration: 3000,
+    };
+    saleStore.deleted = false;
+  }
   setupRefreshTimer();
+
 
   document.addEventListener('visibilitychange', handleVisibilityChange);
 });

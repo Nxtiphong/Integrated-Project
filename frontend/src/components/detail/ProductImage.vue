@@ -38,7 +38,7 @@ const props = defineProps({
     </div>
 
     <img
-      class="w-full max-w-[280px] sm:max-w-[300px] md:max-w-[320px] lg:max-w-[400px] lg:h-[520px] object-contain"
+      class="w-full max-w-[280px] sm:max-w-[300px] md:max-w-[320px] lg:max-w-[310px] xl:max-w-[390px]  lg:h-[520px] object-contain"
       :src="selectedImage"
       alt="product-main-image"
     />

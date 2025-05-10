@@ -58,10 +58,10 @@ const validation = (product) => {
     };
     return false;
   }
-  if (!product.quantity || product.quantity <= 0) {
+  if (product.quantity < 0) {
     alertMessage.value = {
       type: 'error',
-      message: 'Please enter a valid quantity',
+      message: 'Please enter a valid quantity, quantity should be greater than 0',
       visible: true,
     };
 
@@ -121,11 +121,11 @@ const saveProduct = () => {
       type: 'success',
       message: 'Product updated successfully',
       visible: true,
-      duration: 2000,
+      duration: 1000,
     };
     setTimeout(() => {
       router.push(`/sale-items/${params}`);
-    }, 2000);
+    }, 1000);
   } else {
     saleStore.createSaleItem(product.value);
     saleStore.created = true;
@@ -149,7 +149,7 @@ const cancel = () => {
     type: 'info',
     message: 'Action cancelled',
     visible: true,
-    duration: 1000,
+    duration: 500,
     countdownVisible: false,
   };
   setTimeout(() => {
@@ -176,8 +176,6 @@ onMounted(async () => {
         quantity: item.quantity,
       };
     }
-    // console.log('Sale item ID:', item);
-    // console.log('Sale ID:', saleStore.brands.find(b => b.name === item.brandName));
   }
 });
 </script>
@@ -229,7 +227,6 @@ onMounted(async () => {
               </div>
             </div>
 
-            <!-- Form Fields Section -->
             <div class="lg:w-2/4">
               <div class="bg-white rounded-lg border border-gray-200 p-6">
                 <h2 class="font-semibold text-gray-800 mb-6">Product Details</h2>
@@ -253,7 +250,7 @@ onMounted(async () => {
                     <input
                       id="model"
                       type="text"
-                      v-model="product.model"
+                      v-model.trim="product.model"
                       placeholder="Enter model name"
                       class="itbms-model px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                     />
@@ -264,7 +261,7 @@ onMounted(async () => {
                     <input
                       id="price"
                       type="number"
-                      v-model="product.price"
+                      v-model.trim="product.price"
                       placeholder="0.00"
                       class="itbms-price px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                     />
@@ -275,7 +272,7 @@ onMounted(async () => {
                     <input
                       id="quantity"
                       type="number"
-                      v-model="product.quantity"
+                      v-model.trim="product.quantity"
                       placeholder="0"
                       class="itbms-quantity px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                     />
@@ -286,7 +283,7 @@ onMounted(async () => {
                     <input
                       id="ram"
                       type="number"
-                      v-model="product.ramGb"
+                      v-model.trim="product.ramGb"
                       placeholder="Enter RAM size"
                       class="itbms-ramGb px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                     />
@@ -300,7 +297,7 @@ onMounted(async () => {
                       id="screenSize"
                       type="number"
                       step="0.1"
-                      v-model="product.screenSizeInch"
+                      v-model.trim="product.screenSizeInch"
                       placeholder="0.0"
                       class="itbms-screenSizeInch px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                     />
@@ -311,7 +308,7 @@ onMounted(async () => {
                     <input
                       id="storage"
                       type="number"
-                      v-model="product.storageGb"
+                      v-model.trim="product.storageGb"
                       placeholder="Enter storage size"
                       class="itbms-storageGb px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                     />
@@ -322,7 +319,7 @@ onMounted(async () => {
                     <input
                       id="color"
                       type="text"
-                      v-model="product.color"
+                      v-model.trim="product.color"
                       placeholder="Enter color"
                       class="itbms-color px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                     />
@@ -344,7 +341,6 @@ onMounted(async () => {
           </div>
         </div>
 
-        <!-- Footer with action buttons -->
         <div class="bg-gray-50 px-6 py-4 flex justify-end gap-3 border-t border-gray-200">
           <button
             @click="cancel"
@@ -371,7 +367,14 @@ onMounted(async () => {
           </button>
           <button
             @click="saveProduct"
-            class="itbms-save-button cursor-pointer flex items-center gap-2 px-5 py-2.5 rounded-md bg-primary text-white hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary/50 transition-colors"
+            class="itbms-save-button cursor-pointer flex items-center gap-2 px-5 py-2.5 rounded-md text-white transition-colors bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:bg-gray-300 disabled:cursor-not-allowed"
+            :disabled="
+              !product.brand ||
+              !product.model ||
+              !product.price ||
+              !product.color ||
+              !product.description
+            "
           >
             <svg
               class="w-4 h-4"

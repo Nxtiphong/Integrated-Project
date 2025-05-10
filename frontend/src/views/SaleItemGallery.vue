@@ -16,12 +16,12 @@
       </div>
     </div>
 
-    <div class="flex flex-col lg:flex-row gap-6">
+    <div class="flex flex-col lg:flex-row gap-5">
       <!-- Mobile Filter Toggle Button -->
       <div class="lg:hidden w-full mb-4">
         <button
           @click="toggleMobileFilters"
-          class="w-full py-2 px-4 bg-gray-100 text-gray-700 rounded-lg flex justify-between items-center shadow-sm"
+          class="w-full py-2 px-2 bg-gray-100 text-gray-700 rounded-lg flex justify-between items-center shadow-sm"
         >
           <span class="font-medium">Filters</span>
           <Icon
@@ -34,7 +34,7 @@
       <!-- Filters Sidebar - Responsive -->
       <div
         :class="[
-          'w-full lg:w-1/4 transition-all duration-300 overflow-hidden',
+          'w-full lg:w-1/7 transition-all duration-300 overflow-hidden',
           showMobileFilters ? 'max-h-screen' : 'max-h-0 lg:max-h-screen',
         ]"
       >
@@ -112,14 +112,14 @@
       </div>
 
       <!-- Products Grid -->
-      <div class="w-full lg:w-3/4">
+      <div class="w-full lg:w-2/2">
         <div v-if="isLoading" class="flex justify-center items-center min-h-[300px]">
           <p class="text-center text-lg">Loading...</p>
         </div>
 
         <div
           v-else-if="filteredItems.length > 0"
-          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 py-4 sm:py-5"
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4 py-4 sm:py-5"
         >
           <SaleItemCard
             v-for="item in filteredItems"

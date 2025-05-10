@@ -150,7 +150,6 @@
     @update:show="alertMessage.visible = $event"
     :duration="alertMessage.duration"
   />
-
   </div>
 </template>
 
@@ -281,7 +280,7 @@ onMounted(() => {
   if (saleStore.deleted) {
     alertMessage.value = {
       type: 'success',
-      message: 'Sale item deleted successfully!',
+      message: 'The sale item has been deleted.',
       visible: true,
       duration: 3000,
     };

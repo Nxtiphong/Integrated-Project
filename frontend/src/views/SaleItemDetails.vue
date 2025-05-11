@@ -45,13 +45,40 @@ const handleEdit = () => {
 const showDeleteModal = ref(false);
 
 const handleDelete = async () => {
-  if (showDeleteModal.value) {
-    await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items/${params}`, {
+  try {
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items/${params}`, {
       method: 'DELETE',
     });
-    saleStore.deleted = true
-    router.push('/sale-items');
+
+    if (res.status === 404) {
+      alertMessage.value = {
+        type: 'error',
+        message: 'The requested sale item does not exist.',
+        visible: true,
+        duration: 3000,
+      };
+      setTimeout(() => {
+        router.back();
+      }, 3000);
+    } else if (!res.ok) {
+      throw new Error('Failed to delete item');
+    } else {
+      saleStore.deleted = true;
+      router.push('/sale-items');
+    }
+  } catch (error) {
+    alertMessage.value = {
+      type: 'error',
+      message: 'Something went wrong while deleting the sale item.',
+      visible: true,
+      duration: 3000,
+    };
+    console.error('Delete Error:', error);
+  } finally {
+    showDeleteModal.value = false;
   }
+
+  
 };
 
 

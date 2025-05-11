@@ -1,4 +1,3 @@
-// src/stores/saleItemStore.js
 import { defineStore } from 'pinia'
 
 export const useSaleItemStore = defineStore('saleItem', {

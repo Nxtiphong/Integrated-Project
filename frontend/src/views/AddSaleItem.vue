@@ -120,7 +120,7 @@ const saveProduct = async () => {
       body: JSON.stringify(product.value),
     });
     saleStore.updated = true;
-      router.push(`/sale-items/${params}`);
+    router.push(`/sale-items/${params}`);
   } else {
     await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items`, {
       method: 'POST',
@@ -156,6 +156,13 @@ const cancel = () => {
   setTimeout(() => {
     router.push('/sale-items');
   }, 1000);
+};
+
+const focusNext = (nextFieldId) => {
+  const nextField = document.getElementById(nextFieldId);
+  if (nextField) {
+    nextField.focus();
+  }
 };
 
 const sortBrands = (brands) => {
@@ -246,8 +253,10 @@ onMounted(async () => {
                   <div class="flex flex-col gap-2">
                     <label for="brand" class="text-gray-700 font-medium">Brand</label>
                     <select
+                      id="brand"
                       v-model="product.brand"
                       class="itbms-brand px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                      @keydown.enter="focusNext('model')"
                     >
                       <option disabled value="">Select a brand</option>
                       <option v-for="brand in saleStore.brands" :key="brand.id" :value="brand">
@@ -264,7 +273,7 @@ onMounted(async () => {
                       v-model.trim="product.model"
                       placeholder="Enter model name"
                       class="itbms-model px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
-                      @input="(e) => console.log(e.target.value)"
+                      @keydown.enter="focusNext('price')"
                     />
                   </div>
 
@@ -276,6 +285,7 @@ onMounted(async () => {
                       v-model.trim="product.price"
                       placeholder="0.00"
                       class="itbms-price px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                      @keydown.enter="focusNext('quantity')"
                     />
                   </div>
 
@@ -287,6 +297,7 @@ onMounted(async () => {
                       v-model.trim="product.quantity"
                       placeholder="0"
                       class="itbms-quantity px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                      @keydown.enter="focusNext('ram')"
                     />
                   </div>
 
@@ -298,6 +309,7 @@ onMounted(async () => {
                       v-model.trim="product.ramGb"
                       placeholder="Enter RAM size"
                       class="itbms-ramGb px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                      @keydown.enter="focusNext('screenSize')"
                     />
                   </div>
 
@@ -312,6 +324,7 @@ onMounted(async () => {
                       v-model.trim="product.screenSizeInch"
                       placeholder="0.0"
                       class="itbms-screenSizeInch px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                      @keydown.enter="focusNext('storage')"
                     />
                   </div>
 
@@ -323,6 +336,7 @@ onMounted(async () => {
                       v-model.trim="product.storageGb"
                       placeholder="Enter storage size"
                       class="itbms-storageGb px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                      @keydown.enter="focusNext('color')"
                     />
                   </div>
 
@@ -334,6 +348,7 @@ onMounted(async () => {
                       v-model.trim="product.color"
                       placeholder="Enter color"
                       class="itbms-color px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                      @keydown.enter="focusNext('description')"
                     />
                   </div>
 
@@ -345,6 +360,7 @@ onMounted(async () => {
                       rows="4"
                       placeholder="Enter product description"
                       class="itbms-description px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors resize-y"
+                      @keydown.enter="focusNext('save')"
                     ></textarea>
                   </div>
                 </div>
@@ -387,6 +403,7 @@ onMounted(async () => {
               !product.color ||
               !product.description
             "
+            @keydown.enter="saveProduct"
           >
             <svg
               class="w-4 h-4"

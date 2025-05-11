@@ -4,7 +4,7 @@ import ProductSpec from '@/components/detail/ProductSpec.vue';
 import { useRoute, useRouter } from 'vue-router';
 import notFoundImg from '@/assets/images/404.png';
 import { onMounted, ref } from 'vue';
-import ConfirmDeleteModal from '@/components/share/ConfirmDeleteModal.vue';
+import ConfirmDeleteModal from '@/components/share/confirmDeleteModal.vue';
 import { useSaleItemStore } from '@/stores/saleItemStore';
 
 const saleStore = useSaleItemStore();

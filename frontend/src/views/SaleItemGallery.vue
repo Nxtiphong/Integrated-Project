@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+  <div class="p-5">
     <div class="breadcrumbs text-sm my-2 overflow-x-auto whitespace-nowrap">
       <ul class="flex">
         <li class="flex items-center">
@@ -47,7 +47,7 @@
                 class="flex justify-between items-center cursor-pointer"
                 @click="toggleFilter('battery')"
               >
-                <h3 class="font-medium">Battery capacity</h3>
+                <h3 class="font-medium text-sm">Battery capacity</h3>
                 <Icon
                   :icon="showBatteryFilter ? 'lucide:chevron-down' : 'lucide:chevron-right'"
                   class="text-gray-400"
@@ -60,7 +60,7 @@
                 class="flex justify-between items-center cursor-pointer"
                 @click="toggleFilter('screen')"
               >
-                <h3 class="font-medium">Screen type</h3>
+                <h3 class="font-medium text-sm">Screen type</h3>
                 <Icon
                   :icon="showScreenFilter ? 'lucide:chevron-down' : 'lucide:chevron-right'"
                   class="text-gray-400"
@@ -73,7 +73,7 @@
                 class="flex justify-between items-center cursor-pointer"
                 @click="toggleFilter('diagonal')"
               >
-                <h3 class="font-medium">Screen diagonal</h3>
+                <h3 class="font-medium text-sm">Screen diagonal</h3>
                 <Icon
                   :icon="showDiagonalFilter ? 'lucide:chevron-down' : 'lucide:chevron-right'"
                   class="text-gray-400"
@@ -86,7 +86,7 @@
                 class="flex justify-between items-center cursor-pointer"
                 @click="toggleFilter('protection')"
               >
-                <h3 class="font-medium">Protection class</h3>
+                <h3 class="font-medium text-sm">Protection class</h3>
                 <Icon
                   :icon="showProtectionFilter ? 'lucide:chevron-down' : 'lucide:chevron-right'"
                   class="text-gray-400"
@@ -99,7 +99,7 @@
                 class="flex justify-between items-center cursor-pointer"
                 @click="toggleFilter('memory')"
               >
-                <h3 class="font-medium">Built-in memory</h3>
+                <h3 class="font-medium text-sm">Built-in memory</h3>
                 <Icon
                   :icon="showMemoryFilter ? 'lucide:chevron-down' : 'lucide:chevron-right'"
                   class="text-gray-400"

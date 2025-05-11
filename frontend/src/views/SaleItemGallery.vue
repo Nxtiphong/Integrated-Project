@@ -144,7 +144,7 @@
       </div>
     </div>
   </div>
-  <!-- <div class="itbms-message">
+  <div class="itbms-message">
     <Alert
     :show="alertMessage.visible"
     :type="alertMessage.type"
@@ -153,7 +153,7 @@
     :duration="alertMessage.duration"
   />
 
-  </div> -->
+  </div>
 </template>
 
 <script setup>

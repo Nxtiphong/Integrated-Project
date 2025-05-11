@@ -161,7 +161,7 @@ const cancel = () => {
 const sortBrands = (brands) => {
   return brands.sort((a, b) => a.name.localeCompare(b.name));
 };
-
+const model = ref('');
 onMounted(async () => {
   await saleStore.fetchBrands();
   saleStore.brands = sortBrands(saleStore.brands);
@@ -172,6 +172,7 @@ onMounted(async () => {
       router.push('/non-existing-path');
       return;
     }
+    model.value = item.model;
     if (item) {
       const matchedBrand = saleStore.brands.find((b) => b.name === item.brandName);
       product.value = {
@@ -204,7 +205,7 @@ onMounted(async () => {
             <div class="itbms-back-button">
               <RouterLink :to="`/sale-items${params ? `/${params}` : ''}`">
                 <b>
-                  {{ params ? product.model : 'New Sale Item' }}
+                  {{ params ? model : 'New Sale Item' }}
                 </b>
               </RouterLink>
             </div>
@@ -263,6 +264,7 @@ onMounted(async () => {
                       v-model.trim="product.model"
                       placeholder="Enter model name"
                       class="itbms-model px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                      @input="(e) => console.log(e.target.value)"
                     />
                   </div>
 

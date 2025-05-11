@@ -1,6 +1,6 @@
 <template>
-  <div class=" rounded-lg shadow-sm">
-    <div class="p-4 ">
+  <div class="rounded-lg shadow-sm">
+    <div class="p-4">
       <div class="flex justify-between items-center cursor-pointer" @click="toggleFilter">
         <h3 class="font-medium">Brand</h3>
         <Icon icon="lucide:chevron-right" v-if="!isExpanded" class="text-gray-400" />
@@ -37,7 +37,7 @@
             />
             <label :for="brand.name" class="ml-2 text-sm">
               {{ brand.name }} 
-              <span class="text-gray-500 text-xs">{{ brand.count }}</span>
+              <span class="text-gray-500 text-xs">({{ brand.count }})</span>
             </label>
           </div>
         </div>
@@ -82,6 +82,7 @@ const generateBrandsList = () => {
   
   // Count items by brand
   props.items.forEach(item => {
+    if (!item) return;
     const brandName = item.brandName || 'Unknown';
     if (brandsMap.has(brandName)) {
       brandsMap.set(brandName, brandsMap.get(brandName) + 1);
@@ -90,14 +91,14 @@ const generateBrandsList = () => {
     }
   });
   
-  const brandsArray = Array.from(brandsMap.entries()).map(([name, count]) => ({
-    name,
-    count,
-    selected: false
-  }));
-  
-
-  brandsArray.sort((a, b) => a.name.localeCompare(b.name));
+  // Convert Map to Array and sort alphabetically A-Z
+  const brandsArray = Array.from(brandsMap.entries())
+    .map(([name, count]) => ({
+      name,
+      count,
+      selected: false
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
   
   brandsList.value = brandsArray;
 };

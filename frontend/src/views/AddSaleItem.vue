@@ -29,10 +29,6 @@ const product = ref({
   quantity: null,
 });
 
-const showAlert = () => {
-  alertVisible.value = true;
-};
-
 const validation = (product) => {
   if (!product.brand) {
     alertMessage.value = {
@@ -110,24 +106,29 @@ const validation = (product) => {
   return true;
 };
 
-const saveProduct = () => {
+const saveProduct = async () => {
   console.log('Adding product:', product.value);
   if (!validation(product.value)) {
     return;
   }
   if (params) {
-    saleStore.updateSaleItem(params, product.value);
-    alertMessage.value = {
-      type: 'success',
-      message: 'Product updated successfully',
-      visible: true,
-      duration: 1000,
-    };
-    setTimeout(() => {
+    await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items/${params}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(product.value),
+    });
+    saleStore.updated = true;
       router.push(`/sale-items/${params}`);
-    }, 1000);
   } else {
-    saleStore.createSaleItem(product.value);
+    await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(product.value),
+    });
     saleStore.created = true;
     router.push('/sale-items');
   }
@@ -157,11 +158,20 @@ const cancel = () => {
   }, 1000);
 };
 
+const sortBrands = (brands) => {
+  return brands.sort((a, b) => a.name.localeCompare(b.name));
+};
+
 onMounted(async () => {
   await saleStore.fetchBrands();
+  saleStore.brands = sortBrands(saleStore.brands);
 
   if (params) {
     const item = await saleStore.fetchSaleItemById(params);
+    if (!item) {
+      router.push('/non-existing-path');
+      return;
+    }
     if (item) {
       const matchedBrand = saleStore.brands.find((b) => b.name === item.brandName);
       product.value = {

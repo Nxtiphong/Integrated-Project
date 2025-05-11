@@ -16,12 +16,12 @@
       </div>
     </div>
 
-    <div class="flex flex-col lg:flex-row gap-6">
+    <div class="flex flex-col lg:flex-row gap-5">
       <!-- Mobile Filter Toggle Button -->
       <div class="lg:hidden w-full mb-4">
         <button
           @click="toggleMobileFilters"
-          class="w-full py-2 px-4 bg-gray-100 text-gray-700 rounded-lg flex justify-between items-center shadow-sm"
+          class="w-full py-2 px-2 bg-gray-100 text-gray-700 rounded-lg flex justify-between items-center shadow-sm"
         >
           <span class="font-medium">Filters</span>
           <Icon
@@ -34,7 +34,7 @@
       <!-- Filters Sidebar - Responsive -->
       <div
         :class="[
-          'w-full lg:w-1/4 transition-all duration-300 overflow-hidden',
+          'w-full lg:w-1/7 transition-all duration-300 overflow-hidden',
           showMobileFilters ? 'max-h-screen' : 'max-h-0 lg:max-h-screen',
         ]"
       >
@@ -42,7 +42,7 @@
           <!-- Brand Filter -->
           <BrandFilter :items="saleItems" @filter-change="handleBrandFilterChange" />
           <div class="mt-4 rounded-lg shadow-sm">
-            <div class="p-4 border-b border-neutral-200">
+            <div class="p-2 border-b border-neutral-200">
               <div
                 class="flex justify-between items-center cursor-pointer"
                 @click="toggleFilter('battery')"
@@ -112,23 +112,25 @@
       </div>
 
       <!-- Products Grid -->
-      <div class="w-full lg:w-3/4">
+      <div class="w-full lg:w-2/2">
         <div v-if="isLoading" class="flex justify-center items-center min-h-[300px]">
           <p class="text-center text-lg">Loading...</p>
         </div>
 
         <div
           v-else-if="filteredItems.length > 0"
-          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 py-4 sm:py-5"
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4 py-4 sm:py-5"
         >
           <SaleItemCard
             v-for="item in filteredItems"
             :key="item.id"
             :brand="item.brandName ?? '-'"
             :model="item.model ?? '-'"
-            :ram="item.ramGb ?? '-'"
+            :ram="displayOrDash(item.ramGb)"
+            :screen="displayOrDash(item.screen)"
+            :storage="displayOrDash(item.storageGb)"
+            :quantity="displayOrDash(item.quantity)"
             :price="item.price ?? '-'"
-            :storage="item.storageGb ?? '-'"
             :color="item.color ?? '-'"
             :image="item.image ?? ''"
             :id="item.id"
@@ -142,7 +144,7 @@
       </div>
     </div>
   </div>
-  <div class="itbms-message">
+  <!-- <div class="itbms-message">
     <Alert
     :show="alertMessage.visible"
     :type="alertMessage.type"
@@ -151,7 +153,7 @@
     :duration="alertMessage.duration"
   />
 
-  </div>
+  </div> -->
 </template>
 
 <script setup>
@@ -256,15 +258,19 @@ const loadSaleItems = async () => {
 // Setup auto-refresh for real-time updates
 const setupRefreshTimer = () => {
   // Refresh data every 30 seconds to catch new items
-  refreshInterval.value = setInterval(() => {
-    loadSaleItems();
-  }, 30000); // 30 seconds
+  // refreshInterval.value = setInterval(() => {
+  //   loadSaleItems();
+  // }, 30000); // 30 seconds
 };
 
 const handleVisibilityChange = () => {
   if (document.visibilityState === 'visible') {
     loadSaleItems();
   }
+};
+
+const displayOrDash = (val) => {
+  return val === null || val === undefined || val === '' || val === 0 ? '-' : val;
 };
 
 onMounted(() => {
@@ -281,14 +287,13 @@ onMounted(() => {
   if (saleStore.deleted) {
     alertMessage.value = {
       type: 'success',
-      message: 'Sale item deleted successfully!',
+      message: 'The sale item has been deleted.',
       visible: true,
       duration: 3000,
     };
     saleStore.deleted = false;
   }
   setupRefreshTimer();
-
 
   document.addEventListener('visibilitychange', handleVisibilityChange);
 });

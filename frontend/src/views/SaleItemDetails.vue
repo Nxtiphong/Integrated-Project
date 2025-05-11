@@ -4,8 +4,9 @@ import ProductSpec from '@/components/detail/ProductSpec.vue';
 import { useRoute, useRouter } from 'vue-router';
 import notFoundImg from '@/assets/images/404.png';
 import { onMounted, ref } from 'vue';
-import ConfirmDeleteModal from '@/components/share/confirmDeleteModal.vue';
+import DeleteModal from '@/components/share/DeleteModal.vue';
 import { useSaleItemStore } from '@/stores/saleItemStore';
+import Alert from '@/components/share/Alert.vue';
 
 const saleStore = useSaleItemStore();
 const router = useRouter();
@@ -43,16 +44,38 @@ const handleEdit = () => {
 
 const showDeleteModal = ref(false);
 
-const handleDelete = () => {
+const handleDelete = async () => {
   if (showDeleteModal.value) {
-    saleStore.deleteSaleItem(params);
+    await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items/${params}`, {
+      method: 'DELETE',
+    });
     saleStore.deleted = true
     router.push('/sale-items');
   }
 };
 
+
+const alertMessage = ref({
+  type: '',
+  message: '',
+  visible: false,
+  duration: 3000,
+});
+
+
 onMounted(() => {
   fetchProductDetail(params);
+
+  if (saleStore.updated) {
+    alertMessage.value = {
+      type: 'success',
+      message: 'The sale item has been successfully added!',
+      visible: true,
+      duration: 3000,
+    };
+    saleStore.updated = false;
+  }
+
 });
 </script>
 
@@ -111,14 +134,23 @@ onMounted(() => {
       </div>
     </div>
     <div class="itbms-message">
-      <ConfirmDeleteModal
+    <Alert
+    :show="alertMessage.visible"
+    :type="alertMessage.type"
+    :message="alertMessage.message"
+    @update:show="alertMessage.visible = $event"
+    :duration="alertMessage.duration"
+  />
+  </div>
+
+    <div class="itbms-message">
+      <DeleteModal
       v-model="showDeleteModal"
       :title="`Delete ${productDetail.model}`"
       :message="`Are you sure you want to delete ${productDetail.model}? This action cannot be undone.`"
       @confirm="handleDelete"
       @cancel="cancelModal"
     />
-
     </div>
   </div>
 

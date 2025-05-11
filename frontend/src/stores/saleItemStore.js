@@ -8,6 +8,7 @@ export const useSaleItemStore = defineStore('saleItem', {
     isLoading: false,
     created: false,
     deleted: false,
+    updated: false,
   }),
 
   actions: {
@@ -47,47 +48,5 @@ export const useSaleItemStore = defineStore('saleItem', {
         }
         },
 
-    async createSaleItem(payload) {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        })
-        if (!res.ok) throw new Error('Failed to create sale item')
-        const newItem = await res.json()
-        this.saleItems.push(newItem)
-      } catch (error) {
-        console.error('Error creating sale item:', error)
-      }
-    },
-
-    async updateSaleItem(id, payload) {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items/${id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        })
-        if (!res.ok) throw new Error('Failed to update sale item')
-        const updated = await res.json()
-        const index = this.saleItems.findIndex(item => item.id === id)
-        if (index !== -1) this.saleItems[index] = updated
-      } catch (error) {
-        console.error('Error updating sale item:', error)
-      }
-    },
-
-    async deleteSaleItem(id) {
-      try {
-        const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items/${id}`, {
-          method: 'DELETE',
-        })
-        if (!res.ok) throw new Error('Failed to delete sale item')
-        this.saleItems = this.saleItems.filter(item => item.id !== id)
-      } catch (error) {
-        console.error('Error deleting sale item:', error)
-      }
-    },
   }
 })

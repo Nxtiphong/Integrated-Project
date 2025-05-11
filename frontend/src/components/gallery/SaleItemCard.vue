@@ -1,5 +1,5 @@
 <template>
-  <div class="itbms-row border-1 border-base-300 rounded-lg shadow-md p-4 relative">
+  <div class="itbms-row border-1 border-base-300 rounded-lg shadow-md p-4 relative flex flex-col h-full">
     <button @click="toggleFavorite" class="absolute top-3 right-3 z-10 focus:outline-none">
       <Icon
         :icon="isFavorite ? 'mdi:heart' : 'mdi:heart-outline'"
@@ -8,7 +8,7 @@
       />
     </button>
 
-    <router-link :to="`/sale-items/${id}`" class="block">
+    <router-link :to="`/sale-items/${id}`" class="block" flex-grow>
       <img
         :src="mock_phone"
         alt="product"
@@ -21,7 +21,11 @@
         </p>
         <p class="itbms-ramGb">Ram: {{ ram }}</p>
         <p class="itbms-storageGb">
-          Storage: {{ storage }} <span class="itbms-storageGb-unit">GB</span>
+          Storage:
+          <span v-if="Number(storage)"
+            >{{ storage }} <span class="itbms-storageGb-unit">GB</span></span
+          >
+          <span v-else>-</span>
         </p>
         <p class="itbms-Color">Color: {{ color }}</p>
         <p class="itbms-price text-black">
@@ -30,8 +34,8 @@
       </div>
     </router-link>
 
-    <div class="mt-4">
-      <button class="btn btn-primary text-white w-full rounded-box">Buy</button>
+    <div class="mt-auto">
+      <button class="btn btn-primary w-full">Buy</button>
     </div>
   </div>
 </template>
@@ -53,6 +57,7 @@ const props = defineProps([
   'image',
   'id',
   'ramGb',
+  'screen',
 ]);
 
 const favoriteStore = useFavoriteStore();
@@ -62,6 +67,7 @@ const product = {
   brand: props.brand,
   model: props.model,
   ram: props.ram,
+  screen: props.screen,
   storage: props.storage,
   price: props.price,
   color: props.color,

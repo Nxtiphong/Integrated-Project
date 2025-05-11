@@ -151,8 +151,7 @@
     :message="alertMessage.message"
     @update:show="alertMessage.visible = $event"
     :duration="alertMessage.duration"
-  />
-
+    />
   </div>
 </template>
 

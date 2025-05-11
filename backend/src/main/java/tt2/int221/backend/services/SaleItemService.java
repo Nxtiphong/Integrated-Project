@@ -44,6 +44,12 @@ public class SaleItemService {
             saleItem.setQuantity(1);
         }
 
+        if(saleItemDTO.getModel().length() > 60){
+            saleItem.setModel(saleItemDTO.getModel().substring(0, 60));
+        }else{
+            saleItem.setModel(saleItemDTO.getModel());
+        }
+
         SaleItem savedSaleItem = saleItemRepository.save(saleItem);
 
         return saleItemRepository.findById(savedSaleItem.getId())
@@ -58,7 +64,12 @@ public class SaleItemService {
         Integer brandId = saleItemDTO.getBrand().getId();
         Brand brand = brandRepository.findById(brandId).orElseThrow(() -> new NotfoundException("Brand not found with id: " + brandId));
 
-        editedSaleItem.setModel(saleItemDTO.getModel());
+        if(saleItemDTO.getModel().length() > 60){
+            editedSaleItem.setModel(saleItemDTO.getModel().substring(0, 60));
+        }else{
+            editedSaleItem.setModel(saleItemDTO.getModel());
+        }
+
         editedSaleItem.setBrand(brand);
         editedSaleItem.setDescription(saleItemDTO.getDescription());
         editedSaleItem.setPrice(saleItemDTO.getPrice());

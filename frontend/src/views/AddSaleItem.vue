@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 import ProductImage from '@/components/detail/ProductImage.vue';
 import { useSaleItemStore } from '@/stores/saleItemStore';
@@ -25,7 +25,7 @@ const product = ref({
   ramGb: null,
   screenSizeInch: null,
   storageGb: null,
-  color: '',
+  color: null,
   quantity: null,
 });
 
@@ -87,14 +87,6 @@ const validation = (product) => {
     };
     return false;
   }
-  if (!product.color) {
-    alertMessage.value = {
-      type: 'error',
-      message: 'Please enter a color',
-      visible: true,
-    };
-    return false;
-  }
   if (!product.description) {
     alertMessage.value = {
       type: 'error',
@@ -143,7 +135,7 @@ const cancel = () => {
     ramGb: null,
     screenSizeInch: null,
     storageGb: null,
-    color: '',
+    color: null,
     quantity: null,
   };
   alertMessage.value = {
@@ -165,6 +157,27 @@ const focusNext = (nextFieldId) => {
   }
 };
 
+const originalProduct = ref(null);
+const isEdit = ref(false);
+
+const isEqual = (a, b) => {
+  return JSON.stringify(a) === JSON.stringify(b);
+};
+
+watch(product, (newVal) => {
+  if (originalProduct.value) {
+    isEdit.value = !isEqual(newVal, originalProduct.value);
+  }
+}, { deep: true });
+
+const isSaveDisabled = computed(() => {
+  if (params) {
+    return !isEdit.value;
+  } else {
+    return !product.value.brand || !product.value.model || !product.value.price || !product.value.description;
+  }
+});
+
 const sortBrands = (brands) => {
   return brands.sort((a, b) => a.name.localeCompare(b.name));
 };
@@ -182,7 +195,7 @@ onMounted(async () => {
     model.value = item.model;
     if (item) {
       const matchedBrand = saleStore.brands.find((b) => b.name === item.brandName);
-      product.value = {
+      const loadedProduct = {
         brand: matchedBrand || '',
         model: item.model,
         price: item.price,
@@ -193,9 +206,12 @@ onMounted(async () => {
         color: item.color,
         quantity: item.quantity,
       };
+      product.value = loadedProduct;
+      originalProduct.value = JSON.parse(JSON.stringify(loadedProduct));
     }
   }
 });
+
 </script>
 
 <template>
@@ -396,13 +412,7 @@ onMounted(async () => {
           <button
             @click="saveProduct"
             class="itbms-save-button cursor-pointer flex items-center gap-2 px-5 py-2.5 rounded-md text-white transition-colors bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:bg-gray-300 disabled:cursor-not-allowed"
-            :disabled="
-              !product.brand ||
-              !product.model ||
-              !product.price ||
-              !product.color ||
-              !product.description
-            "
+            :disabled="isSaveDisabled"
             @keydown.enter="saveProduct"
           >
             <svg

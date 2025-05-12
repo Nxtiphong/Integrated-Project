@@ -254,13 +254,7 @@ const loadSaleItems = async () => {
   }
 };
 
-// Setup auto-refresh for real-time updates
-const setupRefreshTimer = () => {
-  // Refresh data every 30 seconds to catch new items
-  // refreshInterval.value = setInterval(() => {
-  //   loadSaleItems();
-  // }, 30000); // 30 seconds
-};
+
 
 const handleVisibilityChange = () => {
   if (document.visibilityState === 'visible') {
@@ -292,7 +286,7 @@ onMounted(() => {
     };
     saleStore.deleted = false;
   }
-  setupRefreshTimer();
+
 
   document.addEventListener('visibilitychange', handleVisibilityChange);
 });

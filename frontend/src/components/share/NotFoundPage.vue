@@ -2,8 +2,32 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import notFoundImg from '@/assets/images/404.png';
+import Alert from './Alert.vue';
+import { useSaleItemStore } from '@/stores/saleItemStore';
+import { onMounted } from 'vue';
+import { ref } from 'vue';
 
 const router = useRouter();
+const saleStore = useSaleItemStore();
+const alertMessage = ref({
+  type: '',
+  message: '',
+  visible: false,
+  duration: 3000,
+});
+
+onMounted(() => {
+  if (saleStore.noExist) {
+    alertMessage.value = {
+      type: 'error',
+      message: 'The requested sale item does not exist.',
+      visible: true,
+      duration: 3000,
+    };
+    saleStore.noExist = false;
+  }
+
+});
 </script>
 
 <template>
@@ -18,6 +42,15 @@ const router = useRouter();
         Back
       </button>
     </div>
+  </div>
+  <div class="itbms-message">
+    <Alert
+    :show="alertMessage.visible"
+    :type="alertMessage.type"
+    :message="alertMessage.message"
+    @update:show="alertMessage.visible = $event"
+    :duration="alertMessage.duration"
+  />
   </div>
 </template>
 

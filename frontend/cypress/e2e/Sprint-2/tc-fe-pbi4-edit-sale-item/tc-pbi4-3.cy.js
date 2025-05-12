@@ -35,7 +35,7 @@ describe(`TC-FE-PBI4-ADD-SALE-ITEM-2\n
         cy.get('.itbms-screenSizeInch').contains('6.7')
         cy.get('.itbms-storageGb').contains('128')
         cy.get('.itbms-storageGb-unit').contains('GB')
-        cy.get('.itbms-color').contains('PinK') 
+        cy.get('.itbms-color').contains('Pink') 
         cy.get('.itbms-quantity').contains('12')
     })
 
@@ -68,8 +68,8 @@ describe(`TC-FE-PBI4-ADD-SALE-ITEM-2\n
         cy.get('.itbms-ramGb').should('have.value','6')
         cy.get('.itbms-screenSizeInch').should('have.value','6.7')
         cy.get('.itbms-storageGb').should('have.value','128') 
-        cy.get('.itbms-color').contains('PinK')
-        cy.get('input.itbms-quantity').should('have.value','12')
+        cy.get('.itbms-color').should('have.value','Pink')
+        cy.get('.itbms-quantity').should('have.value','12')
 
         cy.get('.itbms-save-button').as('save') ;
         cy.get('@save').should(($btn)=>{

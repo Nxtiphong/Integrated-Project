@@ -116,7 +116,7 @@ onMounted(() => {
     <div class="breadcrumbs text-sm my-2">
       <ul>
         <li><RouterLink to="/">Home</RouterLink></li>
-        <li><RouterLink to="/sale-items">Gallery</RouterLink></li>
+        <li class="itbms-home-button"><RouterLink to="/sale-items">Gallery</RouterLink></li>
         <li class="font-bold">{{ productDetail.model }}</li>
       </ul>
     </div>

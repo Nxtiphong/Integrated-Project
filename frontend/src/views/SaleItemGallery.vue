@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+  <div class="mx-auto px-4 sm:px-6 lg:px-8">
     <div class="breadcrumbs text-sm my-2 overflow-x-auto whitespace-nowrap">
       <ul class="flex">
         <li class="flex items-center">
@@ -34,7 +34,7 @@
       <!-- Filters Sidebar - Responsive -->
       <div
         :class="[
-          'w-full lg:w-1/7 transition-all duration-300 overflow-hidden',
+          'w-full lg:w-1/7  transition-all duration-300 overflow-hidden',
           showMobileFilters ? 'max-h-screen' : 'max-h-0 lg:max-h-screen',
         ]"
       >

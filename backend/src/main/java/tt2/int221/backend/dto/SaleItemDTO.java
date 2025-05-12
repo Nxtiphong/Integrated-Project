@@ -16,4 +16,8 @@ public class SaleItemDTO {
     private Integer quantity;
     private Integer storageGb;
     private String color;
+
+    public BigDecimal getScreenSizeInch() {
+        return screenSizeInch == null ? null : screenSizeInch.stripTrailingZeros();
+    }
 }

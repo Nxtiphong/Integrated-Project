@@ -42,11 +42,17 @@ public class SaleItemService {
                 .orElseThrow(() ->
                         new NotfoundException("Brand not found with id: " + saleItemDTO.getBrand().getId()));
 
+        saleItemDTO.setModel(saleItemDTO.getModel().trim());
+        saleItemDTO.setDescription(saleItemDTO.getDescription().trim());
+        saleItemDTO.setColor(saleItemDTO.getColor() != null ? saleItemDTO.getColor().trim() : null);
+
         SaleItem saleItem = modelMapper.map(saleItemDTO, SaleItem.class);
         saleItem.setBrand(brand);
 
-        if (saleItemDTO.getQuantity() == null || saleItemDTO.getQuantity() <= 0) {
+        if (saleItemDTO.getQuantity() == null || saleItemDTO.getQuantity() < 0) {
             saleItem.setQuantity(1);
+        }else{
+            saleItem.setQuantity(saleItemDTO.getQuantity());
         }
 
         if (saleItemDTO.getModel().length() > 60) {
@@ -71,14 +77,17 @@ public class SaleItemService {
         Integer brandId = saleItemDTO.getBrand().getId();
         Brand brand = brandRepository.findById(brandId).orElseThrow(() -> new NotfoundException("Brand not found with id: " + brandId));
 
-        if (saleItemDTO.getModel().length() > 60) {
-            editedSaleItem.setModel(saleItemDTO.getModel().substring(0, 60));
-        } else {
-            editedSaleItem.setModel(saleItemDTO.getModel());
+        if (saleItemDTO.getModel() != null) {
+            String trimmedModel = saleItemDTO.getModel().trim();
+            editedSaleItem.setModel(trimmedModel.length() > 60 ? trimmedModel.substring(0, 60) : trimmedModel);
         }
 
         editedSaleItem.setBrand(brand);
-        editedSaleItem.setDescription(saleItemDTO.getDescription());
+
+        if (saleItemDTO.getDescription() != null) {
+            editedSaleItem.setDescription(saleItemDTO.getDescription().trim());
+        }
+
         editedSaleItem.setPrice(saleItemDTO.getPrice());
 
         if (saleItemDTO.getQuantity() != null) {
@@ -93,8 +102,12 @@ public class SaleItemService {
             editedSaleItem.setScreenSizeInch(saleItemDTO.getScreenSizeInch());
         }
 
-        if(saleItemDTO.getColor() != null) {
-            editedSaleItem.setColor(saleItemDTO.getColor());
+        if (saleItemDTO.getStorageGb() != null) {
+            editedSaleItem.setStorageGb(saleItemDTO.getStorageGb());
+        }
+
+        if (saleItemDTO.getColor() != null && !saleItemDTO.getColor().trim().isEmpty()) {
+            editedSaleItem.setColor(saleItemDTO.getColor().trim());
         }
 
         SaleItem updatedSaleItem = saleItemRepository.saveAndFlush(editedSaleItem);

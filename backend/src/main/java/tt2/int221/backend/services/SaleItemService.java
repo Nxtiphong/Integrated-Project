@@ -1,5 +1,8 @@
 package tt2.int221.backend.services;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,7 +13,6 @@ import tt2.int221.backend.exceptions.NotfoundException;
 import tt2.int221.backend.repositories.BrandRepository;
 import tt2.int221.backend.repositories.SaleItemRepository;
 
-import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -21,6 +23,8 @@ public class SaleItemService {
     private BrandRepository brandRepository;
     @Autowired
     private ModelMapper modelMapper;
+    @PersistenceContext
+    private EntityManager em;
 
     public SaleItem getSaleItemById(Integer id) {
         return saleItemRepository.findById(id)
@@ -31,6 +35,7 @@ public class SaleItemService {
         return saleItemRepository.findAllByOrderByCreatedOnAscIdAsc();
     }
 
+    @Transactional
     public SaleItem createSaleItem(SaleItemDTO saleItemDTO) {
         Integer brandId = saleItemDTO.getBrand().getId();
         Brand brand = brandRepository.findById(brandId)
@@ -44,19 +49,21 @@ public class SaleItemService {
             saleItem.setQuantity(1);
         }
 
-        if(saleItemDTO.getModel().length() > 60){
+        if (saleItemDTO.getModel().length() > 60) {
             saleItem.setModel(saleItemDTO.getModel().substring(0, 60));
-        }else{
+        } else {
             saleItem.setModel(saleItemDTO.getModel());
         }
 
         SaleItem savedSaleItem = saleItemRepository.save(saleItem);
+        em.refresh(savedSaleItem);
 
         return saleItemRepository.findById(savedSaleItem.getId())
                 .orElseThrow(() ->
                         new NotfoundException("Sale-Item not found with id: " + savedSaleItem.getId()));
     }
 
+    @Transactional
     public SaleItem updateSaleItemById(Integer id, SaleItemDTO saleItemDTO) {
 
         SaleItem editedSaleItem = getSaleItemById(id);
@@ -64,9 +71,9 @@ public class SaleItemService {
         Integer brandId = saleItemDTO.getBrand().getId();
         Brand brand = brandRepository.findById(brandId).orElseThrow(() -> new NotfoundException("Brand not found with id: " + brandId));
 
-        if(saleItemDTO.getModel().length() > 60){
+        if (saleItemDTO.getModel().length() > 60) {
             editedSaleItem.setModel(saleItemDTO.getModel().substring(0, 60));
-        }else{
+        } else {
             editedSaleItem.setModel(saleItemDTO.getModel());
         }
 
@@ -74,7 +81,7 @@ public class SaleItemService {
         editedSaleItem.setDescription(saleItemDTO.getDescription());
         editedSaleItem.setPrice(saleItemDTO.getPrice());
 
-        if (saleItemDTO.getQuantity() != null){
+        if (saleItemDTO.getQuantity() != null) {
             editedSaleItem.setQuantity(saleItemDTO.getQuantity());
         }
 
@@ -86,7 +93,9 @@ public class SaleItemService {
             editedSaleItem.setScreenSizeInch(saleItemDTO.getScreenSizeInch());
         }
 
-        SaleItem updatedSaleItem = saleItemRepository.save(editedSaleItem);
+        SaleItem updatedSaleItem = saleItemRepository.saveAndFlush(editedSaleItem);
+
+        em.refresh(updatedSaleItem);
 
         return saleItemRepository.findById(updatedSaleItem.getId()).orElseThrow(() -> new NotfoundException("Sale-Item not found with id: " + updatedSaleItem.getId()));
     }

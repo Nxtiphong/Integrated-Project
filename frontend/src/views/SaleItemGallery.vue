@@ -32,7 +32,7 @@
 
       <div
         :class="[
-          'w-full lg:w-1/7 transition-all duration-300 overflow-hidden',
+          'w-full lg:w-1/7  transition-all duration-300 overflow-hidden',
           showMobileFilters ? 'max-h-screen' : 'max-h-0 lg:max-h-screen',
         ]"
       >

@@ -15,7 +15,7 @@ import tt2.int221.backend.services.SaleItemService;
 import java.util.List;
 
 @RestController
-@Tag(name="Sale Items API")
+@Tag(name = "Sale Items API")
 @RequestMapping("/v1")
 public class SaleItemController {
 

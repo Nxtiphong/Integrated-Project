@@ -6,7 +6,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tt2.int221.backend.dto.BrandDTO;
@@ -16,7 +15,7 @@ import tt2.int221.backend.services.BrandService;
 import java.util.List;
 
 @RestController
-@Tag(name="Brand API")
+@Tag(name = "Brand API")
 @RequestMapping("/v1")
 public class BrandController {
 

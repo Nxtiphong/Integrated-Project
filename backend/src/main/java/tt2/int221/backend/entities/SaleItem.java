@@ -5,10 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -60,14 +58,10 @@ public class SaleItem {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
-
-    @Column(name = "createdOn")
-    @CreationTimestamp
+    @Column(name = "createdOn", insertable = false, updatable = false)
     private Instant createdOn;
 
-
-    @Column(name = "updatedOn")
-    @UpdateTimestamp
+    @Column(name = "updatedOn", insertable = false, updatable = false)
     private Instant updatedOn;
 
 }

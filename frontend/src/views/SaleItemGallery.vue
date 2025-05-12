@@ -17,7 +17,6 @@
     </div>
 
     <div class="flex flex-col lg:flex-row gap-5">
-      <!-- Mobile Filter Toggle Button -->
       <div class="lg:hidden w-full mb-4">
         <button
           @click="toggleMobileFilters"
@@ -31,15 +30,13 @@
         </button>
       </div>
 
-      <!-- Filters Sidebar - Responsive -->
       <div
         :class="[
-          'w-full lg:w-1/7 transition-all duration-300 overflow-hidden',
+          'w-full lg:w-1/7  transition-all duration-300 overflow-hidden',
           showMobileFilters ? 'max-h-screen' : 'max-h-0 lg:max-h-screen',
         ]"
       >
         <div class="bg-white rounded-lg shadow-sm">
-          <!-- Brand Filter -->
           <BrandFilter :items="saleItems" @filter-change="handleBrandFilterChange" />
           <div class="mt-4 rounded-lg shadow-sm">
             <div class="p-2 border-b border-neutral-200">
@@ -111,7 +108,6 @@
         </div>
       </div>
 
-      <!-- Products Grid -->
       <div class="w-full lg:w-2/2">
         <div v-if="isLoading" class="flex justify-center items-center min-h-[300px]">
           <p class="text-center text-lg">Loading...</p>

@@ -127,7 +127,7 @@
             :storage="displayOrDash(item.storageGb)"
             :quantity="displayOrDash(item.quantity)"
             :price="item.price ?? '-'"
-            :color="item.color ?? '-'"
+            :color="displayOrDash(item.color)"
             :image="item.image ?? ''"
             :id="item.id"
             class="w-full"

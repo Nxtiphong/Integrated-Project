@@ -4,11 +4,11 @@ import lombok.Data;
 
 @Data
 public class GalleryDTO {
-    private int id;
+    private Integer id;
     private String model;
     private String brandName;
-    private int price;
-    private int storageGb;
-    private int ramGb;
+    private Integer price;
+    private Integer storageGb;
+    private Integer ramGb;
     private String color;
 }

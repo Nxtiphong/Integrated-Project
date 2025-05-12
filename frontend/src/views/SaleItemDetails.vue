@@ -96,7 +96,7 @@ onMounted(() => {
   if (saleStore.updated) {
     alertMessage.value = {
       type: 'success',
-      message: 'The sale item has been updated',
+      message: 'The sale item has been updated.',
       visible: true,
       duration: 3000,
     };
@@ -174,7 +174,7 @@ onMounted(() => {
       <DeleteModal
       v-model="showDeleteModal"
       :title="`Delete ${productDetail.model}`"
-      :message="`Do you want to delete this sale item`"
+      :message="`Do you want to delete this sale item?`"
       @confirm="handleDelete"
       @cancel="cancelModal"
     />

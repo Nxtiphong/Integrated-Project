@@ -11,7 +11,7 @@
       </ul>
       <div class="mt-4">
         <RouterLink to="/sale-items/add">
-          <button className="btn btn-outline btn-info">Add Sale Item</button>
+          <button className="itbms-sale-item-add btn btn-outline btn-info">Add Sale Item</button>
         </RouterLink>
       </div>
     </div>
@@ -127,7 +127,7 @@
             :storage="displayOrDash(item.storageGb)"
             :quantity="displayOrDash(item.quantity)"
             :price="item.price ?? '-'"
-            :color="item.color ?? '-'"
+            :color="displayOrDash(item.color)"
             :image="item.image ?? ''"
             :id="item.id"
             class="w-full"
@@ -142,11 +142,11 @@
   </div>
   <div class="itbms-message">
     <Alert
-    :show="alertMessage.visible"
-    :type="alertMessage.type"
-    :message="alertMessage.message"
-    @update:show="alertMessage.visible = $event"
-    :duration="alertMessage.duration"
+      :show="alertMessage.visible"
+      :type="alertMessage.type"
+      :message="alertMessage.message"
+      @update:show="alertMessage.visible = $event"
+      :duration="alertMessage.duration"
     />
   </div>
 </template>
@@ -250,7 +250,6 @@ const loadSaleItems = async () => {
   }
 };
 
-
 const handleVisibilityChange = () => {
   if (document.visibilityState === 'visible') {
     loadSaleItems();
@@ -266,7 +265,7 @@ onMounted(() => {
   if (saleStore.created) {
     alertMessage.value = {
       type: 'success',
-      message: 'The sale item has been successfully added!',
+      message: 'The sale item has been successfully added.',
       visible: true,
       duration: 3000,
     };

@@ -93,6 +93,10 @@ public class SaleItemService {
             editedSaleItem.setScreenSizeInch(saleItemDTO.getScreenSizeInch());
         }
 
+        if(saleItemDTO.getColor() != null) {
+            editedSaleItem.setColor(saleItemDTO.getColor());
+        }
+
         SaleItem updatedSaleItem = saleItemRepository.saveAndFlush(editedSaleItem);
 
         em.refresh(updatedSaleItem);

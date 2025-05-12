@@ -152,7 +152,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch, onUnmounted } from 'vue';
+import { onMounted, ref, onUnmounted } from 'vue';
 import SaleItemCard from '@/components/gallery/SaleItemCard.vue';
 import BrandFilter from '@/components/Brand Filter/BrandFilter.vue';
 import { Icon } from '@iconify/vue';
@@ -281,7 +281,6 @@ onMounted(() => {
     };
     saleStore.deleted = false;
   }
-  setupRefreshTimer();
 
   document.addEventListener('visibilitychange', handleVisibilityChange);
 });

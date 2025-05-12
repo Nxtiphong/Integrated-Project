@@ -25,7 +25,7 @@ const product = ref({
   ramGb: null,
   screenSizeInch: null,
   storageGb: null,
-  color: null,
+  color: '',
   quantity: null,
 });
 
@@ -189,6 +189,7 @@ onMounted(async () => {
   if (params) {
     const item = await saleStore.fetchSaleItemById(params);
     if (!item) {
+      saleStore.noExist = true;
       router.push('/non-existing-path');
       return;
     }
@@ -290,6 +291,7 @@ onMounted(async () => {
                       placeholder="Enter model name"
                       class="itbms-model px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
                       @keydown.enter="focusNext('price')"
+                      maxlength="60"
                     />
                   </div>
 
@@ -355,7 +357,6 @@ onMounted(async () => {
                       @keydown.enter="focusNext('color')"
                     />
                   </div>
-
                   <div class="flex flex-col gap-2">
                     <label for="color" class="text-gray-700 font-medium">Color</label>
                     <input

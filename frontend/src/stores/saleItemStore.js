@@ -8,6 +8,7 @@ export const useSaleItemStore = defineStore('saleItem', {
     created: false,
     deleted: false,
     updated: false,
+    noExist: false,
   }),
 
   actions: {

@@ -127,7 +127,7 @@
             :storage="displayOrDash(item.storageGb)"
             :quantity="displayOrDash(item.quantity)"
             :price="item.price ?? '-'"
-            :color="item.color ?? '-'"
+            :color="displayOrDash(item.color)"
             :image="item.image ?? ''"
             :id="item.id"
             class="w-full"
@@ -142,11 +142,11 @@
   </div>
   <div class="itbms-message">
     <Alert
-    :show="alertMessage.visible"
-    :type="alertMessage.type"
-    :message="alertMessage.message"
-    @update:show="alertMessage.visible = $event"
-    :duration="alertMessage.duration"
+      :show="alertMessage.visible"
+      :type="alertMessage.type"
+      :message="alertMessage.message"
+      @update:show="alertMessage.visible = $event"
+      :duration="alertMessage.duration"
     />
   </div>
 </template>
@@ -251,6 +251,7 @@ const loadSaleItems = async () => {
 };
 
 
+
 const handleVisibilityChange = () => {
   if (document.visibilityState === 'visible') {
     loadSaleItems();
@@ -281,7 +282,7 @@ onMounted(() => {
     };
     saleStore.deleted = false;
   }
-  setupRefreshTimer();
+
 
   document.addEventListener('visibilitychange', handleVisibilityChange);
 });

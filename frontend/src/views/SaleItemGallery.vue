@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-auto px-4 sm:px-6 lg:px-8">
+  <div class="p-5">
     <div class="breadcrumbs text-sm my-2 overflow-x-auto whitespace-nowrap">
       <ul class="flex">
         <li class="flex items-center">
@@ -17,7 +17,6 @@
     </div>
 
     <div class="flex flex-col lg:flex-row gap-5">
-      <!-- Mobile Filter Toggle Button -->
       <div class="lg:hidden w-full mb-4">
         <button
           @click="toggleMobileFilters"
@@ -31,7 +30,6 @@
         </button>
       </div>
 
-      <!-- Filters Sidebar - Responsive -->
       <div
         :class="[
           'w-full lg:w-1/7  transition-all duration-300 overflow-hidden',
@@ -39,7 +37,6 @@
         ]"
       >
         <div class="bg-white rounded-lg shadow-sm">
-          <!-- Brand Filter -->
           <BrandFilter :items="saleItems" @filter-change="handleBrandFilterChange" />
           <div class="mt-4 rounded-lg shadow-sm">
             <div class="p-2 border-b border-neutral-200">
@@ -47,7 +44,7 @@
                 class="flex justify-between items-center cursor-pointer"
                 @click="toggleFilter('battery')"
               >
-                <h3 class="font-medium">Battery capacity</h3>
+                <h3 class="font-medium text-sm">Battery capacity</h3>
                 <Icon
                   :icon="showBatteryFilter ? 'lucide:chevron-down' : 'lucide:chevron-right'"
                   class="text-gray-400"
@@ -60,7 +57,7 @@
                 class="flex justify-between items-center cursor-pointer"
                 @click="toggleFilter('screen')"
               >
-                <h3 class="font-medium">Screen type</h3>
+                <h3 class="font-medium text-sm">Screen type</h3>
                 <Icon
                   :icon="showScreenFilter ? 'lucide:chevron-down' : 'lucide:chevron-right'"
                   class="text-gray-400"
@@ -73,7 +70,7 @@
                 class="flex justify-between items-center cursor-pointer"
                 @click="toggleFilter('diagonal')"
               >
-                <h3 class="font-medium">Screen diagonal</h3>
+                <h3 class="font-medium text-sm">Screen diagonal</h3>
                 <Icon
                   :icon="showDiagonalFilter ? 'lucide:chevron-down' : 'lucide:chevron-right'"
                   class="text-gray-400"
@@ -86,7 +83,7 @@
                 class="flex justify-between items-center cursor-pointer"
                 @click="toggleFilter('protection')"
               >
-                <h3 class="font-medium">Protection class</h3>
+                <h3 class="font-medium text-sm">Protection class</h3>
                 <Icon
                   :icon="showProtectionFilter ? 'lucide:chevron-down' : 'lucide:chevron-right'"
                   class="text-gray-400"
@@ -99,7 +96,7 @@
                 class="flex justify-between items-center cursor-pointer"
                 @click="toggleFilter('memory')"
               >
-                <h3 class="font-medium">Built-in memory</h3>
+                <h3 class="font-medium text-sm">Built-in memory</h3>
                 <Icon
                   :icon="showMemoryFilter ? 'lucide:chevron-down' : 'lucide:chevron-right'"
                   class="text-gray-400"
@@ -111,7 +108,6 @@
         </div>
       </div>
 
-      <!-- Products Grid -->
       <div class="w-full lg:w-2/2">
         <div v-if="isLoading" class="flex justify-center items-center min-h-[300px]">
           <p class="text-center text-lg">Loading...</p>
@@ -144,16 +140,15 @@
       </div>
     </div>
   </div>
-  <!-- <div class="itbms-message">
+  <div class="itbms-message">
     <Alert
     :show="alertMessage.visible"
     :type="alertMessage.type"
     :message="alertMessage.message"
     @update:show="alertMessage.visible = $event"
     :duration="alertMessage.duration"
-  />
-
-  </div> -->
+    />
+  </div>
 </template>
 
 <script setup>
@@ -255,13 +250,6 @@ const loadSaleItems = async () => {
   }
 };
 
-// Setup auto-refresh for real-time updates
-const setupRefreshTimer = () => {
-  // Refresh data every 30 seconds to catch new items
-  // refreshInterval.value = setInterval(() => {
-  //   loadSaleItems();
-  // }, 30000); // 30 seconds
-};
 
 const handleVisibilityChange = () => {
   if (document.visibilityState === 'visible') {

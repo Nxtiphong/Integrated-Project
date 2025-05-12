@@ -19,16 +19,16 @@
         <p class="itbms-brand font-semibold text-sm">
           {{ brand }}
         </p>
-        <p class="itbms-ramGb">Ram: {{ ram }}</p>
-        <p class="itbms-storageGb">
-          Storage:
+        <p class="itbms-ramGb text-sm">Ram: {{ ram }}</p>
+        <p class="itbms-storageGb text-sm">
+          Storage
           <span v-if="Number(storage)"
             >{{ storage }} <span class="itbms-storageGb-unit">GB</span></span
           >
           <span v-else>-</span>
         </p>
-        <p class="itbms-Color">Color: {{ color }}</p>
-        <p class="itbms-price text-black">
+        <p class="itbms-Color text-sm">Color: {{ color }}</p>
+        <p class="itbms-price text-black text-sm">
           Price : {{ Number(price).toLocaleString() }} <span class="itbms-price-unit">Baht</span>
         </p>
       </div>

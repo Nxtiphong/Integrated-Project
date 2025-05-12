@@ -44,22 +44,13 @@ public class SaleItemService {
 
         saleItemDTO.setModel(saleItemDTO.getModel().trim());
         saleItemDTO.setDescription(saleItemDTO.getDescription().trim());
-        saleItemDTO.setColor(saleItemDTO.getColor() != null ? saleItemDTO.getColor().trim() : null);
+        saleItemDTO.setColor(saleItemDTO.getColor().trim().isEmpty() ? null : saleItemDTO.getColor().trim());
 
         SaleItem saleItem = modelMapper.map(saleItemDTO, SaleItem.class);
+
         saleItem.setBrand(brand);
-
-        if (saleItemDTO.getQuantity() == null || saleItemDTO.getQuantity() < 0) {
-            saleItem.setQuantity(1);
-        }else{
-            saleItem.setQuantity(saleItemDTO.getQuantity());
-        }
-
-        if (saleItemDTO.getModel().length() > 60) {
-            saleItem.setModel(saleItemDTO.getModel().substring(0, 60));
-        } else {
-            saleItem.setModel(saleItemDTO.getModel());
-        }
+        saleItem.setQuantity(saleItemDTO.getQuantity() == null || saleItem.getQuantity() < 0 ? 1 : saleItemDTO.getQuantity());
+        saleItem.setModel(saleItemDTO.getModel());
 
         SaleItem savedSaleItem = saleItemRepository.save(saleItem);
         em.refresh(savedSaleItem);
@@ -77,48 +68,26 @@ public class SaleItemService {
         Integer brandId = saleItemDTO.getBrand().getId();
         Brand brand = brandRepository.findById(brandId).orElseThrow(() -> new NotfoundException("Brand not found with id: " + brandId));
 
-        if (saleItemDTO.getModel() != null) {
-            String trimmedModel = saleItemDTO.getModel().trim();
-            editedSaleItem.setModel(trimmedModel.length() > 60 ? trimmedModel.substring(0, 60) : trimmedModel);
-        }
-
+        editedSaleItem.setModel(saleItemDTO.getModel().trim());
         editedSaleItem.setBrand(brand);
-
-        if (saleItemDTO.getDescription() != null) {
-            editedSaleItem.setDescription(saleItemDTO.getDescription().trim());
-        }
-
+        editedSaleItem.setDescription(saleItemDTO.getDescription().trim());
         editedSaleItem.setPrice(saleItemDTO.getPrice());
-
-        if (saleItemDTO.getQuantity() != null) {
-            editedSaleItem.setQuantity(saleItemDTO.getQuantity());
-        }
-
-        if (saleItemDTO.getRamGb() != null) {
-            editedSaleItem.setRamGb(saleItemDTO.getRamGb());
-        }
-
-        if (saleItemDTO.getScreenSizeInch() != null) {
-            editedSaleItem.setScreenSizeInch(saleItemDTO.getScreenSizeInch());
-        }
-
-        if (saleItemDTO.getStorageGb() != null) {
-            editedSaleItem.setStorageGb(saleItemDTO.getStorageGb());
-        }
-
-        if (saleItemDTO.getColor() != null && !saleItemDTO.getColor().trim().isEmpty()) {
-            editedSaleItem.setColor(saleItemDTO.getColor().trim());
-        }
+        editedSaleItem.setQuantity(saleItemDTO.getQuantity() == null || saleItemDTO.getQuantity() < 0 ? 1 : saleItemDTO.getQuantity());
+        editedSaleItem.setRamGb(saleItemDTO.getRamGb());
+        editedSaleItem.setScreenSizeInch(saleItemDTO.getScreenSizeInch());
+        editedSaleItem.setStorageGb(saleItemDTO.getStorageGb());
+        editedSaleItem.setColor(saleItemDTO.getColor().trim().isEmpty() ? null : saleItemDTO.getColor().trim());
 
         SaleItem updatedSaleItem = saleItemRepository.saveAndFlush(editedSaleItem);
-
         em.refresh(updatedSaleItem);
 
         return saleItemRepository.findById(updatedSaleItem.getId()).orElseThrow(() -> new NotfoundException("Sale-Item not found with id: " + updatedSaleItem.getId()));
     }
 
     public void deleteSaleItemById(Integer id) {
-        SaleItem saleItem = getSaleItemById(id);
-        saleItemRepository.delete(saleItem);
+        if (!saleItemRepository.existsById(id)) {
+            throw new NotfoundException("Sale-Item not found with id: " + id);
+        }
+        saleItemRepository.deleteById(id);
     }
 }

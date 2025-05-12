@@ -75,7 +75,7 @@ public class SaleItemController {
 
     @Operation(summary = "Delete sale item by id", description = "Return status 204 if delete successfully")
     @DeleteMapping("/sale-items/{id}")
-    public ResponseEntity deleteSaleItem(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteSaleItem(@PathVariable Integer id) {
         service.deleteSaleItemById(id);
         return ResponseEntity.status(204).build();
     }

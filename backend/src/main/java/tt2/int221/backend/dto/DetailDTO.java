@@ -20,4 +20,8 @@ public class DetailDTO {
     private String color;
     private Instant createdOn;
     private Instant updatedOn;
+
+    public BigDecimal getScreenSizeInch() {
+        return screenSizeInch == null ? null : screenSizeInch.stripTrailingZeros();
+    }
 }

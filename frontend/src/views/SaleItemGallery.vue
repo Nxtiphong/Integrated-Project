@@ -1,4 +1,5 @@
 <template>
+<div>
   <div class="p-5">
     <div class="breadcrumbs text-sm my-2 overflow-x-auto whitespace-nowrap">
       <ul class="flex">
@@ -140,6 +141,7 @@
       </div>
     </div>
   </div>
+
   <div class="itbms-message">
     <Alert
       :show="alertMessage.visible"
@@ -149,6 +151,7 @@
       :duration="alertMessage.duration"
     />
   </div>
+</div>
 </template>
 
 <script setup>

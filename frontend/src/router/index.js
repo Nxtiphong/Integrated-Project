@@ -5,6 +5,7 @@ import SaleItemDetails from '@/views/SaleItemDetails.vue'
 import Favorite from '@/views/Favorite.vue'
 import AddSaleItem from '@/views/AddSaleItem.vue'
 import NotFoundPage from '@/components/share/NotFoundPage.vue'
+import SaleItemList from '@/views/SaleItemList.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -38,6 +39,11 @@ const router = createRouter({
       path: '/sale-items/:id/edit',
       name: "editSaleItem",
       component: AddSaleItem
+    },
+    {
+      path: '/sale-items/list',
+      name: "saleItemList",
+      component: SaleItemList
     },
     {
       path: '/:pathMatch(.*)*', 

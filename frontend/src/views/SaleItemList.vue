@@ -1,7 +1,12 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-const products = ref([]);
+import { useRouter } from 'vue-router';
+import DeleteModal from '@/components/share/DeleteModal.vue';
 
+const router = useRouter();
+const products = ref([]);
+const showDeleteModal = ref(false);
+const isConfirmDelete = ref(false);
 const isLoading = ref(true);
 
 const fetchProducts = async () => {
@@ -17,67 +22,301 @@ const fetchProducts = async () => {
 };
 
 const handleEdit = (id) => {
-  console.log(`Edit product with ID: ${id}`);
+  router.push(`/sale-items/${id}/edit`);
 };
 
-const handleDelete = (id) => {
-  console.log(`Delete product with ID: ${id}`);
+const showUiDelete = (id) => {
+  showDeleteModal.value = true;
+  if (isConfirmDelete.value) {
+    handleDelete(id);
+    isConfirmDelete.value = false;
+  }
+};
+
+const cancelModal = () => {
+  showDeleteModal.value = false;
 };
 
 const addSaleItem = () => {
-  console.log('Add sale item clicked');
+    router.push(`/sale-items/add`);
 };
 
 const manageBrand = () => {
   console.log('Manage brand clicked');
 };
 
-const getColorClass = (color) => {
-  const colorMap = {
-    'Space Black': 'bg-gray-900',
-    Midnight: 'bg-gray-800',
-    'Sierra Blue': 'bg-blue-500',
-    Pink: 'bg-pink-400',
-    'Pacific Blue': 'bg-blue-600',
-    Purple: 'bg-purple-500',
-    Starlight: 'bg-yellow-100',
-    Blue: 'bg-blue-400',
-  };
+const handleDelete = async (id) => {
+  try {
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items/${id}`, {
+      method: 'DELETE',
+    });
 
-  return colorMap[color] || `bg-${color.toLowerCase()}-500` || 'bg-gray-500';
+    if (res.status === 404) {
+      alertMessage.value = {
+        type: 'error',
+        message: 'The requested sale item does not exist.',
+        visible: true,
+        duration: 3000,
+      };
+      setTimeout(() => {
+        router.back();
+      }, 3000);
+    } else if (!res.ok) {
+      throw new Error('Failed to delete item');
+    } else {
+      saleStore.deleted = true;
+      router.push('/sale-items/list');
+    }
+  } catch (error) {
+    alertMessage.value = {
+      type: 'error',
+      message: 'Something went wrong while deleting the sale item.',
+      visible: true,
+      duration: 3000,
+    };
+    console.error('Delete Error:', error);
+  } finally {
+    showDeleteModal.value = false;
+  }
 };
 
-const mockdata = () =>{
-    const products = ref([
-  { id: 1, brand: 'Apple', model: 'iPhone 14 Pro Max', ram: 6, storage: 512, color: 'Space Black', screenSize: 6.7, price: 42900, quantity: 5 },
-  { id: 2, brand: 'Apple', model: 'iPhone 14', ram: 6, storage: 256, color: 'Midnight', screenSize: 6.1, price: 29700, quantity: 8 },
-  { id: 3, brand: 'Apple', model: 'iPhone 13 Pro', ram: 6, storage: 256, color: 'Sierra Blue', screenSize: 6.1, price: 33000, quantity: 3 },
-  { id: 4, brand: 'Apple', model: 'iPhone 13', ram: 4, storage: 128, color: 'Pink', screenSize: 6.1, price: 23100, quantity: 10 },
-  { id: 5, brand: 'Apple', model: 'iPhone 12 Pro Max', ram: 6, storage: 256, color: 'Pacific Blue', screenSize: 6.7, price: 29700, quantity: 4 },
-  { id: 6, brand: 'Apple', model: 'iPhone 12', ram: 4, storage: 128, color: 'Purple', screenSize: 6.1, price: 19800, quantity: 6 },
-  { id: 7, brand: 'Apple', model: 'iPhone SE 2022', ram: 4, storage: 64, color: 'Starlight', screenSize: 4.7, price: 14190, quantity: 15 },
-  { id: 8, brand: 'Apple', model: 'iPhone 14 Plus', ram: 6, storage: 256, color: 'Blue', screenSize: 6.7, price: 29700, quantity: 7 },
-  { id: 9, brand: 'Apple', model: 'iPhone 14 Pro', ram: 6, storage: 128, color: 'Midnight', screenSize: 6.1, price: 42900, quantity: 2 },
-  { id: 10, brand: 'Apple', model: 'iPhone 13 Mini', ram: 4, storage: 128, color: 'Pink', screenSize: 5.4, price: 19800, quantity: 9 },
-    { id: 11, brand: 'Apple', model: 'iPhone 12 Mini', ram: 4, storage: 64, color: 'Purple', screenSize: 5.4, price: 14190, quantity: 12 },
-    { id: 12, brand: 'Apple', model: 'iPhone SE (3rd Gen)', ram: 4, storage: 128, color: 'Starlight', screenSize: 4.7, price: 19800, quantity: 11 },
-    { id: 13, brand: 'Apple', model: 'iPhone 11', ram: 4, storage: 128, color: 'Black', screenSize: 6.1, price: 19800, quantity: 5 },
-    { id: 14, brand: 'Apple', model: 'iPhone XR', ram: 3, storage: 64, color: 'White', screenSize: 6.1, price: 14190, quantity: 8 },
-    { id: 15, brand: 'Apple', model: 'iPhone XS Max', ram: 4, storage: 256, color: 'Gold', screenSize: 6.5, price: 29700, quantity: 3 },
-    { id: 16, brand: 'Apple', model: 'iPhone 8 Plus', ram: 3, storage: 64, color: 'Red', screenSize: 5.5, price: 14190, quantity: 6 },
-    { id: 17, brand: 'Apple', model: 'iPhone 7', ram: 2, storage: 32, color: 'Rose Gold', screenSize: 4.7, price: 9900, quantity: 10 },
-    { id: 18, brand: 'Apple', model: 'iPhone SE (2nd Gen)', ram: 3, storage: 128, color: 'Black', screenSize: 4.7, price: 14190, quantity: 4 },
-    { id: 19, brand: 'Apple', model: 'iPhone X', ram: 3, storage: 256, color: 'Silver', screenSize: 5.8, price: 29700, quantity: 2 },
-    { id: 20, brand: 'Apple', model: 'iPhone XS', ram: 4, storage: 64, color: 'Space Gray', screenSize: 5.8, price: 19800, quantity: 7 }
-]);
-    isLoading.value = false;
-    return products.value;
-}
+const alertMessage = ref({
+  type: '',
+  message: '',
+  visible: false,
+  duration: 3000,
+});
+
+const mockdata = () => {
+  const products = ref([
+    {
+      id: 1,
+      brand: 'Apple',
+      model: 'iPhone 14 Pro Max',
+      ram: 6,
+      storage: 512,
+      color: 'Space Black',
+      screenSize: 6.7,
+      price: 42900,
+      quantity: 5,
+    },
+    {
+      id: 2,
+      brand: 'Apple',
+      model: 'iPhone 14',
+      ram: 6,
+      storage: 256,
+      color: 'Midnight',
+      screenSize: 6.1,
+      price: 29700,
+      quantity: 8,
+    },
+    {
+      id: 3,
+      brand: 'Apple',
+      model: 'iPhone 13 Pro',
+      ram: 6,
+      storage: 256,
+      color: 'Sierra Blue',
+      screenSize: 6.1,
+      price: 33000,
+      quantity: 3,
+    },
+    {
+      id: 4,
+      brand: 'Apple',
+      model: 'iPhone 13',
+      ram: 4,
+      storage: 128,
+      color: 'Pink',
+      screenSize: 6.1,
+      price: 23100,
+      quantity: 10,
+    },
+    {
+      id: 5,
+      brand: 'Apple',
+      model: 'iPhone 12 Pro Max',
+      ram: 6,
+      storage: 256,
+      color: 'Pacific Blue',
+      screenSize: 6.7,
+      price: 29700,
+      quantity: 4,
+    },
+    {
+      id: 6,
+      brand: 'Apple',
+      model: 'iPhone 12',
+      ram: 4,
+      storage: 128,
+      color: 'Purple',
+      screenSize: 6.1,
+      price: 19800,
+      quantity: 6,
+    },
+    {
+      id: 7,
+      brand: 'Apple',
+      model: 'iPhone SE 2022',
+      ram: 4,
+      storage: 64,
+      color: 'Starlight',
+      screenSize: 4.7,
+      price: 14190,
+      quantity: 15,
+    },
+    {
+      id: 8,
+      brand: 'Apple',
+      model: 'iPhone 14 Plus',
+      ram: 6,
+      storage: 256,
+      color: 'Blue',
+      screenSize: 6.7,
+      price: 29700,
+      quantity: 7,
+    },
+    {
+      id: 9,
+      brand: 'Apple',
+      model: 'iPhone 14 Pro',
+      ram: 6,
+      storage: 128,
+      color: 'Midnight',
+      screenSize: 6.1,
+      price: 42900,
+      quantity: 2,
+    },
+    {
+      id: 10,
+      brand: 'Apple',
+      model: 'iPhone 13 Mini',
+      ram: 4,
+      storage: 128,
+      color: 'Pink',
+      screenSize: 5.4,
+      price: 19800,
+      quantity: 9,
+    },
+    {
+      id: 11,
+      brand: 'Apple',
+      model: 'iPhone 12 Mini',
+      ram: 4,
+      storage: 64,
+      color: 'Purple',
+      screenSize: 5.4,
+      price: 14190,
+      quantity: 12,
+    },
+    {
+      id: 12,
+      brand: 'Apple',
+      model: 'iPhone SE (3rd Gen)',
+      ram: 4,
+      storage: 128,
+      color: 'Starlight',
+      screenSize: 4.7,
+      price: 19800,
+      quantity: 11,
+    },
+    {
+      id: 13,
+      brand: 'Apple',
+      model: 'iPhone 11',
+      ram: 4,
+      storage: 128,
+      color: 'Black',
+      screenSize: 6.1,
+      price: 19800,
+      quantity: 5,
+    },
+    {
+      id: 14,
+      brand: 'Apple',
+      model: 'iPhone XR',
+      ram: 3,
+      storage: 64,
+      color: 'White',
+      screenSize: 6.1,
+      price: 14190,
+      quantity: 8,
+    },
+    {
+      id: 15,
+      brand: 'Apple',
+      model: 'iPhone XS Max',
+      ram: 4,
+      storage: 256,
+      color: 'Gold',
+      screenSize: 6.5,
+      price: 29700,
+      quantity: 3,
+    },
+    {
+      id: 16,
+      brand: 'Apple',
+      model: 'iPhone 8 Plus',
+      ram: 3,
+      storage: 64,
+      color: 'Red',
+      screenSize: 5.5,
+      price: 14190,
+      quantity: 6,
+    },
+    {
+      id: 17,
+      brand: 'Apple',
+      model: 'iPhone 7',
+      ram: 2,
+      storage: 32,
+      color: 'Rose Gold',
+      screenSize: 4.7,
+      price: 9900,
+      quantity: 10,
+    },
+    {
+      id: 18,
+      brand: 'Apple',
+      model: 'iPhone SE (2nd Gen)',
+      ram: 3,
+      storage: 128,
+      color: 'Black',
+      screenSize: 4.7,
+      price: 14190,
+      quantity: 4,
+    },
+    {
+      id: 19,
+      brand: 'Apple',
+      model: 'iPhone X',
+      ram: 3,
+      storage: 256,
+      color: 'Silver',
+      screenSize: 5.8,
+      price: 29700,
+      quantity: 2,
+    },
+    {
+      id: 20,
+      brand: 'Apple',
+      model: 'iPhone XS',
+      ram: 4,
+      storage: 64,
+      color: 'Space Gray',
+      screenSize: 5.8,
+      price: 19800,
+      quantity: 7,
+    },
+  ]);
+  isLoading.value = false;
+  return products.value;
+};
 
 onMounted(() => {
-//   fetchProducts();
-    products.value = mockdata();
-
+  //   fetchProducts();
+  products.value = mockdata();
 });
 </script>
 
@@ -89,7 +328,7 @@ onMounted(() => {
       <div class="flex space-x-3">
         <button
           @click="addSaleItem"
-          class="itbms-sale-item-add bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md flex items-center transition-colors shadow-sm"
+          class="itbms-sale-item-add cursor-pointer bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md flex items-center transition-colors shadow-sm"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -258,7 +497,7 @@ onMounted(() => {
               <div class="flex space-x-2">
                 <button
                   @click="handleEdit(product.id)"
-                  class="itbms-edit-button text-blue-600 hover:text-blue-900 transition-colors"
+                  class="itbms-edit-button cursor-pointer text-blue-600 hover:text-blue-900 transition-colors"
                   title="Edit"
                 >
                   <svg
@@ -317,8 +556,8 @@ onMounted(() => {
                   </svg>
                 </button>
                 <button
-                  @click="handleDelete(product.id)"
-                  class="itbms-delete-button text-red-600 hover:text-red-900 transition-colors"
+                  @click="showUiDelete(product.id)"
+                  class="itbms-delete-button cursor-pointer text-red-600 hover:text-red-900 transition-colors"
                   title="Delete"
                 >
                   <svg
@@ -367,6 +606,15 @@ onMounted(() => {
                     </g>
                   </svg>
                 </button>
+              </div>
+              <div class="itbms-message">
+                <DeleteModal
+                  v-model="showDeleteModal"
+                  :title="`Delete ${product.model}`"
+                  :message="`Do you want to delete this sale item?`"
+                  @confirm="isConfirmDelete = true"
+                  @cancel="cancelModal"
+                />
               </div>
             </td>
           </tr>

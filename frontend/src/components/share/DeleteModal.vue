@@ -7,7 +7,6 @@
               class="relative w-full max-w-md transform overflow-hidden rounded-lg bg-white p-6 text-left shadow-xl transition-all"
               @click.stop
             >
-              <!-- Close button -->
               <button 
                 type="button" 
                 class="absolute right-4 top-4 text-gray-400 hover:text-gray-500 focus:outline-none" 
@@ -19,7 +18,6 @@
                 </svg>
               </button>
               
-              <!-- Warning icon -->
               <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
@@ -107,7 +105,6 @@
     emit('update:modelValue', false);
   };
   
-  // Handle ESC key press
   const handleKeyDown = (e) => {
     if (e.key === 'Escape' && props.modelValue) {
       cancel();

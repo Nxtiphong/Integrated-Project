@@ -13,9 +13,6 @@
         <RouterLink to="/sale-items/add">
           <button className="itbms-sale-item-add btn btn-outline btn-info">Add Sale Item</button>
         </RouterLink>
-        <RouterLink to="/brand">
-          <button className="itbms-manage-brand btn btn-outline btn-warning">Manage Brand</button>
-        </RouterLink>
       </div>
     </div>
 

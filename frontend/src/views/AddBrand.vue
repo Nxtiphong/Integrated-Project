@@ -107,10 +107,15 @@ onMounted(() => {
           <RouterLink to="/sale-items">Gallery</RouterLink>
         </li>
         <li>
-          <RouterLink to="/brand">Brand List</RouterLink>
+          <RouterLink to="/sale-items/list">Sale Item List</RouterLink>
         </li>
         <li>
-          <RouterLink to="/brand/add">{{ params ? brandForm.name : 'New Brand' }}</RouterLink>
+          <RouterLink to="/sale-items/brand">Brand List</RouterLink>
+        </li>
+        <li>
+          <RouterLink :to="params ? `/sale-items/brand/${params}/edit` : '/sale-items/brand/add'">{{
+            params ? brandForm.name : 'New Brand'
+          }}</RouterLink>
         </li>
       </ul>
     </div>

@@ -23,7 +23,10 @@ const cancelModal = () => {
 
 <template>
   <div>
-    <div class="overflow-x-auto mx-8 rounded-box border border-base-content/10 bg-base-100">
+    <div
+      v-if="brandList"
+      class="overflow-x-auto mx-8 rounded-box border border-base-content/10 bg-base-100"
+    >
       <table class="table">
         <thead>
           <tr>
@@ -37,7 +40,7 @@ const cancelModal = () => {
           </tr>
         </thead>
         <tbody>
-          <tr class="hover:bg-gray-200/50">
+          <tr v-for="brand in brandList" class="hover:bg-gray-200/50">
             <td>Cy Ganderton</td>
             <td>example.com</td>
             <td>True</td>
@@ -46,7 +49,7 @@ const cancelModal = () => {
             <td>DATE</td>
             <td class="flex space-x-4 items-center justify-center">
               <button class="btn btn-sm btn-soft btn-info">
-                <RouterLink to="/brand/1/edit">Edit</RouterLink>
+                <RouterLink to="/sale-items/brand/1/edit">Edit</RouterLink>
               </button>
               <button @click="showDeleteModal" class="btn btn-sm btn-soft btn-error">Delete</button>
             </td>
@@ -64,7 +67,7 @@ const cancelModal = () => {
         </tbody>
       </table>
     </div>
-    <div class="flex items-center justify-center">
+    <div v-else class="flex items-center justify-center">
       <p class="text-center text-error">No brand</p>
     </div>
   </div>

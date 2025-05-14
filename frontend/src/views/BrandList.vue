@@ -16,12 +16,15 @@ import { Icon } from '@iconify/vue';
           <RouterLink to="/sale-items">Gallery</RouterLink>
         </li>
         <li>
-          <RouterLink to="/brand">Brand List</RouterLink>
+          <RouterLink to="/sale-items/list">Sale Item List</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/sale-items/brand">Brand List</RouterLink>
         </li>
       </ul>
 
       <div class="flex items-center justify-end">
-        <RouterLink to="/brand/add">
+        <RouterLink to="/sale-items/brand/add">
           <button class="btn btn-primary">
             Add Brand
             <Icon icon="gg:add" class="text-xl" />

@@ -42,7 +42,7 @@ const addSaleItem = () => {
 };
 
 const manageBrand = () => {
-  console.log('Manage brand clicked');
+  router.push("/sale-items/brand")
 };
 
 const handleDelete = async (id) => {
@@ -351,7 +351,7 @@ onMounted(() => {
 
         <button
           @click="manageBrand"
-          class="itbms-manage-brand border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-md flex items-center transition-colors shadow-sm"
+          class="itbms-manage-brand border cursor-pointer border-gray-300 bg-white hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-md flex items-center transition-colors shadow-sm"
         >
           <svg
             class="mr-1.5"

@@ -28,7 +28,7 @@
           <span v-else>-</span>
         </p>
         <p class="itbms-Color text-sm">Color: {{ color }}</p>
-        <p class="itbms-price text-black text-sm">
+        <p class="itbms-price text-black text-sm ">
           Price : {{ Number(price).toLocaleString() }} <span class="itbms-price-unit">Baht</span>
         </p>
       </div>

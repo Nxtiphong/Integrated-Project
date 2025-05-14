@@ -4,23 +4,21 @@
 
     <!-- แสดงรายการข้อมูล -->
     <ul class="mb-6 space-y-1">
-      <li v-for="item in paginatedItems" :key="item" class="border-b pb-1">
-        {{ item }}
+      <li v-for="item in items" :key="item.id" class="border-b pb-1">
+        {{ item.name }}
       </li>
     </ul>
 
     <!-- Pagination Controls -->
     <div class="flex justify-center space-x-2">
-      <!-- Previous Button -->
       <button
-        @click="previousPage"
-        :disabled="currentPage === 1"
+        @click="changePage(currentPage - 1)"
+        :disabled="isFirst"
         class="px-3 py-1 rounded-md text-sm bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
       >
         Previous
       </button>
 
-      <!-- Page Number Buttons -->
       <button
         v-for="page in displayedPageNumbers"
         :key="'page-' + page"
@@ -33,10 +31,9 @@
         {{ page }}
       </button>
 
-      <!-- Next Button -->
       <button
-        @click="nextPage"
-        :disabled="currentPage === totalPages"
+        @click="changePage(currentPage + 1)"
+        :disabled="isLast"
         class="px-3 py-1 rounded-md text-sm bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
       >
         Next
@@ -46,48 +43,42 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
-// จำนวนรายการต่อหน้า
-const itemsPerPage = 10
+// ตัวแปรเก็บข้อมูลจาก backend
+const items = ref([])
 
-// รายการทั้งหมด (สมมุติข้อมูลไว้ก่อน)
-const items = ref(Array.from({ length: 100 }, (_, i) => `Item ${i + 1}`))
-
-// หน้าปัจจุบัน
 const currentPage = ref(1)
+const pageSize = ref(10)
+const totalPages = ref(1)
+const isFirst = ref(true)
+const isLast = ref(false)
 
-// คำนวณจำนวนหน้าทั้งหมด
-const totalPages = computed(() => Math.ceil(items.value.length / itemsPerPage))
+// โหลดข้อมูลจาก backend
+async function fetchItems(page = 1) {
+  try {
+    const response = await fetch(`/sale-items?page=${page}&size=${pageSize.value}`)
+    const data = await response.json()
 
-// คำนวณรายการที่แสดงในหน้าปัจจุบัน
-const paginatedItems = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage
-  const end = start + itemsPerPage
-  return items.value.slice(start, end)
-})
+    items.value = data.content
+    currentPage.value = data.pageNumber
+    pageSize.value = data.pageSize
+    totalPages.value = data.totalPages
+    isFirst.value = data.isFirst
+    isLast.value = data.isLast
+  } catch (err) {
+    console.error('Error loading items:', err)
+  }
+}
 
 // เปลี่ยนหน้า
 function changePage(page) {
   if (page >= 1 && page <= totalPages.value) {
-    currentPage.value = page
+    fetchItems(page)
   }
 }
 
-// หน้า Previous / Next
-function previousPage() {
-  if (currentPage.value > 1) {
-    currentPage.value--
-  }
-}
-
-function nextPage() {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value++
-  }
-}
-
-// สร้าง array ของหมายเลขหน้าที่จะแสดง
+// แสดงหมายเลขหน้า
 const displayedPageNumbers = computed(() => {
   const pages = []
   const total = totalPages.value
@@ -106,6 +97,11 @@ const displayedPageNumbers = computed(() => {
     pages.push(i)
   }
   return pages
+})
+
+// เรียกตอนโหลด component
+onMounted(() => {
+  fetchItems()
 })
 </script>
 

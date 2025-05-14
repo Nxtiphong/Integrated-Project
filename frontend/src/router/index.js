@@ -5,6 +5,8 @@ import SaleItemDetails from '@/views/SaleItemDetails.vue'
 import Favorite from '@/views/Favorite.vue'
 import AddSaleItem from '@/views/AddSaleItem.vue'
 import NotFoundPage from '@/components/share/NotFoundPage.vue'
+import BrandList from '@/views/BrandList.vue'
+import AddBrand from '@/views/AddBrand.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -40,11 +42,26 @@ const router = createRouter({
       component: AddSaleItem
     },
     {
-      path: '/:pathMatch(.*)*', 
+      path: '/brand',
+      name: "brandList",
+      component: BrandList
+    },
+    {
+      path: '/brand/add',
+      name: "addBrand",
+      component: AddBrand
+    },
+    {
+      path: '/brand/:id/edit',
+      name: "editBrand",
+      component: AddBrand
+    },
+    {
+      path: '/:pathMatch(.*)*',
       name: 'NotFound',
       component: NotFoundPage,
     }
-    ],
+  ],
   linkActiveClass: "text-black font-semibold"
 })
 

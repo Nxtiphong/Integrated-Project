@@ -99,7 +99,6 @@ const validation = (product) => {
 };
 
 const saveProduct = async () => {
-  console.log('Adding product:', product.value);
   if (!validation(product.value)) {
     return;
   }

@@ -28,7 +28,7 @@ public class SaleItemController {
 
     @Operation(summary = "Get all sale items", description = "Return all sale items")
 
-    @GetMapping("/sale-items")
+    @GetMapping("/sale-items/v2")
     public ResponseEntity<PageDTO<GalleryDTO>> getGalleryDTO(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
@@ -46,6 +46,14 @@ public class SaleItemController {
                 saleItems.isFirst(),
                 saleItems.isLast()
         );
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/sale-items")
+    public ResponseEntity<List<GalleryDTO>> getGalleryDTOV2(){
+        List<GalleryDTO> response = service.getAllSaleItemsOrderByCreatedOnAscV2().stream()
+                .map(saleItem -> modelMapper.map(saleItem, GalleryDTO.class))
+                .toList();
         return ResponseEntity.ok(response);
     }
 
@@ -94,4 +102,5 @@ public class SaleItemController {
         service.deleteSaleItemById(id);
         return ResponseEntity.status(204).build();
     }
+
 }

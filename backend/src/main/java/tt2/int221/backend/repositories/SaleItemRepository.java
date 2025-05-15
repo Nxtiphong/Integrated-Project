@@ -11,4 +11,5 @@ import java.util.List;
 @Repository
 public interface SaleItemRepository extends JpaRepository<SaleItem,Integer> {
     Page<SaleItem> findAllByOrderByCreatedOnAscIdAsc(Pageable pageable);
+    List<SaleItem> findAllByOrderByCreatedOnAscIdAsc();
 }

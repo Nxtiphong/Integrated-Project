@@ -39,6 +39,11 @@ public class SaleItemService {
         return saleItemRepository.findAllByOrderByCreatedOnAscIdAsc(pageable);
     }
 
+
+    public  List<SaleItem> getAllSaleItemsOrderByCreatedOnAscV2() {
+        return saleItemRepository.findAllByOrderByCreatedOnAscIdAsc();
+    }
+
     @Transactional
     public SaleItem createSaleItem(SaleItemDTO saleItemDTO) {
         Integer brandId = saleItemDTO.getBrand().getId();

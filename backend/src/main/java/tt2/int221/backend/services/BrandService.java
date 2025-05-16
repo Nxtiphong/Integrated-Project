@@ -25,15 +25,11 @@ public class BrandService {
 
     public Brand updateBrand(Integer id, UpdateBrandDTO updateBrandDTO) {
         Brand brand = getBrandById(id);
-        if (updateBrandDTO.getName() != null) {
             brand.setName(updateBrandDTO.getName());
-        }if (updateBrandDTO.getWebsiteUrl() != null){
-            brand.setWebsiteUrl(updateBrandDTO.getWebsiteUrl());}
-        if (updateBrandDTO.getCountryOfOrigin() != null){
-            brand.setCountryOfOrigin(updateBrandDTO.getCountryOfOrigin());}
-        if (updateBrandDTO.getIsActive() != null){
+            brand.setWebsiteUrl(updateBrandDTO.getWebsiteUrl());
+            brand.setCountryOfOrigin(updateBrandDTO.getCountryOfOrigin());
             brand.setIsActive(updateBrandDTO.getIsActive());
-        }return brandRepository.save(brand);
+        return brandRepository.save(brand);
     }
     public Brand addBrand(Brand brand) {
         return brandRepository.save(brand);

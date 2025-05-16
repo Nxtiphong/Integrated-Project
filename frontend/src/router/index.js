@@ -10,7 +10,7 @@ import BrandList from '@/views/BrandList.vue'
 import AddBrand from '@/views/AddBrand.vue'
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory('/tt2'),
   routes: [
     {
       path: '/',

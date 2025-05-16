@@ -22,7 +22,7 @@ const fetchProducts = async () => {
 };
 
 const handleEdit = (id) => {
-  router.push(`/sale-items/${id}/edit`);
+  router.push(`/tt2/sale-items/${id}/edit`);
 };
 
 const showUiDelete = (id) => {
@@ -38,7 +38,7 @@ const cancelModal = () => {
 };
 
 const addSaleItem = () => {
-    router.push(`/sale-items/add`);
+    router.push(`/tt2/sale-items/add`);
 };
 
 const manageBrand = () => {
@@ -65,7 +65,7 @@ const handleDelete = async (id) => {
       throw new Error('Failed to delete item');
     } else {
       saleStore.deleted = true;
-      router.push('/sale-items/list');
+      router.push('/tt2/sale-items/list');
     }
   } catch (error) {
     alertMessage.value = {

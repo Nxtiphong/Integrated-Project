@@ -151,6 +151,9 @@
       :duration="alertMessage.duration"
     />
   </div>
+  <!-- <div class="Pagination">
+  <Pagination />
+  </div> -->
 </div>
 </template>
 
@@ -161,7 +164,7 @@ import BrandFilter from '@/components/Brand Filter/BrandFilter.vue';
 import { Icon } from '@iconify/vue';
 import { useSaleItemStore } from '@/stores/saleItemStore';
 import Alert from '@/components/share/Alert.vue';
-
+// import Pagination from '@/components/Pagination/Pagination.vue';
 const saleStore = useSaleItemStore();
 
 const alertMessage = ref({

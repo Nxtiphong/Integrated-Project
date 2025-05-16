@@ -4,10 +4,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tt2.int221.backend.dto.DetailDTO;
 import tt2.int221.backend.dto.GalleryDTO;
+import tt2.int221.backend.dto.PageDTO;
 import tt2.int221.backend.dto.SaleItemDTO;
 import tt2.int221.backend.entities.SaleItem;
 import tt2.int221.backend.services.SaleItemService;
@@ -25,13 +27,34 @@ public class SaleItemController {
     private ModelMapper modelMapper;
 
     @Operation(summary = "Get all sale items", description = "Return all sale items")
-    @GetMapping("/sale-items")
-    public ResponseEntity<List<GalleryDTO>> getGalleryDTO() {
-        List<SaleItem> saleItems = service.getAllSaleItemsOrderByCreatedOnAsc();
-        List<GalleryDTO> galleryDTOs = saleItems.stream()
+
+    @GetMapping("/sale-items/v2")
+    public ResponseEntity<PageDTO<GalleryDTO>> getGalleryDTO(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Page<SaleItem> saleItems = service.getAllSaleItemsOrderByCreatedOnAsc(page - 1, size);
+        List<GalleryDTO> galleryDTOs = saleItems.getContent().stream()
                 .map(saleItem -> modelMapper.map(saleItem, GalleryDTO.class))
                 .toList();
-        return ResponseEntity.ok(galleryDTOs);
+        PageDTO<GalleryDTO> response = new PageDTO<>(
+                galleryDTOs,
+                saleItems.getNumber()+1,
+                saleItems.getSize(),
+                saleItems.getTotalElements(),
+                saleItems.getTotalPages(),
+                saleItems.isFirst(),
+                saleItems.isLast()
+        );
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/sale-items")
+    public ResponseEntity<List<GalleryDTO>> getGalleryDTOV2(){
+        List<GalleryDTO> response = service.getAllSaleItemsOrderByCreatedOnAscV2().stream()
+                .map(saleItem -> modelMapper.map(saleItem, GalleryDTO.class))
+                .toList();
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Get a sale item by id", description = "Return a sale item by id")
@@ -79,4 +102,5 @@ public class SaleItemController {
         service.deleteSaleItemById(id);
         return ResponseEntity.status(204).build();
     }
+
 }

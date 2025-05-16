@@ -5,6 +5,9 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import tt2.int221.backend.dto.SaleItemDTO;
 import tt2.int221.backend.entities.Brand;
@@ -31,7 +34,13 @@ public class SaleItemService {
                 .orElseThrow(() -> new NotfoundException("Sale-Item not found with id: " + id));
     }
 
-    public List<SaleItem> getAllSaleItemsOrderByCreatedOnAsc() {
+    public Page<SaleItem> getAllSaleItemsOrderByCreatedOnAsc(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return saleItemRepository.findAllByOrderByCreatedOnAscIdAsc(pageable);
+    }
+
+
+    public  List<SaleItem> getAllSaleItemsOrderByCreatedOnAscV2() {
         return saleItemRepository.findAllByOrderByCreatedOnAscIdAsc();
     }
 

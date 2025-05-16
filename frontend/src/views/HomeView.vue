@@ -71,7 +71,8 @@ onMounted(() => {
           Created to change everything for the better. For everyone
         </p>
 
-        <div
+        <div class="flex gap-3">
+          <div
           :class="[
             'pt-4 transition-all duration-700 delay-500',
             buttonVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0',
@@ -79,9 +80,9 @@ onMounted(() => {
         >
           <button
             @click="router.push('/sale-items')"
-            class="itbms-shopnow border border-white px-6 sm:px-8 py-2 sm:py-3 rounded cursor-pointer hover:bg-white hover:text-black transition-all duration-300 group"
+            class="itbms-shopnow border border-white px-6 sm:px-8 py-2 sm:py-3 rounded cursor-pointer bg-white hover:bg-gray-300 hover:text-black transition-all duration-300 group"
           >
-            <span class="flex items-center justify-center">
+            <span class="flex items-center justify-center text-black">
               Shop Now
               <svg
                 class="w-4 h-4 ml-2 transform transition-transform duration-300 group-hover:translate-x-1"
@@ -99,6 +100,36 @@ onMounted(() => {
               </svg>
             </span>
           </button>
+        </div>
+        <div
+          :class="[
+            'pt-4 transition-all duration-700 delay-500',
+            buttonVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0',
+          ]"
+        >
+          <button
+            @click="router.push('/sale-items/list')"
+            class="itbms-shopnow border border-white px-6 sm:px-8 py-2 sm:py-3 rounded cursor-pointer hover:bg-white hover:text-black transition-all duration-300 group"
+          >
+            <span class="flex items-center justify-center">
+              Sale Items list
+              <svg
+                class="w-4 h-4 ml-2 transform transition-transform duration-300 group-hover:translate-x-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                ></path>
+              </svg>
+            </span>
+          </button>
+        </div>
         </div>
       </div>
 

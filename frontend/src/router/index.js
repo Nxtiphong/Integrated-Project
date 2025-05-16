@@ -48,17 +48,17 @@ const router = createRouter({
       component: SaleItemList
     },
     {
-      path: '/sale-items/brand',
+      path: '/brands',
       name: "brandList",
       component: BrandList
     },
     {
-      path: '/sale-items/brand/add',
+      path: '/brands/add',
       name: "addBrand",
       component: AddBrand
     },
     {
-      path: '/sale-items/brand/:id/edit',
+      path: '/brands/:id',
       name: "editBrand",
       component: AddBrand
     },

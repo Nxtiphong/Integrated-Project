@@ -2,6 +2,7 @@
 import BrandTable from '@/components/brand/BrandTable.vue';
 import Alert from '@/components/share/Alert.vue';
 import { useBrandStore } from '@/stores/useBrandStore';
+import { deleteBrand } from '@/utils/brandUtils';
 import { Icon } from '@iconify/vue';
 import { onMounted, ref } from 'vue';
 
@@ -12,6 +13,50 @@ const alertMessage = ref({
   message: '',
   visible: false,
 });
+const isLoading = ref(false);
+
+const getAllBrands = async () => {
+  isLoading.value = true;
+  try {
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/brands`);
+    if (!res.ok) throw new Error('Failed to fetch brands');
+    brandStore.brandLists = await res.json();
+  } catch (error) {
+    console.error('API error:', error);
+    return { success: false, error };
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const handleDeleteSubmit = async (deleteBrandId) => {
+  if (!deleteBrandId) {
+    alertMessage.value = {
+      type: 'error',
+      message: 'Brand does not exists',
+      visible: true,
+    };
+    return;
+  }
+
+  const res = await deleteBrand(deleteBrandId);
+
+  if (res.success) {
+    alertMessage.value = {
+      type: 'success',
+      message: 'Brand has been deleted',
+      visible: true,
+    };
+
+    brandStore.deleteBrandLists(deleteBrandId);
+  } else {
+    alertMessage.value = {
+      type: 'error',
+      message: 'Failed to delete brand',
+      visible: true,
+    };
+  }
+};
 
 onMounted(() => {
   if (brandStore.isCreateSuccess) {
@@ -49,6 +94,7 @@ onMounted(() => {
     };
     brandStore.isUpdatedFailed = false;
   }
+  getAllBrands();
 });
 </script>
 
@@ -61,27 +107,28 @@ onMounted(() => {
         <li class="flex items-center">
           <RouterLink to="/">Home</RouterLink>
         </li>
-        <li>
-          <RouterLink to="/sale-items">Gallery</RouterLink>
-        </li>
-        <li>
+        <li class="itbms-item-list">
           <RouterLink to="/sale-items/list">Sale Item List</RouterLink>
         </li>
-        <li>
-          <RouterLink to="/sale-items/brand">Brand List</RouterLink>
+        <li class="itbms-manage-brand">
+          <RouterLink to="/sale-items/brands">Brand List</RouterLink>
         </li>
       </ul>
 
       <div class="flex items-center justify-end">
-        <RouterLink to="/sale-items/brand/add">
-          <button class="btn btn-primary">
+        <RouterLink to="/brands/add">
+          <button class="itbms-add-button btn btn-primary">
             Add Brand
             <Icon icon="gg:add" class="text-xl" />
           </button>
         </RouterLink>
       </div>
     </div>
-    <BrandTable :brand-list="brandStore.brandLists" />
+
+    <div v-if="isLoading" class="text-center py-4">
+      <span class="loading loading-dots loading-lg text-primary"></span>
+    </div>
+    <BrandTable v-else :brand-list="brandStore.brandLists" @submitDelete="handleDeleteSubmit" />
   </section>
 
   <Alert

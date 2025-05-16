@@ -10,7 +10,6 @@ export const fetchBrandDetail = async (id) => {
 }
 
 export const submitCreateForm = async (formData) => {
-   console.log(formData)
    try {
       const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/brands`, {
          method: 'POST',
@@ -28,7 +27,6 @@ export const submitCreateForm = async (formData) => {
 };
 
 export const submitUpdateForm = async (id, formData) => {
-   console.log(formData)
    try {
       const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/brands/${id}`, {
          method: 'PUT',
@@ -43,11 +41,11 @@ export const submitUpdateForm = async (id, formData) => {
    }
 };
 
+
 export const deleteBrand = async (id) => {
    try {
       const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/brands/${id}`, {
          method: 'DELETE',
-         headers: { 'Content-Type': 'application/json' },
       });
 
       if (!res.ok) throw new Error('Failed to create new brand')

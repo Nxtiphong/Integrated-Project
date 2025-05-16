@@ -1,13 +1,16 @@
 <script setup>
 import { ref } from 'vue';
 import DeleteModal from '../share/DeleteModal.vue';
-import { deleteBrand } from '@/utils/brandUtils';
 import Alert from '../share/Alert.vue';
+import { useRouter } from 'vue-router';
 
 const props = defineProps({
   brandList: Array,
 });
 
+const emit = defineEmits(['submitDelete']);
+const router = useRouter();
+const deleteBrandId = ref(null);
 const isDelete = ref(false);
 const alertMessage = ref({
   type: 'error',
@@ -15,26 +18,13 @@ const alertMessage = ref({
   visible: false,
 });
 
-const handleDelete = async (id) => {
-  const res = await deleteBrand(id);
-
-  if (res.success) {
-    alertMessage.value = {
-      type: 'success',
-      message: 'Brand has been deleted',
-      visible: true,
-    };
-  } else {
-    alertMessage.value = {
-      type: 'success',
-      message: 'Brand has been deleted',
-      visible: true,
-    };
-  }
+const handleDelete = () => {
+  emit('submitDelete', deleteBrandId.value);
 };
 
-const showDeleteModal = () => {
+const showDeleteModal = (id) => {
   isDelete.value = true;
+  deleteBrandId.value = id;
 };
 
 const cancelModal = () => {
@@ -45,34 +35,34 @@ const cancelModal = () => {
 <template>
   <div>
     <div
-      v-if="brandList.length > 0"
-      class="overflow-x-auto mx-8 rounded-box border border-base-content/10 bg-base-100"
+      v-if="brandList"
+      class="overflow-x-auto w-7xl mx-auto mb-4 rounded-box border border-base-content/10 bg-base-100"
     >
       <table class="table">
         <thead>
           <tr>
+            <th class="text-center">ID</th>
             <th>Name</th>
-            <th>Website URL</th>
-            <th>isActive</th>
-            <th>Country of Origin</th>
-            <th>Created On</th>
-            <th>Updated On</th>
             <th class="text-center">Action</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="brand in brandList" class="hover:bg-gray-200/50">
+          <tr v-for="brand in brandList" :key="brand.id" class="itbms-row hover:bg-gray-200/50">
+            <td class="text-center">{{ brand.id }}</td>
             <td>{{ brand.name }}</td>
-            <td>{{ brand.websiteUrl }}</td>
-            <td>{{ brand.isActive }}</td>
-            <td>{{ brand.countryOfOrigin }}</td>
-            <td>{{ brand.createdOn }}</td>
-            <td>{{ brand.updatedOn }}</td>
             <td class="flex space-x-4 items-center justify-center">
-              <button class="btn btn-sm btn-soft btn-info">
-                <RouterLink :to="{ name: 'editBrand', params: { id: brand.id } }">Edit</RouterLink>
+              <button
+                @click="router.push(`/brands/${brand.id}`)"
+                class="itbms-edit-button btn btn-sm btn-soft btn-info"
+              >
+                Edit
               </button>
-              <button @click="showDeleteModal" class="btn btn-sm btn-soft btn-error">Delete</button>
+              <button
+                @click="showDeleteModal(brand.id)"
+                class="itbms-delete-button btn btn-sm btn-soft btn-error"
+              >
+                Delete
+              </button>
             </td>
           </tr>
         </tbody>
@@ -92,7 +82,12 @@ const cancelModal = () => {
       />
     </div>
 
-    <Alert :show="alertMessage.visible" :type="alertMessage.type" :message="alertMessage.message" />
+    <Alert
+      :show="alertMessage.visible"
+      :type="alertMessage.type"
+      :message="alertMessage.message"
+      @update:show="alertMessage.visible = $event"
+    />
   </div>
 </template>
 

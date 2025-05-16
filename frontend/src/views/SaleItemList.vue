@@ -42,7 +42,7 @@ const addSaleItem = () => {
 };
 
 const manageBrand = () => {
-  router.push("/sale-items/brand")
+  router.push("/brands")
 };
 
 const handleDelete = async (id) => {

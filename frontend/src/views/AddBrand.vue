@@ -53,7 +53,7 @@ const validateForm = () => {
 
 const handleCancel = () => {
   resetForm();
-  router.push('/sale-items/brand');
+  router.push('/brands');
 };
 
 const handleCreate = async () => {
@@ -68,8 +68,7 @@ const handleCreate = async () => {
 
   if (result.success) {
     brandStore.isCreateSuccess = true;
-    console.log(brandStore.isCreateSuccess);
-    router.push('/sale-items/brand');
+    router.push('/brands');
   } else {
     brandStore.isCreateFailed = true;
   }
@@ -92,7 +91,7 @@ const handleEdit = async () => {
   });
 
   if (result.success) {
-    router.push('/sale-items/brand');
+    router.push('/brands');
     brandStore.isUpdatedSuccess = true;
   } else {
     brandStore.isUpdatedFailed = true;
@@ -116,6 +115,8 @@ const handleSubmit = () => {
 };
 
 onMounted(async () => {
+  resetForm();
+
   if (params) {
     const result = await fetchBrandDetail(params);
     if (result.success) {
@@ -136,32 +137,27 @@ onMounted(async () => {
       router.push('/non-existing-path');
       return;
     }
-  } else {
-    resetForm();
   }
 });
 </script>
 
 <template>
-  <div class="container mx-auto">
+  <div class="">
     <div
-      class="breadcrumbs flex items-center justify-between text-sm mt-4 overflow-x-auto whitespace-nowrap"
+      class="breadcrumbs container mx-auto flex items-center justify-between text-sm mt-4 overflow-x-auto whitespace-nowrap"
     >
       <ul class="flex">
         <li class="flex items-center">
           <RouterLink to="/">Home</RouterLink>
         </li>
-        <li>
-          <RouterLink to="/sale-items">Gallery</RouterLink>
-        </li>
-        <li>
+        <li class="itbms-item-list">
           <RouterLink to="/sale-items/list">Sale Item List</RouterLink>
         </li>
-        <li>
-          <RouterLink to="/sale-items/brand">Brand List</RouterLink>
+        <li class="itbms-manage-brand">
+          <RouterLink to="/brands">Brand List</RouterLink>
         </li>
         <li>
-          <RouterLink :to="params ? `/sale-items/brand/${params}/edit` : '/sale-items/brand/add'">{{
+          <RouterLink :to="params ? `/brands/${params}/edit` : '/brands/add'">{{
             params ? brandName : 'New Brand'
           }}</RouterLink>
         </li>
@@ -193,7 +189,7 @@ onMounted(async () => {
               v-model.trim="brandForm.name"
               @keydown.enter.prevent="focusNext('websiteUrl')"
               :class="[
-                'px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors',
+                'itbms-name px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors',
                 isError
                   ? 'border-red-500 focus:ring-red-200 focus:border-red-500'
                   : 'border-gray-300 focus:ring-primary/20 focus:border-primary',
@@ -213,7 +209,7 @@ onMounted(async () => {
               placeholder="https://example.com"
               v-model.trim="brandForm.websiteUrl"
               @keydown.enter.prevent="focusNext('country')"
-              class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+              class="itbms-websiteUrl px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
               maxlength="40"
             />
           </div>
@@ -226,7 +222,7 @@ onMounted(async () => {
               placeholder="Country of Origin"
               v-model.trim="brandForm.countryOfOrigin"
               @keydown.enter.prevent="focusNext('isActive')"
-              class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+              class="itbms-countryOfOrigin px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
               maxlength="80"
             />
           </div>
@@ -237,16 +233,23 @@ onMounted(async () => {
               id="isActive"
               type="checkbox"
               v-model="brandForm.isActive"
-              class="checkbox checkbox-primary"
+              class="itbms-isActive checkbox checkbox-primary"
             />
             <label class="label">Is Active</label>
           </div>
 
           <div class="flex flex-col space-y-3">
-            <button id="save" type="submit" :disabled="isDisabled" class="btn btn-primary">
+            <button
+              id="save"
+              type="submit"
+              :disabled="isDisabled"
+              class="itbms-save-button btn btn-primary"
+            >
               {{ isSubmitting ? 'Saving...' : 'Save' }}
             </button>
-            <button type="button" @click="handleCancel" class="btn bg-white">Cancel</button>
+            <button type="button" @click="handleCancel" class="itbms-cancel-button btn bg-white">
+              Cancel
+            </button>
           </div>
         </form>
       </div>

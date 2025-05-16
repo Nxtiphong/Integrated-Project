@@ -11,8 +11,11 @@ export const useBrandStore = defineStore('brandLists', () => {
    const getBrandLists = () => brandLists.value
 
    const addBrandLists = (newBrand) => {
-      brandLists.value.push([...brandLists, newBrand])
-   }
+      brandLists.value.push(newBrand);
+   };
 
-   return { brandLists, isCreateSuccess, isCreateFailed, isUpdatedSuccess, isUpdatedFailed, getBrandLists, addBrandLists }
+   const deleteBrandLists = (deleteId) => {
+      brandLists.value = brandLists.value.filter((brand) => brand.id !== deleteId);
+   };
+   return { brandLists, isCreateSuccess, isCreateFailed, isUpdatedSuccess, isUpdatedFailed, getBrandLists, addBrandLists, deleteBrandLists }
 })

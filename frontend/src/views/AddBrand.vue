@@ -1,22 +1,41 @@
 <script setup>
-import Alert from '@/components/share/Alert.vue';
 import { useBrandFormStore } from '@/stores/useBrandFormStore';
-import { onMounted, ref } from 'vue';
+import { useBrandStore } from '@/stores/useBrandStore';
+import { fetchBrandDetail, submitCreateForm, submitUpdateForm } from '@/utils/brandUtils';
+import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
 const router = useRouter();
 const params = route.params.id;
 
-const brandForm = useBrandFormStore();
+const { brandForm, resetForm } = useBrandFormStore();
+const brandStore = useBrandStore();
+
+const brandName = ref('');
+const originalForm = ref({});
+
+const isSubmitting = ref(false);
+
+const isDisabled = computed(() => {
+  const nameInvalid = brandForm.name.trim() === '' || isSubmitting.value;
+
+  if (params) {
+    const noChanges =
+      JSON.stringify({
+        name: brandForm.name,
+        websiteUrl: brandForm.websiteUrl,
+        isActive: brandForm.isActive,
+        countryOfOrigin: brandForm.countryOfOrigin,
+      }) === JSON.stringify(originalForm.value);
+
+    return nameInvalid || noChanges;
+  }
+
+  return nameInvalid;
+});
 
 const isError = ref(false);
-const alertMessage = ref({
-  type: 'error',
-  message: '',
-  visible: false,
-  duration: 3000,
-});
 
 const focusNext = (refName) => {
   const refInputField = document.getElementById(refName);
@@ -33,63 +52,92 @@ const validateForm = () => {
 };
 
 const handleCancel = () => {
-  brandForm.resetForm();
-  router.push('/brand');
+  resetForm();
+  router.push('/sale-items/brand');
 };
 
 const handleCreate = async () => {
   if (!validateForm()) return;
-  const result = await brandForm.submitCreateForm();
+  isSubmitting.value = true;
+  const result = await submitCreateForm({
+    name: brandForm.name,
+    websiteUrl: brandForm.websiteUrl || null,
+    isActive: brandForm.isActive,
+    countryOfOrigin: brandForm.countryOfOrigin || null,
+  });
+
   if (result.success) {
-    alertMessage.value = {
-      type: 'success',
-      message: 'The brand has been added',
-      visible: true,
-    };
-    setTimeout(() => {
-      router.push('/brand');
-    }, 3000);
+    brandStore.isCreateSuccess = true;
+    console.log(brandStore.isCreateSuccess);
+    router.push('/sale-items/brand');
   } else {
-    alertMessage.value = {
-      type: 'error',
-      message: 'The brand could not be added',
-      visible: true,
-    };
+    brandStore.isCreateFailed = true;
+  }
+
+  if (!result.success) {
+    setTimeout(() => {
+      isSubmitting.value = false;
+    }, 3000);
   }
 };
 
 const handleEdit = async () => {
   if (!validateForm()) return;
-  const result = await brandForm.submitUpdateForm(params);
+  isSubmitting.value = true;
+  const result = await submitUpdateForm(params, {
+    name: brandForm.name,
+    websiteUrl: brandForm.websiteUrl || null,
+    isActive: brandForm.isActive,
+    countryOfOrigin: brandForm.countryOfOrigin || null,
+  });
+
   if (result.success) {
-    alertMessage.value = {
-      type: 'success',
-      message: 'The brand has been updated',
-      visible: true,
-    };
-    setTimeout(() => {
-      router.push('/brand');
-    }, 3000);
+    router.push('/sale-items/brand');
+    brandStore.isUpdatedSuccess = true;
   } else {
-    alertMessage.value = {
-      type: 'error',
-      message: 'The brand does not exist',
-      visible: true,
-    };
+    brandStore.isUpdatedFailed = true;
+  }
+
+  if (!result.success) {
+    setTimeout(() => {
+      isSubmitting.value = false;
+    }, 3000);
   }
 };
 
 const handleSubmit = () => {
   if (params) {
     handleEdit();
+    resetForm();
   } else {
     handleCreate();
+    resetForm();
   }
 };
 
-onMounted(() => {
+onMounted(async () => {
   if (params) {
-    brandForm.fetchBrandDetail(params);
+    const result = await fetchBrandDetail(params);
+    if (result.success) {
+      const data = result.data;
+      brandForm.name = data.name;
+      brandForm.websiteUrl = data.websiteUrl;
+      brandForm.isActive = data.isActive;
+      brandForm.countryOfOrigin = data.countryOfOrigin;
+      brandName.value = data.name;
+
+      originalForm.value = {
+        name: data.name,
+        websiteUrl: data.websiteUrl,
+        isActive: data.isActive,
+        countryOfOrigin: data.countryOfOrigin,
+      };
+    } else {
+      router.push('/non-existing-path');
+      return;
+    }
+  } else {
+    resetForm();
   }
 });
 </script>
@@ -114,7 +162,7 @@ onMounted(() => {
         </li>
         <li>
           <RouterLink :to="params ? `/sale-items/brand/${params}/edit` : '/sale-items/brand/add'">{{
-            params ? brandForm.name : 'New Brand'
+            params ? brandName : 'New Brand'
           }}</RouterLink>
         </li>
       </ul>
@@ -143,7 +191,7 @@ onMounted(() => {
               type="text"
               placeholder="Name"
               v-model.trim="brandForm.name"
-              @keydown.enter.prevent="focusNext('websiteURL')"
+              @keydown.enter.prevent="focusNext('websiteUrl')"
               :class="[
                 'px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors',
                 isError
@@ -160,10 +208,10 @@ onMounted(() => {
           <div class="flex flex-col space-y-2">
             <label class="font-semibold">Website URL</label>
             <input
-              id="websiteURL"
+              id="websiteUrl"
               type="text"
               placeholder="https://example.com"
-              v-model.trim="brandForm.websiteURL"
+              v-model.trim="brandForm.websiteUrl"
               @keydown.enter.prevent="focusNext('country')"
               class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
               maxlength="40"
@@ -195,26 +243,14 @@ onMounted(() => {
           </div>
 
           <div class="flex flex-col space-y-3">
-            <button
-              id="save"
-              type="submit"
-              :disabled="!brandForm.name.trim()"
-              class="btn btn-primary"
-            >
-              Save
+            <button id="save" type="submit" :disabled="isDisabled" class="btn btn-primary">
+              {{ isSubmitting ? 'Saving...' : 'Save' }}
             </button>
             <button type="button" @click="handleCancel" class="btn bg-white">Cancel</button>
           </div>
         </form>
       </div>
     </div>
-
-    <Alert
-      :show="alertMessage.visible"
-      :type="alertMessage.type"
-      :message="alertMessage.message"
-      :duration="alertMessage.duration"
-    />
   </div>
 </template>
 

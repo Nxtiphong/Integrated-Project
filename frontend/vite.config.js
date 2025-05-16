@@ -6,7 +6,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
-  base: '/tt2/',
+  // base: '/tt2/',
   plugins: [
     vue(),
     vueDevTools(),

@@ -65,10 +65,10 @@ const toggleMobileMenu = () => {
       
       <ul class="px-4 py-2">
         <li class="py-2 border-b border-gray-100">
-          <RouterLink @click="isMobileMenuOpen = false" to="/" class="block w-full">Home</RouterLink>
+          <RouterLink @click="isMobileMenuOpen = false" to="/tt2" class="block w-full">Home</RouterLink>
         </li>
         <li class="py-2 border-b border-gray-100">
-          <RouterLink @click="isMobileMenuOpen = false" to="/sale-items" class="block w-full">Gallery</RouterLink>
+          <RouterLink @click="isMobileMenuOpen = false" to="/tt2/sale-items" class="block w-full">Gallery</RouterLink>
         </li>
       </ul>
       

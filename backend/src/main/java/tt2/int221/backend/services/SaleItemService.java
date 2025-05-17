@@ -53,7 +53,7 @@ public class SaleItemService {
 
         saleItemDTO.setModel(saleItemDTO.getModel().trim());
         saleItemDTO.setDescription(saleItemDTO.getDescription().trim());
-        saleItemDTO.setColor(saleItemDTO.getColor().trim().isEmpty() ? null : saleItemDTO.getColor().trim());
+        saleItemDTO.setColor(saleItemDTO.getColor() == null || saleItemDTO.getColor().trim().isEmpty() ? null : saleItemDTO.getColor().trim());
 
         SaleItem saleItem = modelMapper.map(saleItemDTO, SaleItem.class);
 
@@ -85,7 +85,7 @@ public class SaleItemService {
         editedSaleItem.setRamGb(saleItemDTO.getRamGb());
         editedSaleItem.setScreenSizeInch(saleItemDTO.getScreenSizeInch());
         editedSaleItem.setStorageGb(saleItemDTO.getStorageGb());
-        editedSaleItem.setColor(saleItemDTO.getColor().trim().isEmpty() ? null : saleItemDTO.getColor().trim());
+        editedSaleItem.setColor(saleItemDTO.getColor() == null || saleItemDTO.getColor().trim().isEmpty() ? null : saleItemDTO.getColor().trim());
 
         SaleItem updatedSaleItem = saleItemRepository.saveAndFlush(editedSaleItem);
         em.refresh(updatedSaleItem);

@@ -24,7 +24,7 @@ const fetchProductDetail = async (id) => {
     productDetail.value = await res.json();
   } catch (error) {
     productDetail.value = null;
-    console.log('Error:', error);
+    console.error('Error:', error);
   } finally {
     isLoading.value = false;
   }

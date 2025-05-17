@@ -10,7 +10,7 @@
           <RouterLink to="/sale-items">Gallery</RouterLink>
         </li>
       </ul>
-      <div class="mt-4">
+      <div class="mt-4 flex items-center space-x-2">
         <RouterLink to="/sale-items/add">
           <button className="itbms-sale-item-add btn btn-outline btn-info">Add Sale Item</button>
         </RouterLink>

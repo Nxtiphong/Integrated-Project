@@ -6,6 +6,8 @@ import Favorite from '@/views/Favorite.vue'
 import AddSaleItem from '@/views/AddSaleItem.vue'
 import NotFoundPage from '@/components/share/NotFoundPage.vue'
 import SaleItemList from '@/views/SaleItemList.vue'
+import BrandList from '@/views/BrandList.vue'
+import AddBrand from '@/views/AddBrand.vue'
 
 const router = createRouter({
   history: createWebHistory('/tt2'),
@@ -46,7 +48,22 @@ const router = createRouter({
       component: SaleItemList
     },
     {
-      path: '/:pathMatch(.*)*', 
+      path: '/brands',
+      name: "brandList",
+      component: BrandList
+    },
+    {
+      path: '/brands/add',
+      name: "addBrand",
+      component: AddBrand
+    },
+    {
+      path: '/brands/:id',
+      name: "editBrand",
+      component: AddBrand
+    },
+    {
+      path: '/:pathMatch(.*)*',
       name: 'NotFound',
       component: NotFoundPage,
     }

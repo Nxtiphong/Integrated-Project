@@ -2,38 +2,76 @@
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import DeleteModal from '@/components/share/DeleteModal.vue';
+import { deleteSaleItem } from '@/utils/saleitemUtils';
+import Alert from '@/components/share/Alert.vue';
+import { useSaleItemStore } from '@/stores/saleItemStore';
 
 const router = useRouter();
+const saleStore = useSaleItemStore();
 const products = ref([]);
 const showDeleteModal = ref(false);
-const isConfirmDelete = ref(false);
 const isLoading = ref(true);
+const selectedProduct = ref(null);
+const alertMessage = ref({
+  type: 'success',
+  message: '',
+  visible: false,
+  duration: 3000,
+});
 
-  const fetchSaleItems = async () => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items`);
-      if (!response.ok) throw new Error('Failed to fetch sale items');
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error('Error fetching sale items:', error);
-      return [];
-    } finally {
-      isLoading.value = false;
-    }
+const fetchSaleItems = async () => {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items`);
+    if (!response.ok) throw new Error('Failed to fetch sale items');
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching sale items:', error);
+    return [];
+  } finally {
+    isLoading.value = false;
+  }
 };
 
+const handleDeleteSubmit = async () => {
+  const Id = selectedProduct.value?.id;
+  if (!Id) {
+    alertMessage.value = {
+      type: 'error',
+      message: 'Sale Item does not exist',
+      visible: true,
+    };
+    return;
+  }
+
+  const res = await deleteSaleItem(Id);
+
+  if (res.success) {
+    products.value = products.value.filter((item) => item.id !== Id);
+    alertMessage.value = {
+      type: 'success',
+      message: 'The sale item has been deleted.',
+      visible: true,
+    };
+  } else {
+    alertMessage.value = {
+      type: 'error',
+      message: 'Failed to delete Sale Item',
+      visible: true,
+    };
+  }
+
+  showDeleteModal.value = false;
+  selectedProduct.value = null;
+};
 
 const handleEdit = (id) => {
   router.push(`/sale-items/${id}/edit`);
 };
 
-const showUiDelete = (id) => {
+const showUiDelete = (product) => {
+  selectedProduct.value = product;
   showDeleteModal.value = true;
-  if (isConfirmDelete.value) {
-    handleDelete(id);
-    isConfirmDelete.value = false;
-  }
 };
 
 const cancelModal = () => {
@@ -41,11 +79,11 @@ const cancelModal = () => {
 };
 
 const addSaleItem = () => {
-    router.push(`/sale-items/add`);
+  router.push(`/sale-items/add`);
 };
 
 const manageBrand = () => {
-    router.push(`/brands`);
+  router.push(`/brands`);
 };
 
 const handleDelete = async (id) => {
@@ -83,16 +121,17 @@ const handleDelete = async (id) => {
   }
 };
 
-const alertMessage = ref({
-  type: '',
-  message: '',
-  visible: false,
-  duration: 3000,
-});
-
 onMounted(async () => {
   products.value = await fetchSaleItems();
-  console.log('Products:', products.value);
+  if (saleStore.created) {
+    alertMessage.value = {
+      type: 'success',
+      message: 'The sale item has been successfully added.',
+      visible: true,
+      duration: 3000,
+    };
+    saleStore.created = false;
+  }
 });
 </script>
 
@@ -213,27 +252,35 @@ onMounted(async () => {
               <div class="text-sm font-medium text-gray-900">#{{ product.id }}</div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm font-medium text-gray-900 itbms-brand">{{ product.brandName
- }}</div>
+              <div class="text-sm font-medium text-gray-900 itbms-brand">
+                {{ product.brandName }}
+              </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="text-sm text-gray-900 font-medium itbms-model">{{ product.model }}</div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-gray-900 itbms-ramGb">{{ product.ramGb != null ? `${product.ramGb} GB` : '-' }}
-            </div>
+              <div class="text-sm text-gray-900 itbms-ramGb">
+                {{ product.ramGb != null ? `${product.ramGb} GB` : '-' }}
+              </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-gray-900 itbms-storageGb">{{ product.storageGb != null ? `${product.storageGb} GB` : '-' }}</div>
+              <div class="text-sm text-gray-900 itbms-storageGb">
+                {{ product.storageGb != null ? `${product.storageGb} GB` : '-' }}
+              </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex items-center itbms-color">
-                <span class="text-sm text-gray-900">{{ product.color != null ? `${product.color}` : '-' }}</span>
+                <span class="text-sm text-gray-900">{{
+                  product.color != null ? `${product.color}` : '-'
+                }}</span>
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="text-sm font-medium text-gray-900 itbms-price">
-                ฿{{ product.price.toLocaleString() != null ? `${product.price.toLocaleString()}` : '-' }}
+                ฿{{
+                  product.price.toLocaleString() != null ? `${product.price.toLocaleString()}` : '-'
+                }}
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -299,7 +346,7 @@ onMounted(async () => {
                   </svg>
                 </button>
                 <button
-                  @click="showUiDelete(product.id)"
+                  @click="showUiDelete(product)"
                   class="itbms-delete-button cursor-pointer text-red-600 hover:text-red-900 transition-colors"
                   title="Delete"
                 >
@@ -350,20 +397,29 @@ onMounted(async () => {
                   </svg>
                 </button>
               </div>
-              <div class="itbms-message">
-                <DeleteModal
-                  v-model="showDeleteModal"
-                  :title="`Delete ${product.model}`"
-                  :message="`Do you want to delete this sale item?`"
-                  @confirm="isConfirmDelete = true"
-                  @cancel="cancelModal"
-                />
-              </div>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
+  </div>
+  <div class="itbms-message">
+    <DeleteModal
+      v-model="showDeleteModal"
+      :title="`Delete ${selectedProduct?.model || ''}`"
+      :message="`Do you want to delete this sale item?`"
+      @confirm="handleDeleteSubmit"
+      @cancel="cancelModal"
+    />
+  </div>
+  <div class="itbms-message">
+    <Alert
+      :show="alertMessage.visible"
+      :type="alertMessage.type"
+      :message="alertMessage.message"
+      @update:show="alertMessage.visible = $event"
+      :duration="alertMessage.duration"
+    />
   </div>
 </template>
 

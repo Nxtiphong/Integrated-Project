@@ -1,6 +1,5 @@
 <template>
   <Teleport to="body">
-    <Transition name="modal-fade">
       <div v-if="modelValue" class="fixed inset-0 z-50 overflow-y-auto" @click.self="cancel">
         <div class="flex min-h-screen items-center justify-center p-4 text-center">
           <div
@@ -78,7 +77,6 @@
           </div>
         </div>
       </div>
-    </Transition>
 
     <Transition name="backdrop-fade">
       <div v-if="modelValue" class="fixed inset-0 bg-black bg-opacity-50 z-40"></div>

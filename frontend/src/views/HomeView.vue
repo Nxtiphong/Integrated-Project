@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+// import CategorySection from '@/components/homepage/categorySection.vue';
 
 const isVisible = ref(false);
 const phoneVisible = ref(false);
@@ -149,6 +150,7 @@ onMounted(() => {
       </div>
     </div>
   </div>
+  <!-- <category-section/> -->
 </template>
 
 <style scoped>

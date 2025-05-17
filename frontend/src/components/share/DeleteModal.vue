@@ -67,6 +67,7 @@
                 {{ cancelButtonText }}
               </button>
               <button
+              v-if="isConfirmButton"
                 type="button"
                 class="itbms-confirm-button inline-flex cursor-pointer justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                 @click="confirm"
@@ -109,6 +110,10 @@ const props = defineProps({
     type: String,
     default: 'Cancel',
   },
+  isConfirmButton: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const emit = defineEmits(['update:modelValue', 'confirm', 'cancel']);
@@ -123,7 +128,6 @@ const cancel = () => {
   emit('update:modelValue', false);
 };
 
-// Handle ESC key press
 const handleKeyDown = (e) => {
   if (e.key === 'Escape' && props.modelValue) {
     cancel();

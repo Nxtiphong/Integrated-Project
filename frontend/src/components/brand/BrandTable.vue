@@ -1,8 +1,8 @@
 <script setup>
 import { ref } from 'vue';
 import DeleteModal from '../share/DeleteModal.vue';
-import Alert from '../share/Alert.vue';
 import { useRouter } from 'vue-router';
+import { fetchBrandDetail } from '@/utils/brandUtils';
 
 const props = defineProps({
   brandList: Array,
@@ -11,20 +11,28 @@ const props = defineProps({
 const emit = defineEmits(['submitDelete']);
 const router = useRouter();
 const deleteBrandId = ref(null);
+const deleteBrandName = ref(null);
 const isDelete = ref(false);
-const alertMessage = ref({
-  type: 'error',
-  message: '',
-  visible: false,
-});
+const isWarning = ref(false);
 
 const handleDelete = () => {
   emit('submitDelete', deleteBrandId.value);
 };
 
-const showDeleteModal = (id) => {
-  isDelete.value = true;
-  deleteBrandId.value = id;
+const showDeleteModal = async (brandId) => {
+  const result = await fetchBrandDetail(brandId);
+
+  if (result.success) {
+    if (result.data.noOfSaleItems > 0) {
+      isDelete.value = true;
+      deleteBrandName.value = result.data.name;
+      isWarning.value = true;
+    } else {
+      isDelete.value = true;
+      deleteBrandId.value = result.data.id;
+      deleteBrandName.value = result.data.name;
+    }
+  }
 };
 
 const cancelModal = () => {
@@ -36,9 +44,9 @@ const cancelModal = () => {
   <div>
     <div
       v-if="brandList"
-      class="overflow-x-auto w-7xl mx-auto mb-4 rounded-box border border-base-content/10 bg-base-100"
+      class="overflow-x-auto w-xs xs:w-lg sm:w-2xl md:w-2xl lg:w-4xl xl:w-7xl mx-auto mb-4 rounded-box border border-base-content/10 bg-base-100"
     >
-      <table class="table">
+      <table class="table table-xs sm:table-sm md:table-md">
         <thead>
           <tr>
             <th class="text-center">ID</th>
@@ -75,19 +83,18 @@ const cancelModal = () => {
     <div class="itbms-message">
       <DeleteModal
         v-model="isDelete"
-        :title="`Delete confirm`"
-        :message="`Do you want to delete this brand?`"
+        confirm-button-text="Confirm"
+        :title="isWarning ? `Not Allowed` : `Delete confirm`"
+        :message="
+          isWarning
+            ? `Delete ${deleteBrandName} is not allow. There are sale items with ${deleteBrandName} brand.`
+            : `Do you want to delete ${deleteBrandName} brand?`
+        "
+        :is-confirm-button="!isWarning"
         @confirm="handleDelete"
         @cancel="cancelModal"
       />
     </div>
-
-    <Alert
-      :show="alertMessage.visible"
-      :type="alertMessage.type"
-      :message="alertMessage.message"
-      @update:show="alertMessage.visible = $event"
-    />
   </div>
 </template>
 

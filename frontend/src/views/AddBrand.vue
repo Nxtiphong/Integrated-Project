@@ -144,7 +144,7 @@ onMounted(async () => {
 <template>
   <div class="">
     <div
-      class="breadcrumbs container mx-auto flex items-center justify-between text-sm mt-4 overflow-x-auto whitespace-nowrap"
+      class="breadcrumbs container mx-auto flex items-center justify-between text-xs lg:text-sm mt-4 overflow-x-auto whitespace-nowrap"
     >
       <ul class="flex">
         <li class="flex items-center">
@@ -164,10 +164,10 @@ onMounted(async () => {
       </ul>
     </div>
 
-    <div class="lg:max-w-[1450px] mx-auto mt-1">
+    <div class="text-xs px-4 md:text-base lg:max-w-[1450px] mx-auto mt-2 lg:mt-1">
       <div class="bg-white rounded-lg shadow-md overflow-hidden">
-        <div class="p-6 border-b border-gray-200">
-          <h1 class="text-2xl font-bold text-gray-900">
+        <div class="py-2 px-6 lg:px-6 lg:py-6 border-b border-gray-200">
+          <h1 class="text-base md:text-2xl font-bold text-gray-900">
             {{ params ? 'Edit Brand' : 'Create New Brand' }}
           </h1>
           <p class="text-gray-500 mt-1">
@@ -243,11 +243,15 @@ onMounted(async () => {
               id="save"
               type="submit"
               :disabled="isDisabled"
-              class="itbms-save-button btn btn-primary"
+              class="itbms-save-button btn btn-primary btn-sm md:btn-md"
             >
               {{ isSubmitting ? 'Saving...' : 'Save' }}
             </button>
-            <button type="button" @click="handleCancel" class="itbms-cancel-button btn bg-white">
+            <button
+              type="button"
+              @click="handleCancel"
+              class="itbms-cancel-button btn bg-white btn-sm md:btn-md"
+            >
               Cancel
             </button>
           </div>

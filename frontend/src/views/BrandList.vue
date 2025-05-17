@@ -101,7 +101,7 @@ onMounted(() => {
 <template>
   <section>
     <div
-      class="container mx-auto breadcrumbs flex items-center justify-between text-sm my-2 overflow-x-auto whitespace-nowrap"
+      class="container mx-auto breadcrumbs flex flex-col sm:flex-row sm:items-center  justify-between text-sm my-2 overflow-x-auto whitespace-nowrap"
     >
       <ul class="flex">
         <li class="flex items-center">
@@ -115,11 +115,11 @@ onMounted(() => {
         </li>
       </ul>
 
-      <div class="flex items-center justify-end">
+      <div class="flex items-center justsat mt-2 md:m-0 sm:justify-end">
         <RouterLink to="/brands/add">
-          <button class="itbms-add-button btn btn-primary">
+          <button class="itbms-add-button btn btn-primary btn-sm md:btn-md">
             Add Brand
-            <Icon icon="gg:add" class="text-xl" />
+            <Icon icon="gg:add" class="md:text-xl" />
           </button>
         </RouterLink>
       </div>

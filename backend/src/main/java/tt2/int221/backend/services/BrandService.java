@@ -60,8 +60,8 @@ public class BrandService {
         dto.setCountryOfOrigin(brand.getCountryOfOrigin());
         dto.setIsActive(brand.getIsActive());
 
-        long noOfSaleItems = saleItemRepository.countByBrandId(brand.getId());
-        dto.setNoOfSaleItems(String.valueOf(noOfSaleItems));
+        long count = saleItemRepository.countByBrandId(brand.getId());
+        dto.setNoOfSaleItems((int) count);
 
         return dto;
     }

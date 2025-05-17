@@ -9,17 +9,20 @@ const showDeleteModal = ref(false);
 const isConfirmDelete = ref(false);
 const isLoading = ref(true);
 
-const fetchProducts = async () => {
-  try {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/itb-mshop/v1/sale-items`);
-    if (!response.ok) throw new Error('fetch error');
-    products.value = await response.json();
-  } catch (error) {
-    console.error('Error fetching products:', error);
-  } finally {
-    isLoading.value = false;
-  }
+  const fetchSaleItems = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items`);
+      if (!response.ok) throw new Error('Failed to fetch sale items');
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching sale items:', error);
+      return [];
+    } finally {
+      isLoading.value = false;
+    }
 };
+
 
 const handleEdit = (id) => {
   router.push(`/sale-items/${id}/edit`);
@@ -42,7 +45,7 @@ const addSaleItem = () => {
 };
 
 const manageBrand = () => {
-  console.log('Manage brand clicked');
+    router.push(`/brands`);
 };
 
 const handleDelete = async (id) => {
@@ -87,236 +90,9 @@ const alertMessage = ref({
   duration: 3000,
 });
 
-const mockdata = () => {
-  const products = ref([
-    {
-      id: 1,
-      brand: 'Apple',
-      model: 'iPhone 14 Pro Max',
-      ram: 6,
-      storage: 512,
-      color: 'Space Black',
-      screenSize: 6.7,
-      price: 42900,
-      quantity: 5,
-    },
-    {
-      id: 2,
-      brand: 'Apple',
-      model: 'iPhone 14',
-      ram: 6,
-      storage: 256,
-      color: 'Midnight',
-      screenSize: 6.1,
-      price: 29700,
-      quantity: 8,
-    },
-    {
-      id: 3,
-      brand: 'Apple',
-      model: 'iPhone 13 Pro',
-      ram: 6,
-      storage: 256,
-      color: 'Sierra Blue',
-      screenSize: 6.1,
-      price: 33000,
-      quantity: 3,
-    },
-    {
-      id: 4,
-      brand: 'Apple',
-      model: 'iPhone 13',
-      ram: 4,
-      storage: 128,
-      color: 'Pink',
-      screenSize: 6.1,
-      price: 23100,
-      quantity: 10,
-    },
-    {
-      id: 5,
-      brand: 'Apple',
-      model: 'iPhone 12 Pro Max',
-      ram: 6,
-      storage: 256,
-      color: 'Pacific Blue',
-      screenSize: 6.7,
-      price: 29700,
-      quantity: 4,
-    },
-    {
-      id: 6,
-      brand: 'Apple',
-      model: 'iPhone 12',
-      ram: 4,
-      storage: 128,
-      color: 'Purple',
-      screenSize: 6.1,
-      price: 19800,
-      quantity: 6,
-    },
-    {
-      id: 7,
-      brand: 'Apple',
-      model: 'iPhone SE 2022',
-      ram: 4,
-      storage: 64,
-      color: 'Starlight',
-      screenSize: 4.7,
-      price: 14190,
-      quantity: 15,
-    },
-    {
-      id: 8,
-      brand: 'Apple',
-      model: 'iPhone 14 Plus',
-      ram: 6,
-      storage: 256,
-      color: 'Blue',
-      screenSize: 6.7,
-      price: 29700,
-      quantity: 7,
-    },
-    {
-      id: 9,
-      brand: 'Apple',
-      model: 'iPhone 14 Pro',
-      ram: 6,
-      storage: 128,
-      color: 'Midnight',
-      screenSize: 6.1,
-      price: 42900,
-      quantity: 2,
-    },
-    {
-      id: 10,
-      brand: 'Apple',
-      model: 'iPhone 13 Mini',
-      ram: 4,
-      storage: 128,
-      color: 'Pink',
-      screenSize: 5.4,
-      price: 19800,
-      quantity: 9,
-    },
-    {
-      id: 11,
-      brand: 'Apple',
-      model: 'iPhone 12 Mini',
-      ram: 4,
-      storage: 64,
-      color: 'Purple',
-      screenSize: 5.4,
-      price: 14190,
-      quantity: 12,
-    },
-    {
-      id: 12,
-      brand: 'Apple',
-      model: 'iPhone SE (3rd Gen)',
-      ram: 4,
-      storage: 128,
-      color: 'Starlight',
-      screenSize: 4.7,
-      price: 19800,
-      quantity: 11,
-    },
-    {
-      id: 13,
-      brand: 'Apple',
-      model: 'iPhone 11',
-      ram: 4,
-      storage: 128,
-      color: 'Black',
-      screenSize: 6.1,
-      price: 19800,
-      quantity: 5,
-    },
-    {
-      id: 14,
-      brand: 'Apple',
-      model: 'iPhone XR',
-      ram: 3,
-      storage: 64,
-      color: 'White',
-      screenSize: 6.1,
-      price: 14190,
-      quantity: 8,
-    },
-    {
-      id: 15,
-      brand: 'Apple',
-      model: 'iPhone XS Max',
-      ram: 4,
-      storage: 256,
-      color: 'Gold',
-      screenSize: 6.5,
-      price: 29700,
-      quantity: 3,
-    },
-    {
-      id: 16,
-      brand: 'Apple',
-      model: 'iPhone 8 Plus',
-      ram: 3,
-      storage: 64,
-      color: 'Red',
-      screenSize: 5.5,
-      price: 14190,
-      quantity: 6,
-    },
-    {
-      id: 17,
-      brand: 'Apple',
-      model: 'iPhone 7',
-      ram: 2,
-      storage: 32,
-      color: 'Rose Gold',
-      screenSize: 4.7,
-      price: 9900,
-      quantity: 10,
-    },
-    {
-      id: 18,
-      brand: 'Apple',
-      model: 'iPhone SE (2nd Gen)',
-      ram: 3,
-      storage: 128,
-      color: 'Black',
-      screenSize: 4.7,
-      price: 14190,
-      quantity: 4,
-    },
-    {
-      id: 19,
-      brand: 'Apple',
-      model: 'iPhone X',
-      ram: 3,
-      storage: 256,
-      color: 'Silver',
-      screenSize: 5.8,
-      price: 29700,
-      quantity: 2,
-    },
-    {
-      id: 20,
-      brand: 'Apple',
-      model: 'iPhone XS',
-      ram: 4,
-      storage: 64,
-      color: 'Space Gray',
-      screenSize: 5.8,
-      price: 19800,
-      quantity: 7,
-    },
-  ]);
-  isLoading.value = false;
-  return products.value;
-};
-
-onMounted(() => {
-  //   fetchProducts();
-  products.value = mockdata();
+onMounted(async () => {
+  products.value = await fetchSaleItems();
+  console.log('Products:', products.value);
 });
 </script>
 
@@ -351,7 +127,7 @@ onMounted(() => {
 
         <button
           @click="manageBrand"
-          class="itbms-manage-brand border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-md flex items-center transition-colors shadow-sm"
+          class="itbms-manage-brand border cursor-pointer border-gray-300 bg-white hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-md flex items-center transition-colors shadow-sm"
         >
           <svg
             class="mr-1.5"
@@ -417,19 +193,7 @@ onMounted(() => {
               scope="col"
               class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
             >
-              Screen Size
-            </th>
-            <th
-              scope="col"
-              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-            >
               Price
-            </th>
-            <th
-              scope="col"
-              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-            >
-              Quantity
             </th>
             <th
               scope="col"
@@ -449,48 +213,27 @@ onMounted(() => {
               <div class="text-sm font-medium text-gray-900">#{{ product.id }}</div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm font-medium text-gray-900 itbms-brand">{{ product.brand }}</div>
+              <div class="text-sm font-medium text-gray-900 itbms-brand">{{ product.brandName
+ }}</div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="text-sm text-gray-900 font-medium itbms-model">{{ product.model }}</div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-gray-900 itbms-ramGb">{{ product.ram }} GB</div>
+              <div class="text-sm text-gray-900 itbms-ramGb">{{ product.ramGb != null ? `${product.ramGb} GB` : '-' }}
+            </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-gray-900 itbms-storageGb">{{ product.storage }} GB</div>
+              <div class="text-sm text-gray-900 itbms-storageGb">{{ product.storageGb != null ? `${product.storageGb} GB` : '-' }}</div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex items-center itbms-color">
-                <!-- <span
-                  class="h-3 w-3 rounded-full mr-2"
-                  :class="getColorClass(product.color)"
-                ></span> -->
-                <span class="text-sm text-gray-900">{{ product.color }}</span>
-              </div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-gray-900 itbms-screenSizeInch">
-                {{ product.screenSize }}"
+                <span class="text-sm text-gray-900">{{ product.color != null ? `${product.color}` : '-' }}</span>
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="text-sm font-medium text-gray-900 itbms-price">
-                ฿{{ product.price.toLocaleString() }}
-              </div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm text-gray-900 itbms-quantity">
-                <span
-                  class="px-2.5 py-0.5 rounded-full text-xs font-medium"
-                  :class="{
-                    'bg-green-100 text-green-800': product.quantity > 5,
-                    'bg-yellow-100 text-yellow-800': product.quantity > 2 && product.quantity <= 5,
-                    'bg-red-100 text-red-800': product.quantity <= 2,
-                  }"
-                >
-                  {{ product.quantity }} in stock
-                </span>
+                ฿{{ product.price.toLocaleString() != null ? `${product.price.toLocaleString()}` : '-' }}
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">

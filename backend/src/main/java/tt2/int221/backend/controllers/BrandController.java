@@ -35,25 +35,26 @@ public class BrandController {
                 .toList();
         return ResponseEntity.ok(brandDTO);
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<BrandResponseDTO> getBrand(@PathVariable Integer id) {
-        Brand brand = brandService.getBrandById(id);
-        BrandResponseDTO response = modelMapper.map(brand, BrandResponseDTO.class);
+        BrandResponseDTO response = brandService.getBrandById(id);
         return ResponseEntity.ok(response);
     }
+
     @PostMapping("")
     public ResponseEntity<BrandResponseDTO> addBrand(@RequestBody AddBrandDTO newBrandDTO) {
         Brand brand = modelMapper.map(newBrandDTO, Brand.class);
-        Brand savedBrand = brandService.addBrand(brand);
-        BrandResponseDTO response = modelMapper.map(savedBrand, BrandResponseDTO.class);
+        BrandResponseDTO response = brandService.addBrand(brand);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
     @PutMapping("/{id}")
     public ResponseEntity<BrandResponseDTO> updateBrand(@PathVariable Integer id, @RequestBody UpdateBrandDTO updateBrandDTO) {
-        Brand brand = brandService.updateBrand(id, updateBrandDTO);
-        BrandResponseDTO response = modelMapper.map(brand, BrandResponseDTO.class);
+        BrandResponseDTO response = brandService.updateBrand(id, updateBrandDTO);
         return ResponseEntity.ok(response);
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<BrandResponseDTO> deleteBrand(@PathVariable Integer id) {
         brandService.deleteBrand(id);

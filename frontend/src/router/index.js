@@ -8,7 +8,7 @@ import NotFoundPage from '@/components/share/NotFoundPage.vue'
 import SaleItemList from '@/views/SaleItemList.vue'
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory('/tt2'),
   routes: [
     {
       path: '/',
@@ -50,7 +50,7 @@ const router = createRouter({
       name: 'NotFound',
       component: NotFoundPage,
     }
-    ],
+  ],
   linkActiveClass: "text-black font-semibold"
 })
 

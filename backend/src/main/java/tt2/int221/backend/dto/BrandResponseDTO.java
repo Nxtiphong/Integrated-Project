@@ -11,6 +11,7 @@ public class BrandResponseDTO {
     private String websiteUrl;
     private String countryOfOrigin;
     private Boolean isActive;
+    private String noOfSaleItems;
 //    private Instant createdOn;
 //    private Instant updatedOn;
 }

@@ -188,7 +188,7 @@ onMounted(async () => {
     </div>
     <div v-if="isLoading" class="text-center py-10 text-gray-500">Loading...</div>
 
-    <div v-else class="overflow-x-auto">
+    <div v-else-if="products.length > 0" class="overflow-x-auto">
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
           <tr>
@@ -402,6 +402,7 @@ onMounted(async () => {
         </tbody>
       </table>
     </div>
+    <div v-else class="text-center py-10 text-gray-500">No sale item found.</div>
   </div>
   <div class="itbms-message">
     <DeleteModal

@@ -121,7 +121,7 @@ const saveProduct = async () => {
       body: JSON.stringify(product.value),
     });
     saleStore.created = true;
-    router.push('/sale-items');
+    router.back();
   }
 };
 

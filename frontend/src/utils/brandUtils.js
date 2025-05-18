@@ -48,7 +48,7 @@ export const deleteBrand = async (id) => {
          method: 'DELETE',
       });
 
-      if (!res.ok) throw new Error('Failed to create new brand')
+      if (!res.ok) throw new Error('Failed to delete a brand')
 
       return { success: true };
    } catch (error) {

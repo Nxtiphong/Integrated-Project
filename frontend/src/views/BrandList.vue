@@ -44,7 +44,7 @@ const handleDeleteSubmit = async (deleteBrandId) => {
   if (res.success) {
     alertMessage.value = {
       type: 'success',
-      message: 'Brand has been deleted',
+      message: 'The brand has been deleted',
       visible: true,
     };
 
@@ -52,7 +52,7 @@ const handleDeleteSubmit = async (deleteBrandId) => {
   } else {
     alertMessage.value = {
       type: 'error',
-      message: 'Failed to delete brand',
+      message: 'An error has occurred, the brand does not exist.',
       visible: true,
     };
   }
@@ -101,7 +101,7 @@ onMounted(() => {
 <template>
   <section>
     <div
-      class="container mx-auto breadcrumbs flex flex-col sm:flex-row sm:items-center  justify-between text-sm my-2 overflow-x-auto whitespace-nowrap"
+      class="container mx-auto breadcrumbs flex flex-col sm:flex-row sm:items-center justify-between text-sm my-2 overflow-x-auto whitespace-nowrap"
     >
       <ul class="flex">
         <li class="flex items-center">

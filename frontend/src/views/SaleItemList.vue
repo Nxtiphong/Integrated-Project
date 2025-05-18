@@ -92,7 +92,6 @@ const alertMessage = ref({
 
 onMounted(async () => {
   products.value = await fetchSaleItems();
-  console.log('Products:', products.value);
 });
 </script>
 

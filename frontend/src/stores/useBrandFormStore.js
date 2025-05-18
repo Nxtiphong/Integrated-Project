@@ -6,7 +6,7 @@ export const useBrandFormStore = defineStore('brandForm', () => {
    const brandForm = ref({
       name: '',
       websiteUrl: '',
-      isActive: false,
+      isActive: true,
       countryOfOrigin: ''
    })
 
@@ -14,7 +14,7 @@ export const useBrandFormStore = defineStore('brandForm', () => {
       brandForm.value = {
          name: '',
          websiteUrl: '',
-         isActive: false,
+         isActive: true,
          countryOfOrigin: ''
       };
    };

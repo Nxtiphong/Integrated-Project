@@ -43,7 +43,7 @@ const cancelModal = () => {
 <template>
   <div>
     <div
-      v-if="brandList"
+      v-if="brandList.length > 0"
       class="overflow-x-auto w-xs xs:w-lg sm:w-2xl md:w-2xl lg:w-4xl xl:w-7xl mx-auto mb-4 rounded-box border border-base-content/10 bg-base-100"
     >
       <table class="table table-xs sm:table-sm md:table-md">
@@ -60,7 +60,7 @@ const cancelModal = () => {
             <td>{{ brand.name }}</td>
             <td class="flex space-x-4 items-center justify-center">
               <button
-                @click="router.push(`/brands/${brand.id}`)"
+                @click="router.push(`/brands/${brand.id}/edit`)"
                 class="itbms-edit-button btn btn-sm btn-soft btn-info"
               >
                 Edit
@@ -76,6 +76,7 @@ const cancelModal = () => {
         </tbody>
       </table>
     </div>
+
     <div v-else class="flex items-center justify-center">
       <p class="text-center text-error">No brand</p>
     </div>
@@ -87,7 +88,7 @@ const cancelModal = () => {
         :title="isWarning ? `Not Allowed` : `Delete confirm`"
         :message="
           isWarning
-            ? `Delete ${deleteBrandName} is not allow. There are sale items with ${deleteBrandName} brand.`
+            ? `Delete ${deleteBrandName} is not allowed. There are sale items with ${deleteBrandName} brand.`
             : `Do you want to delete ${deleteBrandName} brand?`
         "
         :is-confirm-button="!isWarning"

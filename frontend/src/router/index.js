@@ -63,6 +63,11 @@ const router = createRouter({
       component: AddBrand
     },
     {
+      path: '/brands/:pathMatch(.*)*',
+      name: 'brandNotFound',
+      component: NotFoundPage,
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
       component: NotFoundPage,

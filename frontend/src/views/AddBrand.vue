@@ -134,7 +134,7 @@ onMounted(async () => {
         countryOfOrigin: data.countryOfOrigin,
       };
     } else {
-      router.push('/non-existing-path');
+      router.push('/brands/non-existing-path');
       return;
     }
   }

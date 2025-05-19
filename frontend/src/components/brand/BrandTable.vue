@@ -56,8 +56,8 @@ const cancelModal = () => {
         </thead>
         <tbody>
           <tr v-for="brand in brandList" :key="brand.id" class="itbms-row hover:bg-gray-200/50">
-            <td class="text-center">{{ brand.id }}</td>
-            <td>{{ brand.name }}</td>
+            <td class="itbms-id text-center">{{ brand.id }}</td>
+            <td class="itbms-name">{{ brand.name }}</td>
             <td class="flex space-x-4 items-center justify-center">
               <button
                 @click="router.push(`/brands/${brand.id}/edit`)"

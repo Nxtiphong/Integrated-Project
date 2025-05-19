@@ -249,7 +249,7 @@ onMounted(async () => {
             class="itbms-row hover:bg-gray-50 transition-colors"
           >
             <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm font-medium text-gray-900">#{{ product.id }}</div>
+              <div class="text-sm font-medium text-gray-900 itbms-id">#{{ product.id }}</div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="text-sm font-medium text-gray-900 itbms-brand">

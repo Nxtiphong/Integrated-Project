@@ -1,4 +1,3 @@
-
 <script setup>
 import { useRouter } from 'vue-router';
 import notFoundImg from '@/assets/images/404.png';
@@ -16,8 +15,11 @@ const alertMessage = ref({
   duration: 3000,
 });
 
+const notExistsMessage = ref('');
+
 onMounted(() => {
   if (saleStore.noExist) {
+    notExistsMessage.value = 'The requested sale item does not exist.';
     alertMessage.value = {
       type: 'error',
       message: 'The requested sale item does not exist.',
@@ -25,8 +27,9 @@ onMounted(() => {
       duration: 3000,
     };
     saleStore.noExist = false;
+  } else {
+    notExistsMessage.value = 'The brand does not exist.';
   }
-
 });
 </script>
 
@@ -37,7 +40,7 @@ onMounted(() => {
     >
       <img :src="notFoundImg" alt="not_found" />
       <h1 class="text-3xl font-bold uppercase">Something is wrong</h1>
-      <p class="itbms-message">The requested sale item does not exist.</p>
+      <p class="itbms-message">{{ notExistsMessage }}</p>
       <button @click="router.push('/sale-items')" class="itbms-button btn btn-primary my-2">
         Back
       </button>
@@ -45,12 +48,12 @@ onMounted(() => {
   </div>
   <div class="itbms-message">
     <Alert
-    :show="alertMessage.visible"
-    :type="alertMessage.type"
-    :message="alertMessage.message"
-    @update:show="alertMessage.visible = $event"
-    :duration="alertMessage.duration"
-  />
+      :show="alertMessage.visible"
+      :type="alertMessage.type"
+      :message="alertMessage.message"
+      @update:show="alertMessage.visible = $event"
+      :duration="alertMessage.duration"
+    />
   </div>
 </template>
 

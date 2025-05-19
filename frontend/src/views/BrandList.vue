@@ -62,7 +62,7 @@ onMounted(() => {
   if (brandStore.isCreateSuccess) {
     alertMessage.value = {
       type: 'success',
-      message: 'The brand has been added',
+      message: 'The brand has been added.',
       visible: true,
     };
     brandStore.isCreateSuccess = false;
@@ -80,7 +80,7 @@ onMounted(() => {
   if (brandStore.isUpdatedSuccess) {
     alertMessage.value = {
       type: 'success',
-      message: 'The brand has been updated',
+      message: 'The brand has been updated.',
       visible: true,
     };
     brandStore.isUpdatedSuccess = false;

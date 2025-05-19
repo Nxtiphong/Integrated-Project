@@ -19,25 +19,24 @@ const handleDelete = () => {
   emit('submitDelete', deleteBrandId.value);
 };
 
-const showDeleteModal = async (brandId) => {
+const showDeleteModal = async (brandId, brandName) => {
   const result = await fetchBrandDetail(brandId);
 
-  if (result.success) {
-    if (result.data.noOfSaleItems > 0) {
-      isDelete.value = true;
-      deleteBrandName.value = result.data.name;
-      isWarning.value = true;
-    } else {
-      isDelete.value = true;
-      deleteBrandId.value = result.data.id;
-      deleteBrandName.value = result.data.name;
-    }
+  deleteBrandName.value = brandName;
+
+  if (result.success && result.data.noOfSaleItems > 0) {
+    isDelete.value = true;
+    isWarning.value = true;
+  } else {
+    isDelete.value = true;
+    deleteBrandId.value = brandId;
   }
 };
 
 const cancelModal = () => {
   isDelete.value = false;
 };
+
 </script>
 
 <template>
@@ -56,8 +55,8 @@ const cancelModal = () => {
         </thead>
         <tbody>
           <tr v-for="brand in brandList" :key="brand.id" class="itbms-row hover:bg-gray-200/50">
-            <td class="text-center">{{ brand.id }}</td>
-            <td>{{ brand.name }}</td>
+            <td class="itbms-id text-center">{{ brand.id }}</td>
+            <td class="itbms-name">{{ brand.name }}</td>
             <td class="flex space-x-4 items-center justify-center">
               <button
                 @click="router.push(`/brands/${brand.id}/edit`)"
@@ -66,7 +65,7 @@ const cancelModal = () => {
                 Edit
               </button>
               <button
-                @click="showDeleteModal(brand.id)"
+                @click="showDeleteModal(brand.id, brand.name)"
                 class="itbms-delete-button btn btn-sm btn-soft btn-error"
               >
                 Delete

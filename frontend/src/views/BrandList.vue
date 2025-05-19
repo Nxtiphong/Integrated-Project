@@ -5,6 +5,7 @@ import { useBrandStore } from '@/stores/useBrandStore';
 import { deleteBrand } from '@/utils/brandUtils';
 import { Icon } from '@iconify/vue';
 import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const brandStore = useBrandStore();
 
@@ -30,31 +31,25 @@ const getAllBrands = async () => {
 };
 
 const handleDeleteSubmit = async (deleteBrandId) => {
-  if (!deleteBrandId) {
-    alertMessage.value = {
-      type: 'error',
-      message: 'Brand does not exists',
-      visible: true,
-    };
-    return;
-  }
 
   const res = await deleteBrand(deleteBrandId);
 
   if (res.success) {
     alertMessage.value = {
       type: 'success',
-      message: 'The brand has been deleted',
+      message: 'The brand has been deleted.',
       visible: true,
     };
-
     brandStore.deleteBrandLists(deleteBrandId);
+
+    await getAllBrands();
   } else {
     alertMessage.value = {
       type: 'error',
       message: 'An error has occurred, the brand does not exist.',
       visible: true,
     };
+    await getAllBrands();
   }
 };
 
@@ -62,7 +57,7 @@ onMounted(() => {
   if (brandStore.isCreateSuccess) {
     alertMessage.value = {
       type: 'success',
-      message: 'The brand has been added',
+      message: 'The brand has been added.',
       visible: true,
     };
     brandStore.isCreateSuccess = false;
@@ -80,7 +75,7 @@ onMounted(() => {
   if (brandStore.isUpdatedSuccess) {
     alertMessage.value = {
       type: 'success',
-      message: 'The brand has been updated',
+      message: 'The brand has been updated.',
       visible: true,
     };
     brandStore.isUpdatedSuccess = false;
@@ -89,7 +84,7 @@ onMounted(() => {
   if (brandStore.isUpdatedFailed) {
     alertMessage.value = {
       type: 'error',
-      message: 'The brand does not exist',
+      message: 'The brand does not exist.',
       visible: true,
     };
     brandStore.isUpdatedFailed = false;

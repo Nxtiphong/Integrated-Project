@@ -19,25 +19,24 @@ const handleDelete = () => {
   emit('submitDelete', deleteBrandId.value);
 };
 
-const showDeleteModal = async (brandId) => {
+const showDeleteModal = async (brandId, brandName) => {
   const result = await fetchBrandDetail(brandId);
 
-  if (result.success) {
-    if (result.data.noOfSaleItems > 0) {
-      isDelete.value = true;
-      deleteBrandName.value = result.data.name;
-      isWarning.value = true;
-    } else {
-      isDelete.value = true;
-      deleteBrandId.value = result.data.id;
-      deleteBrandName.value = result.data.name;
-    }
+  deleteBrandName.value = brandName;
+
+  if (result.success && result.data.noOfSaleItems > 0) {
+    isDelete.value = true;
+    isWarning.value = true;
+  } else {
+    isDelete.value = true;
+    deleteBrandId.value = brandId;
   }
 };
 
 const cancelModal = () => {
   isDelete.value = false;
 };
+
 </script>
 
 <template>
@@ -66,7 +65,7 @@ const cancelModal = () => {
                 Edit
               </button>
               <button
-                @click="showDeleteModal(brand.id)"
+                @click="showDeleteModal(brand.id, brand.name)"
                 class="itbms-delete-button btn btn-sm btn-soft btn-error"
               >
                 Delete

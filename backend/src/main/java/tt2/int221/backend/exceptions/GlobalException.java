@@ -35,4 +35,16 @@ public class GlobalException {
         );
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ExceptionDTO> handleBadRequest(BadRequestException ex, HttpServletRequest request) {
+        ExceptionDTO error = new ExceptionDTO(
+                ZonedDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                "BadRequest",
+                ex.getMessage(),
+                request.getRequestURI()
+        );
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
 }

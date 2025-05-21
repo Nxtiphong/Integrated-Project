@@ -15,10 +15,11 @@ import tt2.int221.backend.entities.SaleItem;
 import tt2.int221.backend.services.SaleItemService;
 
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @Tag(name = "Sale Items API")
-@RequestMapping("/v1")
+@RequestMapping("/v2")
 public class SaleItemController {
 
     @Autowired
@@ -28,18 +29,21 @@ public class SaleItemController {
 
     @Operation(summary = "Get all sale items", description = "Return all sale items")
 
-    @GetMapping("/sale-items/v2")
+    @GetMapping("/sale-items/pages")
     public ResponseEntity<PageDTO<GalleryDTO>> getGalleryDTO(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "") List<String> sortField,
+            @RequestParam(defaultValue = "asc") String sortDirection
     ) {
-        Page<SaleItem> saleItems = service.getAllSaleItemsOrderByCreatedOnAsc(page - 1, size);
+        Page<SaleItem> saleItems = service.findAll(page, size, sortField ,sortDirection);
         List<GalleryDTO> galleryDTOs = saleItems.getContent().stream()
                 .map(saleItem -> modelMapper.map(saleItem, GalleryDTO.class))
                 .toList();
         PageDTO<GalleryDTO> response = new PageDTO<>(
                 galleryDTOs,
-                saleItems.getNumber()+1,
+                "brand.name: "+ sortDirection.toUpperCase(),
+                saleItems.getNumber(),
                 saleItems.getSize(),
                 saleItems.getTotalElements(),
                 saleItems.getTotalPages(),

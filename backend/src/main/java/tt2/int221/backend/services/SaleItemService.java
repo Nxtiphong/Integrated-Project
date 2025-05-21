@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import tt2.int221.backend.dto.SaleItemDTO;
 import tt2.int221.backend.entities.Brand;
@@ -34,10 +35,18 @@ public class SaleItemService {
                 .orElseThrow(() -> new NotfoundException("Sale-Item not found with id: " + id));
     }
 
-    public Page<SaleItem> getAllSaleItemsOrderByCreatedOnAsc(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return saleItemRepository.findAllByOrderByCreatedOnAscIdAsc(pageable);
+
+    public Page<SaleItem> findAll(int page, int size, List<String> brandNames, String sortDirection) {
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), "brand.name");
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        if (brandNames != null && !brandNames.isEmpty()) {
+            return saleItemRepository.findAllByBrand_NameIn(brandNames, pageable);
+        } else {
+            return saleItemRepository.findAll(pageable);
+        }
     }
+
 
 
     public  List<SaleItem> getAllSaleItemsOrderByCreatedOnAscV2() {

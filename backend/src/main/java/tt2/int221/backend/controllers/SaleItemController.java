@@ -15,10 +15,11 @@ import tt2.int221.backend.entities.SaleItem;
 import tt2.int221.backend.services.SaleItemService;
 
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @Tag(name = "Sale Items API")
-@RequestMapping("/v1")
+@RequestMapping("")
 public class SaleItemController {
 
     @Autowired
@@ -28,18 +29,21 @@ public class SaleItemController {
 
     @Operation(summary = "Get all sale items", description = "Return all sale items")
 
-    @GetMapping("/sale-items/v2")
+    @GetMapping("/v2/sale-items/pages")
     public ResponseEntity<PageDTO<GalleryDTO>> getGalleryDTO(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "") List<String> sortField,
+            @RequestParam(defaultValue = "asc") String sortDirection
     ) {
-        Page<SaleItem> saleItems = service.getAllSaleItemsOrderByCreatedOnAsc(page - 1, size);
+        Page<SaleItem> saleItems = service.findAll(page, size, sortField ,sortDirection);
         List<GalleryDTO> galleryDTOs = saleItems.getContent().stream()
                 .map(saleItem -> modelMapper.map(saleItem, GalleryDTO.class))
                 .toList();
         PageDTO<GalleryDTO> response = new PageDTO<>(
                 galleryDTOs,
-                saleItems.getNumber()+1,
+                "brand.name: "+ sortDirection.toUpperCase(),
+                saleItems.getNumber(),
                 saleItems.getSize(),
                 saleItems.getTotalElements(),
                 saleItems.getTotalPages(),
@@ -49,7 +53,7 @@ public class SaleItemController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/sale-items")
+    @GetMapping("/v1/sale-items")
     public ResponseEntity<List<GalleryDTO>> getGalleryDTOV2(){
         List<GalleryDTO> response = service.getAllSaleItemsOrderByCreatedOnAscV2().stream()
                 .map(saleItem -> modelMapper.map(saleItem, GalleryDTO.class))
@@ -58,7 +62,7 @@ public class SaleItemController {
     }
 
     @Operation(summary = "Get a sale item by id", description = "Return a sale item by id")
-    @GetMapping("/sale-items/{id}")
+    @GetMapping("/v1/sale-items/{id}")
     public ResponseEntity<DetailDTO> findById(@PathVariable Integer id) {
         SaleItem saleItem = service.getSaleItemById(id);
         if (saleItem == null) {
@@ -69,7 +73,7 @@ public class SaleItemController {
     }
 
     @Operation(summary = "Create new sale item", description = "Return a new sale item detail")
-    @PostMapping("/sale-items")
+    @PostMapping("/v1/sale-items")
     public ResponseEntity<DetailDTO> createSaleItem(@RequestBody SaleItemDTO saleItem) {
         if (saleItem == null) {
             return ResponseEntity.badRequest().build();
@@ -83,7 +87,7 @@ public class SaleItemController {
     }
 
     @Operation(summary = "Update exists sale item by id", description = "Return an updated sale item detail")
-    @PutMapping("/sale-items/{id}")
+    @PutMapping("/v1/sale-items/{id}")
     public ResponseEntity<DetailDTO> updateSaleItem(@PathVariable Integer id, @RequestBody SaleItemDTO saleItem) {
         if (saleItem == null) {
             return ResponseEntity.badRequest().build();
@@ -97,7 +101,7 @@ public class SaleItemController {
     }
 
     @Operation(summary = "Delete sale item by id", description = "Return status 204 if delete successfully")
-    @DeleteMapping("/sale-items/{id}")
+    @DeleteMapping("/v1/sale-items/{id}")
     public ResponseEntity<Void> deleteSaleItem(@PathVariable Integer id) {
         service.deleteSaleItemById(id);
         return ResponseEntity.status(204).build();

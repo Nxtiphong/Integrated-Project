@@ -8,4 +8,5 @@ import java.util.List;
 
 @Repository
 public interface BrandRepository extends JpaRepository<Brand, Integer> {
+    Boolean existsByName(String name);
 }

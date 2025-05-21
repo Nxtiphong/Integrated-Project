@@ -16,4 +16,5 @@ public interface SaleItemRepository extends JpaRepository<SaleItem,Integer> {
     List<SaleItem> findAllByOrderByCreatedOnAscIdAsc();
     @Query("SELECT COUNT(s) FROM SaleItem s WHERE s.brand.id = :brandId")
     long countByBrandId(@Param("brandId") Integer brandId);
+    List<SaleItem> findAllByBrandId(Integer brandId);
 }

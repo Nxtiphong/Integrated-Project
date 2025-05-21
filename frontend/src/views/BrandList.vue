@@ -31,7 +31,6 @@ const getAllBrands = async () => {
 };
 
 const handleDeleteSubmit = async (deleteBrandId) => {
-
   const res = await deleteBrand(deleteBrandId);
 
   if (res.success) {
@@ -106,7 +105,7 @@ onMounted(() => {
           <RouterLink to="/sale-items/list">Sale Item List</RouterLink>
         </li>
         <li class="itbms-manage-brand">
-          <RouterLink to="/sale-items/brands">Brand List</RouterLink>
+          <RouterLink to="/brands">Brand List</RouterLink>
         </li>
       </ul>
 

@@ -36,7 +36,6 @@ const showDeleteModal = async (brandId, brandName) => {
 const cancelModal = () => {
   isDelete.value = false;
 };
-
 </script>
 
 <template>

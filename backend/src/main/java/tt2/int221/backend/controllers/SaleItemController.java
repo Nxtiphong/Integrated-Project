@@ -19,7 +19,7 @@ import java.util.Locale;
 
 @RestController
 @Tag(name = "Sale Items API")
-@RequestMapping("/v2")
+@RequestMapping("")
 public class SaleItemController {
 
     @Autowired
@@ -29,7 +29,7 @@ public class SaleItemController {
 
     @Operation(summary = "Get all sale items", description = "Return all sale items")
 
-    @GetMapping("/sale-items/pages")
+    @GetMapping("/v2/sale-items/pages")
     public ResponseEntity<PageDTO<GalleryDTO>> getGalleryDTO(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -53,7 +53,7 @@ public class SaleItemController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/sale-items")
+    @GetMapping("/v1/sale-items")
     public ResponseEntity<List<GalleryDTO>> getGalleryDTOV2(){
         List<GalleryDTO> response = service.getAllSaleItemsOrderByCreatedOnAscV2().stream()
                 .map(saleItem -> modelMapper.map(saleItem, GalleryDTO.class))
@@ -62,7 +62,7 @@ public class SaleItemController {
     }
 
     @Operation(summary = "Get a sale item by id", description = "Return a sale item by id")
-    @GetMapping("/sale-items/{id}")
+    @GetMapping("/v1/sale-items/{id}")
     public ResponseEntity<DetailDTO> findById(@PathVariable Integer id) {
         SaleItem saleItem = service.getSaleItemById(id);
         if (saleItem == null) {
@@ -73,7 +73,7 @@ public class SaleItemController {
     }
 
     @Operation(summary = "Create new sale item", description = "Return a new sale item detail")
-    @PostMapping("/sale-items")
+    @PostMapping("/v1/sale-items")
     public ResponseEntity<DetailDTO> createSaleItem(@RequestBody SaleItemDTO saleItem) {
         if (saleItem == null) {
             return ResponseEntity.badRequest().build();
@@ -87,7 +87,7 @@ public class SaleItemController {
     }
 
     @Operation(summary = "Update exists sale item by id", description = "Return an updated sale item detail")
-    @PutMapping("/sale-items/{id}")
+    @PutMapping("/v1/sale-items/{id}")
     public ResponseEntity<DetailDTO> updateSaleItem(@PathVariable Integer id, @RequestBody SaleItemDTO saleItem) {
         if (saleItem == null) {
             return ResponseEntity.badRequest().build();
@@ -101,7 +101,7 @@ public class SaleItemController {
     }
 
     @Operation(summary = "Delete sale item by id", description = "Return status 204 if delete successfully")
-    @DeleteMapping("/sale-items/{id}")
+    @DeleteMapping("/v1/sale-items/{id}")
     public ResponseEntity<Void> deleteSaleItem(@PathVariable Integer id) {
         service.deleteSaleItemById(id);
         return ResponseEntity.status(204).build();

@@ -33,16 +33,17 @@ public class SaleItemController {
     public ResponseEntity<PageDTO<GalleryDTO>> getGalleryDTO(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "") List<String> sortField,
+            @RequestParam(defaultValue = "id") String sortField,
+            @RequestParam(defaultValue = "") List<String> filterBrands,
             @RequestParam(defaultValue = "asc") String sortDirection
     ) {
-        Page<SaleItem> saleItems = service.findAll(page, size, sortField ,sortDirection);
+        Page<SaleItem> saleItems = service.findAll(page, size, sortField, filterBrands ,sortDirection);
         List<GalleryDTO> galleryDTOs = saleItems.getContent().stream()
                 .map(saleItem -> modelMapper.map(saleItem, GalleryDTO.class))
                 .toList();
         PageDTO<GalleryDTO> response = new PageDTO<>(
                 galleryDTOs,
-                "brand.name: "+ sortDirection.toUpperCase(),
+                sortField + ": "+ sortDirection.toUpperCase(),
                 saleItems.getNumber(),
                 saleItems.getSize(),
                 saleItems.getTotalElements(),

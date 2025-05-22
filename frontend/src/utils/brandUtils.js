@@ -41,7 +41,6 @@ export const submitUpdateForm = async (id, formData) => {
    }
 };
 
-
 export const deleteBrand = async (id) => {
    try {
       const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/brands/${id}`, {
@@ -56,3 +55,4 @@ export const deleteBrand = async (id) => {
       return { success: false, error };
    }
 }
+

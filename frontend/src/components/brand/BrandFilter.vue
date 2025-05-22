@@ -107,11 +107,11 @@ onMounted(() => {
 
 <style scoped>
 .scrollbar-hidden {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+}
   ::-webkit-scrollbar {
     display: none;
   }
-}
+
 </style>

@@ -29,7 +29,7 @@ public class SaleItemController {
 
     @Operation(summary = "Get all sale items", description = "Return all sale items")
 
-    @GetMapping("/v2/sale-items/")
+    @GetMapping("/v2/sale-items")
     public ResponseEntity<PageDTO<GalleryDTO>> getGalleryDTO(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,

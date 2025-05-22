@@ -19,4 +19,6 @@ public interface SaleItemRepository extends JpaRepository<SaleItem,Integer> {
     long countByBrandId(@Param("brandId") Integer brandId);
     List<SaleItem> findAllByBrandId(Integer brandId);
     Page<SaleItem> findAllByBrand_NameIn(List<String> brandNames, Pageable pageable);
+    Page<SaleItem> findByBrandNameIn(List<String> brandNames, Pageable pageable);
+
 }

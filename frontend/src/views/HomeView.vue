@@ -1,7 +1,8 @@
 <script setup>
+import HomeBanner from '@/components/home/HomeBanner.vue';
+import ServiceCard from '@/components/home/ServiceCard.vue';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-// import CategorySection from '@/components/homepage/categorySection.vue';
 
 const isVisible = ref(false);
 const phoneVisible = ref(false);
@@ -32,7 +33,7 @@ onMounted(() => {
 
 <template>
   <div
-    class="bg-black text-white min-h-screen flex items-center justify-center overflow-hidden relative"
+    class="bg-gradient-to-r from-neutral-800 to-black text-white min-h-screen flex items-center justify-between self-stretch overflow-hidden relative px-10"
   >
     <div class="shooting-stars-container">
       <div v-for="n in 30" :key="n" class="shooting-star" :style="getRandomStarStyle()"></div>
@@ -44,7 +45,9 @@ onMounted(() => {
     <div
       class="container mx-auto px-4 md:px-8 py-8 md:py-16 flex flex-col md:flex-row items-center justify-between"
     >
-      <div class="w-full md:w-1/2 z-10 space-y-4 md:space-y-6 text-center md:text-left mb-8 md:mb-0">
+      <div
+        class="w-full md:w-1/2 z-10 space-y-4 md:space-y-6 text-center md:text-left mb-8 md:mb-0"
+      >
         <h3
           :class="[
             'text-gray-400 text-lg md:text-xl font-light tracking-wider transform transition-all duration-700',
@@ -72,85 +75,85 @@ onMounted(() => {
           Created to change everything for the better. For everyone
         </p>
 
-        <div class="flex gap-3">
+        <div class="flex gap-3 items-center justify-center md:justify-start">
           <div
-          :class="[
-            'pt-4 transition-all duration-700 delay-500',
-            buttonVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0',
-          ]"
-        >
-          <button
-            @click="router.push('/sale-items')"
-            class="itbms-shopnow border border-white px-6 sm:px-8 py-2 sm:py-3 rounded cursor-pointer bg-white hover:bg-gray-300 hover:text-black transition-all duration-300 group"
+            :class="[
+              'pt-4 transition-all duration-700 delay-500',
+              buttonVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0',
+            ]"
           >
-            <span class="flex items-center justify-center text-black">
-              Shop Now
-              <svg
-                class="w-4 h-4 ml-2 transform transition-transform duration-300 group-hover:translate-x-1"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M14 5l7 7m0 0l-7 7m7-7H3"
-                ></path>
-              </svg>
-            </span>
-          </button>
-        </div>
-        <div
-          :class="[
-            'pt-4 transition-all duration-700 delay-500',
-            buttonVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0',
-          ]"
-        >
-          <button
-            @click="router.push('/sale-items/list')"
-            class="itbms-shopnow border border-white px-6 sm:px-8 py-2 sm:py-3 rounded cursor-pointer hover:bg-white hover:text-black transition-all duration-300 group"
+            <button
+              @click="router.push('/sale-items')"
+              class="itbms-shopnow border border-white px-6 sm:px-8 py-2 sm:py-3 rounded cursor-pointer bg-white hover:bg-gray-300 hover:text-black transition-all duration-300 group"
+            >
+              <span class="flex items-center justify-center text-black">
+                Shop Now
+                <svg
+                  class="w-4 h-4 ml-2 transform transition-transform duration-300 group-hover:translate-x-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M14 5l7 7m0 0l-7 7m7-7H3"
+                  ></path>
+                </svg>
+              </span>
+            </button>
+          </div>
+          <div
+            :class="[
+              'pt-4 transition-all duration-700 delay-500',
+              buttonVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0',
+            ]"
           >
-            <span class="flex items-center justify-center">
-              Sale Items list
-              <svg
-                class="w-4 h-4 ml-2 transform transition-transform duration-300 group-hover:translate-x-1"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M14 5l7 7m0 0l-7 7m7-7H3"
-                ></path>
-              </svg>
-            </span>
-          </button>
-        </div>
+            <button
+              @click="router.push('/sale-items/list')"
+              class="itbms-shopnow border border-white px-6 sm:px-8 py-2 sm:py-3 rounded cursor-pointer hover:bg-white hover:text-black transition-all duration-300 group"
+            >
+              <span class="flex items-center justify-center">
+                Sale Items list
+                <svg
+                  class="w-4 h-4 ml-2 transform transition-transform duration-300 group-hover:translate-x-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M14 5l7 7m0 0l-7 7m7-7H3"
+                  ></path>
+                </svg>
+              </span>
+            </button>
+          </div>
         </div>
       </div>
 
-      <!-- Phone image section -->
-      <div 
-        class="z-10 w-full md:w-1/2 flex justify-center"
+      <div
+        class="z-10 w-full md:w-1/2 flex justify-center relative"
         :class="[
           'transition-all duration-700 delay-400',
           phoneVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0',
         ]"
       >
-        <img 
-          src="@/assets/images/mock_phone.png" 
-          alt="iPhone 14 Pro" 
-          class="IMGPhoneHome w-64 sm:w-72 md:w-80 lg:w-96 max-w-full h-auto" 
+        <img
+          src="@/assets/images/home_mockup.png"
+          alt="iPhone 14 Pro"
+          class="IMGPhoneHome w-64 sm:w-72 md:w-80 lg:w-96 max-w-full h-auto md:absolute -top-50"
         />
       </div>
     </div>
   </div>
-  <!-- <category-section/> -->
+  <ServiceCard />
+  <HomeBanner />
 </template>
 
 <style scoped>

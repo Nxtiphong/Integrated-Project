@@ -119,10 +119,17 @@ onMounted(() => {
       </div>
     </div>
 
-    <div v-if="isLoading" class="text-center py-4">
+    <div v-if="isLoading" class="text-center py-4 min-h-screen">
       <span class="loading loading-dots loading-lg text-primary"></span>
     </div>
-    <BrandTable v-else :brand-list="brandStore.brandLists" @submitDelete="handleDeleteSubmit" />
+    <BrandTable
+      v-else-if="brandStore.brandLists.length > 0"
+      :brand-list="brandStore.brandLists"
+      @submitDelete="handleDeleteSubmit"
+    />
+    <div v-else class="flex items-center justify-center min-h-screen">
+      <p class="text-center text-error">No brand found.</p>
+    </div>
   </section>
 
   <Alert

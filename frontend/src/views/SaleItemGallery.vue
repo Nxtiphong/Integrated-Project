@@ -5,6 +5,7 @@ import BrandFilter from '@/components/brand/BrandFilter.vue';
 import { Icon } from '@iconify/vue';
 import { useSaleItemStore } from '@/stores/saleItemStore';
 import Alert from '@/components/share/Alert.vue';
+import SortComponent from '@/components/gallery/SortComponent.vue';
 const saleStore = useSaleItemStore();
 
 const alertMessage = ref({
@@ -23,7 +24,6 @@ const fetchSaleItems = async () => {
 const saleItems = ref([]);
 const filteredItems = ref([]);
 const isLoading = ref(true);
-const selectedBrands = ref([]);
 const refreshInterval = ref(null);
 
 const showMobileFilters = ref(false);
@@ -134,8 +134,8 @@ onUnmounted(() => {
           ]"
         >
           <BrandFilter :sale-items="saleItems" @filter-change="handleBrandFilterChange" />
-          <div class="border w-full">
-            <!-- Sort Here -->
+          <div class="w-full flex items-center justify-end">
+             <SortComponent/>
           </div>
         </div>
 

@@ -2,7 +2,6 @@
 import { onMounted, ref, onUnmounted } from 'vue';
 import SaleItemCard from '@/components/gallery/SaleItemCard.vue';
 import BrandFilter from '@/components/brand/BrandFilter.vue';
-import { Icon } from '@iconify/vue';
 import { useSaleItemStore } from '@/stores/saleItemStore';
 import Alert from '@/components/share/Alert.vue';
 import SortComponent from '@/components/gallery/SortComponent.vue';
@@ -23,12 +22,25 @@ const fetchSaleItems = async () => {
 
 const saleItems = ref([]);
 const filteredItems = ref([]);
-const isLoading = ref(true);
+const isLoading = ref(false);
 const refreshInterval = ref(null);
 
-const showMobileFilters = ref(false);
-const toggleMobileFilters = () => {
-  showMobileFilters.value = !showMobileFilters.value;
+const handleFilterSaleItems = async (selectedBrands) => {
+  const params = selectedBrands.map((brand) => `sortField=${brand.toLowerCase()}`).join('&');
+  isLoading.value = true;
+  try {
+    const res = await fetch(
+      `${import.meta.env.VITE_BASE_URL}/itb-mshop/v2/sale-items?${params}`,
+    );
+    if (!res.ok) throw new Error('Failed to fetch from filter brands');
+    const data = await res.json();
+    filteredItems.value = data.content;
+  } catch (error) {
+    console.error('Filter Sale Item by Brand error:', error);
+    throw new Error(error);
+  } finally {
+    isLoading.value = false;
+  }
 };
 
 const loadSaleItems = async () => {
@@ -114,33 +126,21 @@ onUnmounted(() => {
     </div>
     <div class="p-2">
       <div class="flex flex-col gap-1 lg:gap-5">
-        <div class="lg:hidden w-full mb-4">
-          <button
-            @click="toggleMobileFilters"
-            class="w-full py-2 px-2 bg-gray-100 text-gray-700 rounded-lg flex justify-between items-center shadow-sm"
-          >
-            <span class="font-medium">Filters</span>
-            <Icon
-              :icon="showMobileFilters ? 'lucide:chevron-up' : 'lucide:chevron-down'"
-              class="text-gray-500"
-            />
-          </button>
-        </div>
-
         <div
-          :class="[
-            'w-full  transition-all duration-300 flex items-center justify-between gap-8',
-            showMobileFilters ? 'max-h-screen' : 'max-h-0 lg:max-h-screen',
-          ]"
+          class="w-full transition-all duration-300 flex flex-col lg:flex-row items-center justify-between gap-8"
         >
-          <BrandFilter :sale-items="saleItems" @filter-change="handleBrandFilterChange" />
-          <div class="w-full flex items-center justify-end">
-             <SortComponent/>
+          <BrandFilter
+            :sale-items="saleItems"
+            @filter-sale-items-by-brands="handleFilterSaleItems"
+          />
+          <div class="w-full">
+            <SortComponent/>
+
           </div>
         </div>
 
         <div class="w-full lg:w-2/2">
-          <div v-if="isLoading" class="flex justify-center items-center min-h-[300px]">
+          <div v-if="isLoading" class="flex justify-center items-center min-h-screen">
             <p class="text-center text-lg">Loading...</p>
           </div>
 

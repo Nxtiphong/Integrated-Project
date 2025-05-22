@@ -6,11 +6,18 @@ const props = defineProps({
   saleItems: Array,
 });
 
+const emit = defineEmits(['filterSaleItemsByBrands']);
+
 const selectedBrands = ref([]);
 const brands = ref([]);
 
 const clearFilters = () => {
   selectedBrands.value = [];
+  handleFilter();
+};
+
+const handleFilter = () => {
+  emit('filterSaleItemsByBrands', selectedBrands.value);
 };
 
 const getAllBrands = async () => {
@@ -27,8 +34,10 @@ const getAllBrands = async () => {
 const toggleBrand = (brandName) => {
   if (selectedBrands.value.includes(brandName)) {
     selectedBrands.value = selectedBrands.value.filter((existBrand) => existBrand !== brandName);
+    handleFilter();
   } else {
     selectedBrands.value.push(brandName);
+    handleFilter();
   }
 };
 
@@ -39,17 +48,19 @@ onMounted(() => {
 
 <template>
   <section
-    class="join border-secondary rounded-lg flex items-center space-x-4 w-full bg-white border border-slate-200 p-2"
+    class="join border-secondary rounded-lg flex items-center space-x-2 lg:space-x-4 w-full bg-white border border-slate-200 lg:p-2"
   >
-    <div class="itbms-brand-filter flex gap-2 px-2 flex-1 w-lg overflow-x-auto scrollbar-hidden">
+    <div
+      class="itbms-brand-filter flex gap-1 lg:gap-2 px-2 flex-1 w-lg overflow-x-auto scrollbar-hidden"
+    >
       <p
         v-for="(brand, index) in selectedBrands"
         :key="index"
-        class="itbms-filter-item flex items-center select-none justify-center gap-1 bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full"
+        class="itbms-filter-item flex items-center select-none justify-center gap-1 bg-primary/80 text-white text-xs lg:text-sm font-medium px-2 lg:px-3 py-1 rounded-full"
       >
         <span class="itbms-filter-item-name">{{ brand }}</span>
         <span class="cursor-pointer itbms-filter-item-clear" @click="toggleBrand(brand)"
-          ><Icon icon="iconoir:delete-circle" class="text-base" />
+          ><Icon icon="iconoir:delete-circle" class="text-sm lg:text-base" />
         </span>
       </p>
       <span v-if="selectedBrands.length === 0" class="text-gray-400 text-sm"
@@ -68,13 +79,13 @@ onMounted(() => {
 
         <ul
           tabindex="0"
-          class="dropdown-content menu p-2 shadow-md border border-slate-200 mt-2 bg-white rounded-box h-[250px] w-[500px] z-1"
+          class="dropdown-content lg:menu p-2 shadow-md border border-slate-200 mt-2 bg-white rounded-box h-[250px] w-[250px] lg:w-[550px] overflow-y-auto z-1"
         >
           <li v-for="brand in brands" :key="brand.id">
-            <label class="label cursor-pointer justify-start gap-2">
+            <label class="label cursor-pointer justify-start text-xs lg:text-base gap-2">
               <input
                 type="checkbox"
-                class="checkbox checkbox-sm"
+                class="checkbox checkbox-xs lg:checkbox-sm"
                 :checked="selectedBrands.includes(brand.name)"
                 @change="toggleBrand(brand.name)"
               />
@@ -86,7 +97,7 @@ onMounted(() => {
 
       <button
         @click="clearFilters"
-        class="itbms-brand-filter-clear p-2 text-black font-semibold cursor-pointer rounded-r-md transition duration-200"
+        class="itbms-brand-filter-clear p-2 rounded-md text-black font-semibold btn btn-ghost"
       >
         Clear
       </button>
@@ -100,7 +111,7 @@ onMounted(() => {
   scrollbar-width: none; /* Firefox */
 }
   ::-webkit-scrollbar {
-    display: none; /* Safari and Chrome */
+    display: none;
   }
 
 </style>

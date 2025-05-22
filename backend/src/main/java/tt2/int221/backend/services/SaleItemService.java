@@ -18,6 +18,7 @@ import tt2.int221.backend.repositories.BrandRepository;
 import tt2.int221.backend.repositories.SaleItemRepository;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class SaleItemService {
@@ -36,17 +37,11 @@ public class SaleItemService {
     }
 
 
-    public Page<SaleItem> findAll(int page, int size, List<String> brandNames, String sortDirection) {
-        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), "brand.name");
+    public Page<SaleItem> findAll(int page, int size, String sortField, List<String> filterBrands, String sortDirection) {
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
         Pageable pageable = PageRequest.of(page, size, sort);
-
-        if (brandNames != null && !brandNames.isEmpty()) {
-            return saleItemRepository.findAllByBrand_NameIn(brandNames, pageable);
-        } else {
-            return saleItemRepository.findAll(pageable);
-        }
+        return filterBrands.isEmpty() ? saleItemRepository.findAll(pageable) : saleItemRepository.findByBrandNameIn(filterBrands, pageable);
     }
-
 
 
     public  List<SaleItem> getAllSaleItemsOrderByCreatedOnAscV2() {

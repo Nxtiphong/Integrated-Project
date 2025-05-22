@@ -39,9 +39,8 @@ const cancelModal = () => {
 </script>
 
 <template>
-  <div>
+  <section>
     <div
-      v-if="brandList.length > 0"
       class="overflow-x-auto w-xs xs:w-lg sm:w-2xl md:w-2xl lg:w-4xl xl:w-7xl mx-auto mb-4 rounded-box border border-base-content/10 bg-base-100"
     >
       <table class="table table-xs sm:table-sm md:table-md">
@@ -75,10 +74,6 @@ const cancelModal = () => {
       </table>
     </div>
 
-    <div v-else class="flex items-center justify-center">
-      <p class="text-center text-error">No brand</p>
-    </div>
-
     <div class="itbms-message">
       <DeleteModal
         v-model="isDelete"
@@ -94,7 +89,7 @@ const cancelModal = () => {
         @cancel="cancelModal"
       />
     </div>
-  </div>
+  </section>
 </template>
 
 <style scoped></style>

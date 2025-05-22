@@ -1,52 +1,27 @@
 <script setup>
 import { ref } from 'vue';
-import axios from 'axios';
 
-const page = ref(0);
 const pageSize = ref(5);
 const sortOrder = ref('none');
 
-const items = ref([]);
+const emit = defineEmits(['sortType', 'pageSize']);
+
 const pageSizeOptions = [5, 10, 20];
-
-const fetchData = async () => {
-  try {
-    let sortParam = undefined;
-    if (sortOrder.value === 'asc') {
-      sortParam = 'ASC';
-    } else if (sortOrder.value === 'desc') {
-      sortParam = 'DESC';
-    }
-
-    const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/v2/sale-items`, {
-      params: {
-        page: page.value,
-        size: pageSize.value,
-        sortDirection: sortParam,
-      },
-    });
-
-    items.value = response.data.content;
-  } catch (error) {
-    console.error('Error fetching items:', error);
-  }
-};
 
 const toggleSort = (order) => {
   sortOrder.value = order;
-  fetchData();
+  emit('sortType', sortOrder.value);
 };
 
 const handlePageSizeChange = (event) => {
   pageSize.value = parseInt(event.target.value);
-  fetchData();
+  console.log('Page size:', pageSize.value);
+  emit('pageSize', pageSize.value);
 };
 
 const isSortActive = (order) => {
   return sortOrder.value === order;
 };
-
-fetchData();
 </script>
 
 

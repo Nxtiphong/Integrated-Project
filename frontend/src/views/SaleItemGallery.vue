@@ -8,7 +8,7 @@ import SortComponent from '@/components/gallery/SortComponent.vue';
 const saleStore = useSaleItemStore();
 
 const alertMessage = ref({
-  type: '',
+  type: 'success',
   message: '',
   visible: false,
   duration: 3000,
@@ -25,13 +25,45 @@ const filteredItems = ref([]);
 const isLoading = ref(false);
 const refreshInterval = ref(null);
 
+const sortOrder = ref('none');
+const pageSize = ref(5);
+
+const handleSortChange = (newOrder) => {
+  sortOrder.value = newOrder;
+  fetchSortedItems();
+};
+
+const handlePageSizeChange = (newSize) => {
+  pageSize.value = newSize;
+  fetchSortedItems();
+};
+
+const fetchSortedItems = async () => {
+  isLoading.value = true;
+  try {
+    let url = `${import.meta.env.VITE_BASE_URL}/itb-mshop/v2/sale-items?size=${pageSize.value}`;
+
+    if (sortOrder.value !== 'none') {
+      url += `&sortDirection=${sortOrder.value}`;
+    }
+
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Failed to fetch sorted items');
+
+    const data = await res.json();
+    filteredItems.value = data.content;
+  } catch (error) {
+    console.error('Fetch sorted items error:', error);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
 const handleFilterSaleItems = async (selectedBrands) => {
   const params = selectedBrands.map((brand) => `sortField=${brand.toLowerCase()}`).join('&');
   isLoading.value = true;
   try {
-    const res = await fetch(
-      `${import.meta.env.VITE_BASE_URL}/itb-mshop/v2/sale-items?${params}`,
-    );
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v2/sale-items?${params}`);
     if (!res.ok) throw new Error('Failed to fetch from filter brands');
     const data = await res.json();
     filteredItems.value = data.content;
@@ -133,9 +165,8 @@ onUnmounted(() => {
             :sale-items="saleItems"
             @filter-sale-items-by-brands="handleFilterSaleItems"
           />
-          <div class="w-full">
-            <SortComponent/>
-
+          <div class="w-full flex items-center justify-end">
+            <SortComponent @sortType="handleSortChange" @pageSize="handlePageSizeChange" />
           </div>
         </div>
 

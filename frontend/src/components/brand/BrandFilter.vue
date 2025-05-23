@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import { Icon } from '@iconify/vue';
+import { useGalleryFilterStore } from '@/stores/useGalleryFilterStore';
 
 const props = defineProps({
   saleItems: Array,
@@ -8,17 +9,16 @@ const props = defineProps({
 
 const emit = defineEmits(['filterSaleItemsByBrands']);
 
-const selectedBrands = ref([]);
 const brands = ref([]);
+const { filterLists } = useGalleryFilterStore();
 
 const clearFilters = () => {
-  selectedBrands.value = [];
+  filterLists.splice(0, filterLists.length);
   handleFilter();
 };
 
 const handleFilter = () => {
-  emit('filterSaleItemsByBrands', selectedBrands.value);
-  console.log('Selected brands:', selectedBrands.value);
+  emit('filterSaleItemsByBrands');
 };
 
 const getAllBrands = async () => {
@@ -33,13 +33,13 @@ const getAllBrands = async () => {
 };
 
 const toggleBrand = (brandName) => {
-  if (selectedBrands.value.includes(brandName)) {
-    selectedBrands.value = selectedBrands.value.filter((existBrand) => existBrand !== brandName);
-    handleFilter();
+  const index = filterLists.indexOf(brandName);
+  if (index > -1) {
+    filterLists.splice(index, 1);
   } else {
-    selectedBrands.value.push(brandName);
-    handleFilter();
+    filterLists.push(brandName);
   }
+  handleFilter();
 };
 
 onMounted(() => {
@@ -55,7 +55,7 @@ onMounted(() => {
       class="itbms-brand-filter flex gap-1 lg:gap-2 px-2 flex-1 w-lg overflow-x-auto scrollbar-hidden"
     >
       <p
-        v-for="(brand, index) in selectedBrands"
+        v-for="(brand, index) in filterLists"
         :key="index"
         class="itbms-filter-item flex items-center select-none justify-center gap-1 bg-primary/80 text-white text-xs lg:text-sm font-medium px-2 lg:px-3 py-1 rounded-full"
       >
@@ -64,9 +64,7 @@ onMounted(() => {
           ><Icon icon="iconoir:delete-circle" class="text-sm lg:text-base" />
         </span>
       </p>
-      <span v-if="selectedBrands.length === 0" class="text-gray-400 text-sm"
-        >Filter by brand(s)</span
-      >
+      <span v-if="filterLists.length === 0" class="text-gray-400 text-sm">Filter by brand(s)</span>
     </div>
 
     <div class="flex items-center justify-center rounded-r-lg">
@@ -87,7 +85,7 @@ onMounted(() => {
               <input
                 type="checkbox"
                 class="checkbox checkbox-xs lg:checkbox-sm"
-                :checked="selectedBrands.includes(brand.name)"
+                :checked="filterLists.includes(brand.name)"
                 @change="toggleBrand(brand.name)"
               />
               <span class="label-text">{{ brand.name }}</span>
@@ -108,11 +106,10 @@ onMounted(() => {
 
 <style scoped>
 .scrollbar-hidden {
-  -ms-overflow-style: none; /* Internet Explorer 10+ */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
-  ::-webkit-scrollbar {
-    display: none;
-  }
-
+::-webkit-scrollbar {
+  display: none;
+}
 </style>

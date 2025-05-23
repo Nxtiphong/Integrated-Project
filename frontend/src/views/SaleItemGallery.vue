@@ -5,6 +5,7 @@ import BrandFilter from '@/components/brand/BrandFilter.vue';
 import { useSaleItemStore } from '@/stores/saleItemStore';
 import Alert from '@/components/share/Alert.vue';
 import SortComponent from '@/components/gallery/SortComponent.vue';
+import { useGalleryFilterStore } from '@/stores/useGalleryFilterStore';
 import Pagination from '@/components/pagination/Pagination.vue';
 const saleStore = useSaleItemStore();
 
@@ -16,13 +17,13 @@ const alertMessage = ref({
 });
 
 const filteredItems = ref([]);
-const brandFilter = ref([]);
 const isLoading = ref(false);
 const page = ref(1);
 const totalPages = ref(1);
 const sortField = ref('');
 const sortDirection = ref('asc');
 const pageSize = ref(5);
+const { filterLists } = useGalleryFilterStore();
 
 const fetchSaleItems = async ({
   page = 1,
@@ -32,7 +33,7 @@ const fetchSaleItems = async ({
   sortDirection = 'asc',
 } = {}) => {
   const params = new URLSearchParams();
-  params.append('page', page - 1); // Set Page = 0
+  params.append('page', page - 1);
   params.append('size', size);
   if (filterBrands.length > 0) {
     filterBrands.forEach((brand) => params.append('filterBrands', brand));
@@ -40,42 +41,37 @@ const fetchSaleItems = async ({
   if (sortField) params.append('sortField', sortField);
   if (sortDirection) params.append('sortDirection', sortDirection);
 
-  const response = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v2/sale-items?${params.toString()}`);
+  const response = await fetch(
+    `${import.meta.env.VITE_BASE_URL}/itb-mshop/v2/sale-items?${params.toString()}`,
+  );
   const data = await response.json();
   return data;
 };
-// fetch ทุกครั้งที่เปลี่ยนหน้า
 const fetchPage = (newPage) => {
   page.value = newPage;
   loadSaleItems();
 };
-// filter sale items by brand
-const handleFilterSaleItems = async (selectedBrands) => {
-  brandFilter.value = selectedBrands;
-  fetchPage(1)
 
+const handleFilterSaleItems = () => {
+  fetchPage(1);
 };
+
 const handleSortChange = (val) => {
-  // sortField.value = field;
-  // console.log(val);
-  if(val === 'none') {
-    sortDirection.value = 'asc'
-    sortField.value = 'id'
-  }else{
+  if (val === 'none') {
+    sortDirection.value = 'asc';
+    sortField.value = 'id';
+  } else {
     sortDirection.value = val;
     sortField.value = 'brand.name';
   }
-      loadSaleItems(); 
- // fild by id asc 
+  loadSaleItems();
 };
 
 const handlePageSizeChange = (size) => {
   pageSize.value = size;
-  loadSaleItems(); // โหลดใหม่ตามจำนวนรายการต่อหน้า
+  loadSaleItems();
 };
 
-
-// โหลดรายการ Sale Items
 const loadSaleItems = async () => {
   isLoading.value = true;
   try {
@@ -84,7 +80,7 @@ const loadSaleItems = async () => {
       size: pageSize.value,
       sortField: sortField.value,
       sortDirection: sortDirection.value,
-      filterBrands: brandFilter.value
+      filterBrands: filterLists,
     });
     totalPages.value = items.totalPages;
     filteredItems.value = [...items.content];
@@ -92,12 +88,6 @@ const loadSaleItems = async () => {
     console.error('Error fetching sale items:', error);
   } finally {
     isLoading.value = false;
-  }
-};
-
-const handleVisibilityChange = () => {
-  if (document.visibilityState === 'visible') {
-    loadSaleItems();
   }
 };
 
@@ -125,22 +115,14 @@ onMounted(() => {
     };
     saleStore.deleted = false;
   }
-
-  document.addEventListener('visibilitychange', handleVisibilityChange);
-});
-
-onUnmounted(() => {
-  if (refreshInterval.value) {
-    clearInterval(refreshInterval.value);
-  }
-  document.removeEventListener('visibilitychange', handleVisibilityChange);
 });
 </script>
 
 <template>
   <div class="container mx-auto">
-    <!-- Breadcrumbs -->
-    <div class="breadcrumbs text-sm overflow-x-auto whitespace-nowrap my-2 flex items-center justify-between">
+    <div
+      class="breadcrumbs text-sm overflow-x-auto whitespace-nowrap my-2 flex items-center justify-between"
+    >
       <ul class="flex">
         <li class="flex items-center">
           <RouterLink to="/">Home</RouterLink>
@@ -155,7 +137,9 @@ onUnmounted(() => {
     </div>
     <div class="p-2">
       <div class="flex flex-col gap-1 lg:gap-5">
-        <div class="w-full transition-all duration-300 flex flex-col lg:flex-row items-center justify-between gap-8">
+        <div
+          class="w-full transition-all duration-300 flex flex-col lg:flex-row items-center justify-between gap-8"
+        >
           <BrandFilter
             :sale-items="saleItems"
             @filter-sale-items-by-brands="handleFilterSaleItems"
@@ -191,7 +175,10 @@ onUnmounted(() => {
             />
           </div>
 
-          <div v-else class="font-medium text-primary flex justify-center items-center min-h-[300px]">
+          <div
+            v-else
+            class="font-medium text-primary flex justify-center items-center min-h-[300px]"
+          >
             <p class="text-center text-lg">! No sale items</p>
           </div>
         </div>

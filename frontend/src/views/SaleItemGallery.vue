@@ -4,11 +4,12 @@ import SaleItemCard from '@/components/gallery/SaleItemCard.vue';
 import BrandFilter from '@/components/brand/BrandFilter.vue';
 import { useSaleItemStore } from '@/stores/saleItemStore';
 import Alert from '@/components/share/Alert.vue';
+import SortComponent from '@/components/gallery/SortComponent.vue';
 import Pagination from '@/components/pagination/Pagination.vue';
 const saleStore = useSaleItemStore();
 
 const alertMessage = ref({
-  type: '',
+  type: 'success',
   message: '',
   visible: false,
   duration: 3000,
@@ -18,39 +19,12 @@ const saleItems = ref([]);
 const filteredItems = ref([]);
 const isLoading = ref(false);
 const refreshInterval = ref(null);
-const page = ref(1);
-const totalPages = ref(1);
 
-const fetchSaleItems = async ({
-  page = 1,
-  size = 10,
-  filterBrands = [],
-  sortField = '',
-  sortDirection = 'asc',
-} = {}) => {
-  const params = new URLSearchParams();
-  params.append('page', page - 1); // Set Page = 0
-  params.append('size', size);
-  if (filterBrands.length > 0) {
-    filterBrands.forEach((brand) => params.append('filterBrands', brand));
-  }
-  if (sortField) params.append('sortField', sortField);
-  if (sortDirection) params.append('sortDirection', sortDirection);
-
-  const response = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v2/sale-items?${params.toString()}`);
-  const data = await response.json();
-  return data;
-};
-// fetchทุกครั้งที่เปลี่ยนหน้า
-const fetchPage = (newPage) => {
-  page.value = newPage;
-  loadSaleItems();
-};
-// filter sale items by brand
 const handleFilterSaleItems = async (selectedBrands) => {
   const params = selectedBrands.map((brand) => `sortField=${brand.toLowerCase()}`).join('&');
   isLoading.value = true;
   try {
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v2/sale-items?${params}`);
     const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v2/sale-items?${params}`);
     if (!res.ok) throw new Error('Failed to fetch from filter brands');
     const data = await res.json();
@@ -144,7 +118,9 @@ onUnmounted(() => {
             :sale-items="saleItems"
             @filter-sale-items-by-brands="handleFilterSaleItems"
           />
-          <div class="border w-full">Hello</div>
+          <div class="w-full flex items-center justify-end">
+            <SortComponent @sortType="handleSortChange" @pageSize="handlePageSizeChange" />
+          </div>
         </div>
 
         <div class="w-full lg:w-2/2">

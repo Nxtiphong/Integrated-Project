@@ -4,6 +4,7 @@ import SaleItemCard from '@/components/gallery/SaleItemCard.vue';
 import BrandFilter from '@/components/brand/BrandFilter.vue';
 import { useSaleItemStore } from '@/stores/saleItemStore';
 import Alert from '@/components/share/Alert.vue';
+import Pagination from '@/components/pagination/Pagination.vue';
 const saleStore = useSaleItemStore();
 
 const alertMessage = ref({
@@ -13,24 +14,44 @@ const alertMessage = ref({
   duration: 3000,
 });
 
-const fetchSaleItems = async () => {
-  const response = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items`);
-  const data = await response.json();
-  return data;
-};
-
 const saleItems = ref([]);
 const filteredItems = ref([]);
 const isLoading = ref(false);
 const refreshInterval = ref(null);
+const page = ref(1);
+const totalPages = ref(1);
 
+const fetchSaleItems = async ({
+  page = 1,
+  size = 10,
+  filterBrands = [],
+  sortField = '',
+  sortDirection = 'asc',
+} = {}) => {
+  const params = new URLSearchParams();
+  params.append('page', page - 1); // Set Page = 0
+  params.append('size', size);
+  if (filterBrands.length > 0) {
+    filterBrands.forEach((brand) => params.append('filterBrands', brand));
+  }
+  if (sortField) params.append('sortField', sortField);
+  if (sortDirection) params.append('sortDirection', sortDirection);
+
+  const response = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v2/sale-items?${params.toString()}`);
+  const data = await response.json();
+  return data;
+};
+// fetchทุกครั้งที่เปลี่ยนหน้า
+const fetchPage = (newPage) => {
+  page.value = newPage;
+  loadSaleItems();
+};
+// filter sale items by brand
 const handleFilterSaleItems = async (selectedBrands) => {
   const params = selectedBrands.map((brand) => `sortField=${brand.toLowerCase()}`).join('&');
   isLoading.value = true;
   try {
-    const res = await fetch(
-      `${import.meta.env.VITE_BASE_URL}/itb-mshop/v2/sale-items?${params}`,
-    );
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v2/sale-items?${params}`);
     if (!res.ok) throw new Error('Failed to fetch from filter brands');
     const data = await res.json();
     filteredItems.value = data.content;
@@ -42,20 +63,14 @@ const handleFilterSaleItems = async (selectedBrands) => {
   }
 };
 
+// โหลดรายการ Sale Items
 const loadSaleItems = async () => {
   isLoading.value = true;
   try {
-    const items = await fetchSaleItems();
-    saleItems.value = items;
-
-    if (saleItems.value.length > 0) {
-      saleItems.value.sort((a, b) => {
-        const updatedA = new Date(b.createdOn);
-        const updatedB = new Date(a.createdOn);
-        return updatedA - updatedB;
-      });
-    }
-
+    const items = await fetchSaleItems({ page: page.value });
+    saleItems.value = items.content;
+    totalPages.value = items.totalPages;
+    saleItems.value.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
     filteredItems.value = [...saleItems.value];
   } catch (error) {
     console.error('Error fetching sale items:', error);
@@ -108,9 +123,8 @@ onUnmounted(() => {
 
 <template>
   <div class="container mx-auto">
-    <div
-      class="breadcrumbs text-sm overflow-x-auto whitespace-nowrap my-2 flex items-center justify-between"
-    >
+    <!-- Breadcrumbs -->
+    <div class="breadcrumbs text-sm overflow-x-auto whitespace-nowrap my-2 flex items-center justify-between">
       <ul class="flex">
         <li class="flex items-center">
           <RouterLink to="/">Home</RouterLink>
@@ -120,14 +134,12 @@ onUnmounted(() => {
         </li>
       </ul>
       <RouterLink to="/sale-items/add">
-        <button className="itbms-sale-item-add btn btn-outline btn-info">Add Sale Item</button>
+        <button class="itbms-sale-item-add btn btn-outline btn-info">Add Sale Item</button>
       </RouterLink>
     </div>
     <div class="p-2">
       <div class="flex flex-col gap-1 lg:gap-5">
-        <div
-          class="w-full transition-all duration-300 flex flex-col lg:flex-row items-center justify-between gap-8"
-        >
+        <div class="w-full transition-all duration-300 flex flex-col lg:flex-row items-center justify-between gap-8">
           <BrandFilter
             :sale-items="saleItems"
             @filter-sale-items-by-brands="handleFilterSaleItems"
@@ -161,13 +173,13 @@ onUnmounted(() => {
             />
           </div>
 
-          <div
-            v-else
-            class="font-medium text-primary flex justify-center items-center min-h-[300px]"
-          >
+          <div v-else class="font-medium text-primary flex justify-center items-center min-h-[300px]">
             <p class="text-center text-lg">! No sale items</p>
           </div>
         </div>
+      </div>
+      <div>
+        <Pagination :currentPage="page" :totalPages="totalPages" @update:currentPage="fetchPage" />
       </div>
     </div>
 

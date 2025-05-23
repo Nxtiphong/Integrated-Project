@@ -44,7 +44,7 @@ const fetchSaleItems = async ({
   const data = await response.json();
   return data;
 };
-// fetchทุกครั้งที่เปลี่ยนหน้า
+// fetch ทุกครั้งที่เปลี่ยนหน้า
 const fetchPage = (newPage) => {
   page.value = newPage;
   loadSaleItems();
@@ -55,10 +55,18 @@ const handleFilterSaleItems = async (selectedBrands) => {
   fetchPage(1)
 
 };
-const handleSortChange = ({ field, direction }) => {
-  sortField.value = field;
-  sortDirection.value = direction;
-  loadSaleItems(); // โหลดใหม่ตามการจัดเรียง
+const handleSortChange = (val) => {
+  // sortField.value = field;
+  // console.log(val);
+  if(val === 'none') {
+    sortDirection.value = 'asc'
+    sortField.value = 'id'
+  }else{
+    sortDirection.value = val;
+    sortField.value = 'brand.name';
+  }
+      loadSaleItems(); 
+ // fild by id asc 
 };
 
 const handlePageSizeChange = (size) => {

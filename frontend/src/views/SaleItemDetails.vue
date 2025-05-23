@@ -77,10 +77,7 @@ const handleDelete = async () => {
   } finally {
     showDeleteModal.value = false;
   }
-
-  
 };
-
 
 const alertMessage = ref({
   type: '',
@@ -88,7 +85,6 @@ const alertMessage = ref({
   visible: false,
   duration: 3000,
 });
-
 
 onMounted(() => {
   fetchProductDetail(params);
@@ -102,12 +98,11 @@ onMounted(() => {
     };
     saleStore.updated = false;
   }
-
 });
 </script>
 
 <template>
-  <div v-if="isLoading" class="flex flex-col justify-center items-center h-60">
+  <div v-if="isLoading" class="flex flex-col justify-center items-center min-h-screen">
     <span class="loading loading-ball loading-xl"></span>
     <p class="text-lg font-semibold">Loading product details...</p>
   </div>
@@ -161,23 +156,23 @@ onMounted(() => {
       </div>
     </div>
     <div class="itbms-message">
-    <Alert
-    :show="alertMessage.visible"
-    :type="alertMessage.type"
-    :message="alertMessage.message"
-    @update:show="alertMessage.visible = $event"
-    :duration="alertMessage.duration"
-  />
-  </div>
+      <Alert
+        :show="alertMessage.visible"
+        :type="alertMessage.type"
+        :message="alertMessage.message"
+        @update:show="alertMessage.visible = $event"
+        :duration="alertMessage.duration"
+      />
+    </div>
 
     <div class="itbms-message">
       <DeleteModal
-      v-model="showDeleteModal"
-      :title="`Delete ${productDetail.model}`"
-      :message="`Do you want to delete this sale item?`"
-      @confirm="handleDelete"
-      @cancel="cancelModal"
-    />
+        v-model="showDeleteModal"
+        :title="`Delete ${productDetail.model}`"
+        :message="`Do you want to delete this sale item?`"
+        @confirm="handleDelete"
+        @cancel="cancelModal"
+      />
     </div>
   </div>
 

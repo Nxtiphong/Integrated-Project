@@ -19,12 +19,39 @@ const saleItems = ref([]);
 const filteredItems = ref([]);
 const isLoading = ref(false);
 const refreshInterval = ref(null);
+const page = ref(1);
+const totalPages = ref(1);
 
+const fetchSaleItems = async ({
+  page = 1,
+  size = 10,
+  filterBrands = [],
+  sortField = '',
+  sortDirection = 'asc',
+} = {}) => {
+  const params = new URLSearchParams();
+  params.append('page', page - 1); // Set Page = 0
+  params.append('size', size);
+  if (filterBrands.length > 0) {
+    filterBrands.forEach((brand) => params.append('filterBrands', brand));
+  }
+  if (sortField) params.append('sortField', sortField);
+  if (sortDirection) params.append('sortDirection', sortDirection);
+
+  const response = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v2/sale-items?${params.toString()}`);
+  const data = await response.json();
+  return data;
+};
+// fetchทุกครั้งที่เปลี่ยนหน้า
+const fetchPage = (newPage) => {
+  page.value = newPage;
+  loadSaleItems();
+};
+// filter sale items by brand
 const handleFilterSaleItems = async (selectedBrands) => {
   const params = selectedBrands.map((brand) => `sortField=${brand.toLowerCase()}`).join('&');
   isLoading.value = true;
   try {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v2/sale-items?${params}`);
     const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v2/sale-items?${params}`);
     if (!res.ok) throw new Error('Failed to fetch from filter brands');
     const data = await res.json();

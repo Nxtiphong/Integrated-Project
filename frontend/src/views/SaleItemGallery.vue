@@ -5,6 +5,7 @@ import BrandFilter from '@/components/brand/BrandFilter.vue';
 import { useSaleItemStore } from '@/stores/saleItemStore';
 import Alert from '@/components/share/Alert.vue';
 import SortComponent from '@/components/gallery/SortComponent.vue';
+import { useGalleryFilterStore } from '@/stores/useGalleryFilterStore';
 const saleStore = useSaleItemStore();
 
 const alertMessage = ref({
@@ -27,6 +28,7 @@ const refreshInterval = ref(null);
 
 const sortOrder = ref('none');
 const pageSize = ref(5);
+const { filterLists } = useGalleryFilterStore();
 
 const handleSortChange = (newOrder) => {
   sortOrder.value = newOrder;
@@ -59,11 +61,18 @@ const fetchSortedItems = async () => {
   }
 };
 
-const handleFilterSaleItems = async (selectedBrands) => {
-  const params = selectedBrands.map((brand) => `sortField=${brand.toLowerCase()}`).join('&');
+const handleFilterSaleItems = async () => {
+  let params = filterLists.map((brand) => `filterBrands=${brand.toLowerCase()}`).join('&');
   isLoading.value = true;
+
+  if (sortOrder.value !== 'none') {
+    params += `&sortDirection=${sortOrder.value}`;
+  }
+
   try {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v2/sale-items?${params}`);
+    const res = await fetch(
+      `${import.meta.env.VITE_BASE_URL}/itb-mshop/v2/sale-items?${params}&size=${pageSize.value}`,
+    );
     if (!res.ok) throw new Error('Failed to fetch from filter brands');
     const data = await res.json();
     filteredItems.value = data.content;

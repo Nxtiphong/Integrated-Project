@@ -18,6 +18,7 @@ const clearFilters = () => {
 
 const handleFilter = () => {
   emit('filterSaleItemsByBrands', selectedBrands.value);
+  console.log('Selected brands:', selectedBrands.value);
 };
 
 const getAllBrands = async () => {

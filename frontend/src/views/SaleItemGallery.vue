@@ -15,12 +15,14 @@ const alertMessage = ref({
   duration: 3000,
 });
 
-const saleItems = ref([]);
 const filteredItems = ref([]);
+const brandFilter = ref([]);
 const isLoading = ref(false);
-const refreshInterval = ref(null);
 const page = ref(1);
 const totalPages = ref(1);
+const sortField = ref('');
+const sortDirection = ref('asc');
+const pageSize = ref(5);
 
 const fetchSaleItems = async ({
   page = 1,
@@ -49,30 +51,35 @@ const fetchPage = (newPage) => {
 };
 // filter sale items by brand
 const handleFilterSaleItems = async (selectedBrands) => {
-  const params = selectedBrands.map((brand) => `sortField=${brand.toLowerCase()}`).join('&');
-  isLoading.value = true;
-  try {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v2/sale-items?${params}`);
-    if (!res.ok) throw new Error('Failed to fetch from filter brands');
-    const data = await res.json();
-    filteredItems.value = data.content;
-  } catch (error) {
-    console.error('Filter Sale Item by Brand error:', error);
-    throw new Error(error);
-  } finally {
-    isLoading.value = false;
-  }
+  brandFilter.value = selectedBrands;
+  fetchPage(1)
+
 };
+const handleSortChange = ({ field, direction }) => {
+  sortField.value = field;
+  sortDirection.value = direction;
+  loadSaleItems(); // โหลดใหม่ตามการจัดเรียง
+};
+
+const handlePageSizeChange = (size) => {
+  pageSize.value = size;
+  loadSaleItems(); // โหลดใหม่ตามจำนวนรายการต่อหน้า
+};
+
 
 // โหลดรายการ Sale Items
 const loadSaleItems = async () => {
   isLoading.value = true;
   try {
-    const items = await fetchSaleItems({ page: page.value });
-    saleItems.value = items.content;
+    const items = await fetchSaleItems({
+      page: page.value,
+      size: pageSize.value,
+      sortField: sortField.value,
+      sortDirection: sortDirection.value,
+      filterBrands: brandFilter.value
+    });
     totalPages.value = items.totalPages;
-    saleItems.value.sort((a, b) => new Date(b.createdOn) - new Date(a.createdOn));
-    filteredItems.value = [...saleItems.value];
+    filteredItems.value = [...items.content];
   } catch (error) {
     console.error('Error fetching sale items:', error);
   } finally {

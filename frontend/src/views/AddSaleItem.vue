@@ -5,9 +5,6 @@ import ProductImage from '@/components/detail/ProductImage.vue';
 import { useSaleItemStore } from '@/stores/saleItemStore';
 import Alert from '@/components/share/Alert.vue';
 import { useRoute } from 'vue-router';
-import { useGalleryFilterStore } from '@/stores/useGalleryFilterStore';
-
-const saleGalleryFilter = useGalleryFilterStore();
 
 const route = useRoute();
 const params = route.params.id;
@@ -32,73 +29,77 @@ const product = ref({
   quantity: null,
 });
 
-const validation = (product) => {
-  if (!product.brand) {
-    alertMessage.value = {
-      type: 'error',
-      message: 'Please select a brand',
-      visible: true,
-    };
-    return false;
-  }
-  if (!product.model) {
-    alertMessage.value = {
-      type: 'error',
-      message: 'Please enter a model name',
-      visible: true,
-    };
-    return false;
-  }
-  if (!product.price || product.price <= 0) {
-    alertMessage.value = {
-      type: 'error',
-      message: 'Please enter a valid price',
-      visible: true,
-    };
-    return false;
-  }
-  if (product.quantity < 0) {
-    alertMessage.value = {
-      type: 'error',
-      message: 'Please enter a valid quantity, quantity should be greater than 0',
-      visible: true,
-    };
+const errors = ref({
+  brand: '',
+  model: '',
+  price: '',
+  description: '',
+  quantity: '',
+  ramGb: '',
+  screenSizeInch: '',
+  storageGb: '',
+  color: ''
+});
 
-    return false;
+
+const validateField = (field, value) => {
+  switch (field) {
+    case 'brand':
+      return !value ? 'Brand must be selected.' : '';
+    case 'model':
+      return !value || value.length === 0 ? 'Model must be 1-60 characters long.' : 
+             value.length > 60 ? 'Model must be 1-60 characters long.' : '';
+    case 'price':
+      return !value || value <= 0 ? 'Price must be non-negative integer.' : '';
+    case 'description':
+      return !value || value.length === 0 ? 'Description must be 1-65,535 characters long.' : 
+             value.length > 65535 ? 'Description must be 1-65,535 characters long.' : '';
+    case 'quantity':
+      return value !== null && value !== '' && value <= 0 ? 'Quantity must be non-negative integer.' : '';
+
+    case 'ramGb':
+      return value !== null && value !== '' && value <= 0 ? 'RAM size must be positive integer or not specified.' : '';
+    case 'screenSizeInch':
+      return value !== null && value !== '' && value <= 0 ? 'Screen size must be positive number with at most 2 decimal points or not specified.' : '';
+    case 'storageGb':
+      return value !== null && value !== '' && value <= 0 ? 'Storage size must be positive integer or not specified.' : '';
+    case 'color':
+      return value && value.length > 40 ? 'Color must be 1-40 characters long or not specified.' : '';
+    default:
+      return '';
   }
-  if (product.ramGb < 0) {
-    alertMessage.value = {
-      type: 'error',
-      message: 'Please enter a valid RAM size, RAM size should be greater than 0',
-      visible: true,
-    };
-    return false;
+};
+
+const onChange = (field) => {
+  console.log(`Field changed: ${field}`);
+  errors.value[field] = validateField(field, product.value[field]);
+  console.log(`errors.value[field]: ${errors.value[field]}`);
+};
+
+const onInput = (field) => {
+  if (errors.value[field]) {
+    errors.value[field] = '';
   }
-  if (product.screenSizeInch < 0) {
-    alertMessage.value = {
-      type: 'error',
-      message: 'Please enter a valid screen size, screen size should be greater than 0',
-      visible: true,
-    };
-    return false;
-  }
-  if (product.storageGb < 0) {
-    alertMessage.value = {
-      type: 'error',
-      message: 'Please enter a valid storage size, storage size should be greater than 0',
-      visible: true,
-    };
-    return false;
-  }
-  if (!product.description) {
-    alertMessage.value = {
-      type: 'error',
-      message: 'Please enter a description',
-      visible: true,
-    };
-    return false;
-  }
-  return true;
+};
+
+const hasErrors = computed(() => {
+  return errors.value.brand || errors.value.model || errors.value.price || 
+         errors.value.description || errors.value.quantity || errors.value.ramGb || 
+         errors.value.screenSizeInch || errors.value.storageGb || errors.value.color;
+});
+
+const validation = (product) => {
+  errors.value.brand = validateField('brand', product.brand);
+  errors.value.model = validateField('model', product.model);
+  errors.value.price = validateField('price', product.price);
+  errors.value.description = validateField('description', product.description);
+  errors.value.quantity = validateField('quantity', product.quantity);
+  errors.value.ramGb = validateField('ramGb', product.ramGb);
+  errors.value.screenSizeInch = validateField('screenSizeInch', product.screenSizeInch);
+  errors.value.storageGb = validateField('storageGb', product.storageGb);
+  errors.value.color = validateField('color', product.color);
+  
+  return !hasErrors.value;
 };
 
 const saveProduct = async () => {
@@ -114,7 +115,6 @@ const saveProduct = async () => {
       body: JSON.stringify(product.value),
     });
     saleStore.updated = true;
-    saleGalleryFilter.resetPageOnly();
     router.push(`/sale-items/${params}`);
   } else {
     await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items`, {
@@ -125,7 +125,6 @@ const saveProduct = async () => {
       body: JSON.stringify(product.value),
     });
     saleStore.created = true;
-    saleGalleryFilter.resetPageOnly();
     router.back();
   }
 };
@@ -139,8 +138,20 @@ const cancel = () => {
     ramGb: null,
     screenSizeInch: null,
     storageGb: null,
-    color: null,
+    color: '',
     quantity: null,
+  };
+
+  errors.value = {
+    brand: '',
+    model: '',
+    price: '',
+    description: '',
+    quantity: '',
+    ramGb: '',
+    screenSizeInch: '',
+    storageGb: '',
+    color: ''
   };
   alertMessage.value = {
     type: 'info',
@@ -168,26 +179,21 @@ const isEqual = (a, b) => {
   return JSON.stringify(a) === JSON.stringify(b);
 };
 
-watch(
-  product,
-  (newVal) => {
-    if (originalProduct.value) {
-      isEdit.value = !isEqual(newVal, originalProduct.value);
-    }
-  },
-  { deep: true },
-);
+watch(product, (newVal) => {
+  if (originalProduct.value) {
+    isEdit.value = !isEqual(newVal, originalProduct.value);
+  }
+}, { deep: true });
 
 const isSaveDisabled = computed(() => {
+  if (hasErrors.value) {
+    return true;
+  }
+  
   if (params) {
     return !isEdit.value;
   } else {
-    return (
-      !product.value.brand ||
-      !product.value.model ||
-      !product.value.price ||
-      !product.value.description
-    );
+    return !product.value.brand || !product.value.model || !product.value.price || !product.value.description;
   }
 });
 
@@ -195,6 +201,7 @@ const sortBrands = (brands) => {
   return brands.sort((a, b) => a.name.localeCompare(b.name));
 };
 const model = ref('');
+
 onMounted(async () => {
   await saleStore.fetchBrands();
   saleStore.brands = sortBrands(saleStore.brands);
@@ -284,7 +291,9 @@ onMounted(async () => {
                     <select
                       id="brand"
                       v-model="product.brand"
-                      class="itbms-brand px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                      :class="['itbms-brand px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors', errors.brand ? 'border-red-500' : 'border-gray-300']"
+                      @change="onChange('brand')"
+                      @input="onInput('brand')"
                       @keydown.enter="focusNext('model')"
                     >
                       <option disabled value="">Select a brand</option>
@@ -292,6 +301,7 @@ onMounted(async () => {
                         {{ brand.name }}
                       </option>
                     </select>
+                    <div v-if="errors.brand" class="text-red-500 text-sm">{{ errors.brand }}</div>
                   </div>
 
                   <div class="flex flex-col gap-2">
@@ -301,10 +311,13 @@ onMounted(async () => {
                       type="text"
                       v-model.trim="product.model"
                       placeholder="Enter model name"
-                      class="itbms-model px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                      :class="['itbms-model px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors', errors.model ? 'border-red-500' : 'border-gray-300']"
+                      @change="onChange('model')"
+                      @input="onInput('model')"
                       @keydown.enter="focusNext('price')"
                       maxlength="60"
                     />
+                    <div v-if="errors.model" class="text-red-500 text-sm">{{ errors.model }}</div>
                   </div>
 
                   <div class="flex flex-col gap-2">
@@ -314,9 +327,12 @@ onMounted(async () => {
                       type="number"
                       v-model.trim="product.price"
                       placeholder="0.00"
-                      class="itbms-price px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                      :class="['itbms-price px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors', errors.price ? 'border-red-500' : 'border-gray-300']"
+                      @change="onChange('price')"
+                      @input="onInput('price')"
                       @keydown.enter="focusNext('quantity')"
                     />
+                    <div v-if="errors.price" class="text-red-500 text-sm">{{ errors.price }}</div>
                   </div>
 
                   <div class="flex flex-col gap-2">
@@ -326,9 +342,12 @@ onMounted(async () => {
                       type="number"
                       v-model.trim="product.quantity"
                       placeholder="0"
-                      class="itbms-quantity px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                      :class="['itbms-quantity px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors', errors.quantity ? 'border-red-500' : 'border-gray-300']"
+                      @change="onChange('quantity')"
+                      @input="onInput('quantity')"
                       @keydown.enter="focusNext('ram')"
                     />
+                    <div v-if="errors.quantity" class="text-red-500 text-sm">{{ errors.quantity }}</div>
                   </div>
 
                   <div class="flex flex-col gap-2">
@@ -338,24 +357,28 @@ onMounted(async () => {
                       type="number"
                       v-model.trim="product.ramGb"
                       placeholder="Enter RAM size"
-                      class="itbms-ramGb px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                      :class="['itbms-ramGb px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors', errors.ramGb ? 'border-red-500' : 'border-gray-300']"
+                      @change="onChange('ramGb')"
+                      @input="onInput('ramGb')"
                       @keydown.enter="focusNext('screenSize')"
                     />
+                    <div v-if="errors.ramGb" class="text-red-500 text-sm">{{ errors.ramGb }}</div>
                   </div>
 
                   <div class="flex flex-col gap-2">
-                    <label for="screenSize" class="text-gray-700 font-medium"
-                      >Screen Size (Inches)</label
-                    >
+                    <label for="screenSize" class="text-gray-700 font-medium">Screen Size (Inches)</label>
                     <input
                       id="screenSize"
                       type="number"
                       step="0.1"
                       v-model.trim="product.screenSizeInch"
                       placeholder="0.0"
-                      class="itbms-screenSizeInch px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                      :class="['itbms-screenSizeInch px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors', errors.screenSizeInch ? 'border-red-500' : 'border-gray-300']"
+                      @change="onChange('screenSizeInch')"
+                      @input="onInput('screenSizeInch')"
                       @keydown.enter="focusNext('storage')"
                     />
+                    <div v-if="errors.screenSizeInch" class="text-red-500 text-sm">{{ errors.screenSizeInch }}</div>
                   </div>
 
                   <div class="flex flex-col gap-2">
@@ -365,10 +388,14 @@ onMounted(async () => {
                       type="number"
                       v-model.trim="product.storageGb"
                       placeholder="Enter storage size"
-                      class="itbms-storageGb px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                      :class="['itbms-storageGb px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors', errors.storageGb ? 'border-red-500' : 'border-gray-300']"
+                      @change="onChange('storageGb')"
+                      @input="onInput('storageGb')"
                       @keydown.enter="focusNext('color')"
                     />
+                    <div v-if="errors.storageGb" class="text-red-500 text-sm">{{ errors.storageGb }}</div>
                   </div>
+
                   <div class="flex flex-col gap-2">
                     <label for="color" class="text-gray-700 font-medium">Color</label>
                     <input
@@ -376,9 +403,12 @@ onMounted(async () => {
                       type="text"
                       v-model.trim="product.color"
                       placeholder="Enter color"
-                      class="itbms-color px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+                      :class="['itbms-color px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors', errors.color ? 'border-red-500' : 'border-gray-300']"
+                      @change="onChange('color')"
+                      @input="onInput('color')"
                       @keydown.enter="focusNext('description')"
                     />
+                    <div v-if="errors.color" class="text-red-500 text-sm">{{ errors.color }}</div>
                   </div>
 
                   <div class="flex flex-col gap-2 md:col-span-2">
@@ -388,9 +418,12 @@ onMounted(async () => {
                       v-model="product.description"
                       rows="4"
                       placeholder="Enter product description"
-                      class="itbms-description px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors resize-y"
+                      :class="['itbms-description px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors resize-y', errors.description ? 'border-red-500' : 'border-gray-300']"
+                      @change="onChange('description')"
+                      @input="onInput('description')"
                       @keydown.enter="focusNext('save')"
                     ></textarea>
+                    <div v-if="errors.description" class="text-red-500 text-sm">{{ errors.description }}</div>
                   </div>
                 </div>
               </div>
@@ -456,4 +489,5 @@ onMounted(async () => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+</style>

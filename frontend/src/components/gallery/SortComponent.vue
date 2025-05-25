@@ -23,7 +23,7 @@ const isSortActive = (order) => {
 
 <template>
   <div
-    class="flex items-center flex-wrap gap-4 bg-white p-3 rounded-lg shadow-sm border border-gray-200"
+    class="flex items-center flex-wrap gap-4 bg-white p-3 rounded-lg shadow-sm border border-gray-200 lg:justify-center"
   >
     <div class="flex items-center gap-2">
       <label for="page-size" class="text-sm font-medium text-gray-600">Show</label>
@@ -59,7 +59,7 @@ const isSortActive = (order) => {
       </div>
     </div>
 
-    <div class="h-6 w-px bg-gray-300 hidden sm:block"></div>
+    <div class="h-6 w-px bg-gray-300 block lg:hidden xl:block"></div>
 
     <div class="flex items-center gap-2">
       <button

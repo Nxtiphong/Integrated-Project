@@ -4,8 +4,7 @@
       <button 
         @click="changePage(1)" 
         :disabled="currentPage === 1"
-        class="flex items-center justify-center w-12 h-10 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500 transition-all duration-200"
-        title="First page"
+        class="itbms-page-first flex items-center justify-center w-12 h-10 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500 transition-all duration-200"
       >
         First
       </button>
@@ -13,8 +12,7 @@
       <button 
         @click="goToPreviousPage" 
         :disabled="currentPage === 1"
-        class="flex items-center justify-center w-12 h-10 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500 transition-all duration-200"
-        title="Previous page"
+        class="itbms-page-prev flex items-center justify-center w-12 h-10 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500 transition-all duration-200"
       >
         Prev
       </button>
@@ -24,10 +22,13 @@
           v-for="(page, index) in visiblePages" 
           :key="`page-${index}`"
           @click="changePage(page)"
-          :class="{
-            'bg-blue-600 border-blue-600 text-white shadow-md': currentPage === page,
-            'text-gray-500 bg-white border-gray-300 hover:bg-gray-100 hover:text-gray-700': currentPage !== page
-          }"
+          :class="[
+            `itbms-page-${index}`,
+            {
+              'bg-blue-600 border-blue-600 text-white shadow-md': currentPage === page,
+              'text-gray-500 bg-white border-gray-300 hover:bg-gray-100 hover:text-gray-700': currentPage !== page
+            }
+          ]"
           class="flex items-center justify-center w-10 h-10 text-sm font-medium border rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
         >
           {{ page }}
@@ -37,8 +38,7 @@
       <button 
         @click="goToNextPage" 
         :disabled="currentPage === totalPages"
-        class="flex items-center justify-center w-12 h-10 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500 transition-all duration-200"
-        title="Next page"
+        class="itbms-page-next flex items-center justify-center w-12 h-10 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500 transition-all duration-200"
       >
         Next
       </button>
@@ -46,8 +46,7 @@
       <button 
         @click="changePage(totalPages)" 
         :disabled="currentPage === totalPages"
-        class="flex items-center justify-center w-12 h-10 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500 transition-all duration-200"
-        title="Last page"
+        class="itbms-page-last flex items-center justify-center w-12 h-10 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500 transition-all duration-200"
       >
         Last
       </button>
@@ -106,7 +105,7 @@ const currentPageIndex = computed(() => {
 function goToNextPage() {
   if (props.currentPage < props.totalPages) {
     const nextPage = props.currentPage + 1
-    
+
     if (currentPageIndex.value === 9 && nextPage <= props.totalPages) {
       startPage.value += 1
     }

@@ -145,7 +145,7 @@ onMounted(() => {
           class="w-full transition-all duration-300 flex flex-col lg:flex-row items-center justify-between gap-8"
         >
           <BrandFilter @filter-sale-items-by-brands="handleFilterSaleItems" />
-          <div class="w-full flex items-center justify-end">
+          <div class="w-full flex items-center justify-end lg:w-full">
             <SortComponent @sortType="handleSortChange" @pageSize="handlePageSizeChange" />
           </div>
         </div>

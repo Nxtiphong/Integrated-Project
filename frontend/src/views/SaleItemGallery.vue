@@ -5,8 +5,8 @@ import BrandFilter from '@/components/brand/BrandFilter.vue';
 import { useSaleItemStore } from '@/stores/saleItemStore';
 import Alert from '@/components/share/Alert.vue';
 import SortComponent from '@/components/gallery/SortComponent.vue';
-import { useGalleryFilterStore } from '@/stores/useGalleryFilterStore';
 import Pagination from '@/components/pagination/Pagination.vue';
+import { useGalleryFilterStore } from '@/stores/useGalleryFilterStore';
 const saleStore = useSaleItemStore();
 
 const alertMessage = ref({

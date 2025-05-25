@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, onUnmounted } from 'vue';
+import { onBeforeMount, onMounted, ref } from 'vue';
 import SaleItemCard from '@/components/gallery/SaleItemCard.vue';
 import BrandFilter from '@/components/brand/BrandFilter.vue';
 import { useSaleItemStore } from '@/stores/saleItemStore';
@@ -18,13 +18,8 @@ const alertMessage = ref({
 
 const filteredItems = ref([]);
 const isLoading = ref(false);
-const page = ref(1);
-const totalPages = ref(1);
-const sortField = ref('');
-const sortDirection = ref('asc');
-const pageSize = ref(5);
-const { filterLists } = useGalleryFilterStore();
 
+const saleGalleryFilter = useGalleryFilterStore();
 const fetchSaleItems = async ({
   page = 1,
   size = 10,
@@ -38,8 +33,9 @@ const fetchSaleItems = async ({
   if (filterBrands.length > 0) {
     filterBrands.forEach((brand) => params.append('filterBrands', brand));
   }
+
   if (sortField) params.append('sortField', sortField);
-  if (sortDirection) params.append('sortDirection', sortDirection);
+  if (sortDirection !== 'none') params.append('sortDirection', sortDirection);
 
   const response = await fetch(
     `${import.meta.env.VITE_BASE_URL}/itb-mshop/v2/sale-items?${params.toString()}`,
@@ -48,7 +44,7 @@ const fetchSaleItems = async ({
   return data;
 };
 const fetchPage = (newPage) => {
-  page.value = newPage;
+  saleGalleryFilter.page = newPage;
   loadSaleItems();
 };
 
@@ -56,19 +52,20 @@ const handleFilterSaleItems = () => {
   fetchPage(1);
 };
 
-const handleSortChange = (val) => {
-  if (val === 'none') {
-    sortDirection.value = 'asc';
-    sortField.value = 'id';
-  } else {
-    sortDirection.value = val;
-    sortField.value = 'brand.name';
+const handleSortChange = () => {
+  if (saleGalleryFilter.sortDirection === 'none') {
+    saleGalleryFilter.sortField = 'id';
+  } else if (saleGalleryFilter.sortDirection === 'asc') {
+    saleGalleryFilter.sortField = 'brand.name';
+  } else if (saleGalleryFilter.sortDirection === 'desc') {
+    saleGalleryFilter.sortField = 'brand.name';
   }
+  saleGalleryFilter.resetPageOnly();
   loadSaleItems();
 };
 
-const handlePageSizeChange = (size) => {
-  pageSize.value = size;
+const handlePageSizeChange = () => {
+  saleGalleryFilter.resetPageOnly();
   loadSaleItems();
 };
 
@@ -76,13 +73,13 @@ const loadSaleItems = async () => {
   isLoading.value = true;
   try {
     const items = await fetchSaleItems({
-      page: page.value,
-      size: pageSize.value,
-      sortField: sortField.value,
-      sortDirection: sortDirection.value,
-      filterBrands: filterLists,
+      page: saleGalleryFilter.page,
+      size: saleGalleryFilter.pageSize,
+      sortField: saleGalleryFilter.sortField,
+      sortDirection: saleGalleryFilter.sortDirection,
+      filterBrands: saleGalleryFilter.filterLists,
     });
-    totalPages.value = items.totalPages;
+    saleGalleryFilter.totalPages = items.totalPages;
     filteredItems.value = [...items.content];
   } catch (error) {
     console.error('Error fetching sale items:', error);
@@ -96,6 +93,13 @@ const displayOrDash = (val) => {
 };
 
 onMounted(() => {
+  const hasVisited = sessionStorage.getItem('hasVisitedGallery');
+
+  if (!hasVisited) {
+    saleGalleryFilter.resetAll();
+    sessionStorage.setItem('hasVisitedGallery', 'true');
+  }
+
   loadSaleItems();
   if (saleStore.created) {
     alertMessage.value = {
@@ -140,10 +144,7 @@ onMounted(() => {
         <div
           class="w-full transition-all duration-300 flex flex-col lg:flex-row items-center justify-between gap-8"
         >
-          <BrandFilter
-            :sale-items="saleItems"
-            @filter-sale-items-by-brands="handleFilterSaleItems"
-          />
+          <BrandFilter @filter-sale-items-by-brands="handleFilterSaleItems" />
           <div class="w-full flex items-center justify-end">
             <SortComponent @sortType="handleSortChange" @pageSize="handlePageSizeChange" />
           </div>
@@ -184,7 +185,11 @@ onMounted(() => {
         </div>
       </div>
       <div>
-        <Pagination :currentPage="page" :totalPages="totalPages" @update:currentPage="fetchPage" />
+        <Pagination
+          :currentPage="saleGalleryFilter.page"
+          :totalPages="saleGalleryFilter.totalPages"
+          @update:currentPage="fetchPage"
+        />
       </div>
     </div>
 

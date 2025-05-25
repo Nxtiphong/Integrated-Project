@@ -3,10 +3,6 @@ import { onMounted, ref } from 'vue';
 import { Icon } from '@iconify/vue';
 import { useGalleryFilterStore } from '@/stores/useGalleryFilterStore';
 
-const props = defineProps({
-  saleItems: Array,
-});
-
 const emit = defineEmits(['filterSaleItemsByBrands']);
 
 const brands = ref([]);
@@ -26,6 +22,7 @@ const getAllBrands = async () => {
     const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/brands`);
     if (!res.ok) throw new Error('Failed to fetch brands');
     brands.value = await res.json();
+    brands.value.sort((a, b) => a.name.localeCompare(b.name));
   } catch (error) {
     console.error('API error:', error);
     return { success: false, error };

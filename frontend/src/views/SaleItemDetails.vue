@@ -7,6 +7,9 @@ import { onMounted, ref } from 'vue';
 import DeleteModal from '@/components/share/DeleteModal.vue';
 import { useSaleItemStore } from '@/stores/saleItemStore';
 import Alert from '@/components/share/Alert.vue';
+import { useGalleryFilterStore } from '@/stores/useGalleryFilterStore';
+
+const saleGalleryFilter = useGalleryFilterStore();
 
 const saleStore = useSaleItemStore();
 const router = useRouter();
@@ -64,6 +67,8 @@ const handleDelete = async () => {
       throw new Error('Failed to delete item');
     } else {
       saleStore.deleted = true;
+      saleGalleryFilter.resetPageOnly();
+
       router.push('/sale-items');
     }
   } catch (error) {

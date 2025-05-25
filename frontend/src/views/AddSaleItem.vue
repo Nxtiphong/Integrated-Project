@@ -5,6 +5,9 @@ import ProductImage from '@/components/detail/ProductImage.vue';
 import { useSaleItemStore } from '@/stores/saleItemStore';
 import Alert from '@/components/share/Alert.vue';
 import { useRoute } from 'vue-router';
+import { useGalleryFilterStore } from '@/stores/useGalleryFilterStore';
+
+const saleGalleryFilter = useGalleryFilterStore();
 
 const route = useRoute();
 const params = route.params.id;
@@ -111,6 +114,7 @@ const saveProduct = async () => {
       body: JSON.stringify(product.value),
     });
     saleStore.updated = true;
+    saleGalleryFilter.resetPageOnly();
     router.push(`/sale-items/${params}`);
   } else {
     await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items`, {
@@ -121,6 +125,7 @@ const saveProduct = async () => {
       body: JSON.stringify(product.value),
     });
     saleStore.created = true;
+    saleGalleryFilter.resetPageOnly();
     router.back();
   }
 };
@@ -163,17 +168,26 @@ const isEqual = (a, b) => {
   return JSON.stringify(a) === JSON.stringify(b);
 };
 
-watch(product, (newVal) => {
-  if (originalProduct.value) {
-    isEdit.value = !isEqual(newVal, originalProduct.value);
-  }
-}, { deep: true });
+watch(
+  product,
+  (newVal) => {
+    if (originalProduct.value) {
+      isEdit.value = !isEqual(newVal, originalProduct.value);
+    }
+  },
+  { deep: true },
+);
 
 const isSaveDisabled = computed(() => {
   if (params) {
     return !isEdit.value;
   } else {
-    return !product.value.brand || !product.value.model || !product.value.price || !product.value.description;
+    return (
+      !product.value.brand ||
+      !product.value.model ||
+      !product.value.price ||
+      !product.value.description
+    );
   }
 });
 
@@ -211,7 +225,6 @@ onMounted(async () => {
     }
   }
 });
-
 </script>
 
 <template>
@@ -443,5 +456,4 @@ onMounted(async () => {
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

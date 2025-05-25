@@ -1,29 +1,25 @@
 <script setup>
-import { ref } from 'vue';
+import { useGalleryFilterStore } from '@/stores/useGalleryFilterStore';
 
-const pageSize = ref(5);
-const sortOrder = ref('none');
-
+const saleGalleryFilter = useGalleryFilterStore();
 const emit = defineEmits(['sortType', 'pageSize']);
 
 const pageSizeOptions = [5, 10, 20];
 
 const toggleSort = (order) => {
-  sortOrder.value = order;
-  emit('sortType', sortOrder.value);
+  saleGalleryFilter.sortDirection = order;
+  emit('sortType');
 };
 
 const handlePageSizeChange = (event) => {
-  pageSize.value = parseInt(event.target.value);
-  console.log('Page size:', pageSize.value);
-  emit('pageSize', pageSize.value);
+  saleGalleryFilter.pageSize = parseInt(event.target.value);
+  emit('pageSize');
 };
 
 const isSortActive = (order) => {
-  return sortOrder.value === order;
+  return saleGalleryFilter.sortDirection === order;
 };
 </script>
-
 
 <template>
   <div
@@ -34,7 +30,7 @@ const isSortActive = (order) => {
       <div class="itbms-page-size relative">
         <select
           id="page-size"
-          v-model="pageSize"
+          v-model="saleGalleryFilter.pageSize"
           @change="handlePageSizeChange"
           class="appearance-none bg-gray-50 border border-gray-300 text-gray-700 py-2 pl-3 pr-8 rounded-md text-sm cursor-pointer"
         >

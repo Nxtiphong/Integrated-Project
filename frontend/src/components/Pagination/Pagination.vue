@@ -146,15 +146,23 @@ watch(
       startPage.value = Math.min(newStartPage, maxStartPage);
     }
   },
+  { immediate: true }
 );
 
 watch(
   () => props.totalPages,
-  () => {
-    const maxStartPage = Math.max(1, props.totalPages - 9);
+  (newTotalPages) => {
+    const maxStartPage = Math.max(1, newTotalPages - 9);
+    
     if (startPage.value > maxStartPage) {
       startPage.value = maxStartPage;
     }
+    
+    if (props.currentPage < startPage.value || props.currentPage >= startPage.value + 10) {
+      const newStartPage = Math.max(1, props.currentPage - 5);
+      startPage.value = Math.min(newStartPage, maxStartPage);
+    }
   },
+  { immediate: true }
 );
 </script>

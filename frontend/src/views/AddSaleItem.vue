@@ -71,9 +71,7 @@ const validateField = (field, value) => {
 };
 
 const onChange = (field) => {
-  console.log(`Field changed: ${field}`);
   errors.value[field] = validateField(field, product.value[field]);
-  console.log(`errors.value[field]: ${errors.value[field]}`);
 };
 
 const onInput = (field) => {

@@ -27,12 +27,12 @@ const isSortActive = (order) => {
   >
     <div class="flex items-center gap-2">
       <label for="page-size" class="text-sm font-medium text-gray-600">Show</label>
-      <div class="itbms-page-size relative">
+      <div class="relative">
         <select
           id="page-size"
           v-model="saleGalleryFilter.pageSize"
           @change="handlePageSizeChange"
-          class="appearance-none bg-gray-50 border border-gray-300 text-gray-700 py-2 pl-3 pr-8 rounded-md text-sm cursor-pointer"
+          class="itbms-page-size appearance-none bg-gray-50 border border-gray-300 text-gray-700 py-2 pl-3 pr-8 rounded-md text-sm cursor-pointer"
         >
           <option v-for="size in pageSizeOptions" :key="size" :value="size">
             {{ size }}

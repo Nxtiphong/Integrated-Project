@@ -54,7 +54,7 @@
 
     <div class="ml-4 flex items-center text-sm text-gray-600">
       <span class="bg-gray-100 px-3 py-2 rounded-lg">
-        หน้า {{ currentPage }} จาก {{ totalPages }}
+        page {{ currentPage }} of {{ totalPages }}
       </span>
     </div>
   </div>

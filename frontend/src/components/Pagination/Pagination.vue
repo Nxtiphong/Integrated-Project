@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-center mt-6">
+  <div v-if="shouldShowPagination" class="flex justify-center mt-6">
     <nav class="inline-flex items-center gap-2 bg-white shadow-lg border border-gray-200 px-4 py-2 rounded-xl">
       <button 
         @click="changePage(1)" 
@@ -71,12 +71,20 @@ const props = defineProps({
   totalPages: {
     type: Number,
     required: true
+  },
+  hasData: {
+    type: Boolean,
+    default: true
   }
 })
 
 const emit = defineEmits(['update:currentPage'])
 
 const startPage = ref(1)
+
+const shouldShowPagination = computed(() => {
+  return props.hasData && props.totalPages > 1
+})
 
 function changePage(page) {
   if (page >= 1 && page <= props.totalPages) {

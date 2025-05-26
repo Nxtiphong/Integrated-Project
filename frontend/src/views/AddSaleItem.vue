@@ -332,7 +332,7 @@ onMounted(async () => {
                         'itbms-brand px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors',
                         errors.brand ? 'border-red-500' : 'border-gray-300',
                       ]"
-                      @input="onInput('brand')"
+                      @change="onInput('brand')"
                       @focusout="onChange('brand')"
                       @keydown.enter="focusNext('model')"
                     >

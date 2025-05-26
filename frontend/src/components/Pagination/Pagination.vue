@@ -1,5 +1,5 @@
 <template>
-  <div v-if="shouldShowPagination" class="flex justify-center mt-6">
+  <div v-show="shouldShowPagination" class="flex justify-center mt-6">
     <nav class="inline-flex items-center gap-2 bg-white shadow-lg border border-gray-200 px-4 py-2 rounded-xl">
       <button 
         @click="changePage(1)" 

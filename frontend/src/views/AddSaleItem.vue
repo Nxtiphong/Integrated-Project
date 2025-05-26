@@ -38,42 +38,60 @@ const errors = ref({
   ramGb: '',
   screenSizeInch: '',
   storageGb: '',
-  color: ''
+  color: '',
 });
-
 
 const validateField = (field, value) => {
   switch (field) {
     case 'brand':
-      return !value ? 'Brand must be selected.' : '';
+    return !value || !value.name || value.name.trim() === ''
+        ? 'Brand must be selected.'
+        : '';
     case 'model':
-      return !value || value.length === 0 ? 'Model must be 1-60 characters long.' : 
-             value.length > 60 ? 'Model must be 1-60 characters long.' : '';
+      return !value || value.length === 0
+        ? 'Model must be 1-60 characters long.'
+        : value.length > 60
+        ? 'Model must be 1-60 characters long.'
+        : '';
     case 'price':
-      return !value || value <= 0 ? 'Price must be non-negative integer.' : '';
+      return value === null || value === undefined || value === '' || value < 0
+        ? 'Price must be non-negative integer.'
+        : '';
     case 'description':
-      return !value || value.length === 0 ? 'Description must be 1-65,535 characters long.' : 
-             value.length > 65535 ? 'Description must be 1-65,535 characters long.' : '';
+      return !value || value.length === 0
+        ? 'Description must be 1-65,535 characters long.'
+        : value.length > 65535
+        ? 'Description must be 1-65,535 characters long.'
+        : '';
     case 'quantity':
-      return value !== null && value !== '' && value <= 0 ? 'Quantity must be non-negative integer.' : '';
+      return value !== null && value !== '' && value < 0
+        ? 'Quantity must be non-negative integer.'
+        : '';
 
     case 'ramGb':
-      return value !== null && value !== '' && value <= 0 ? 'RAM size must be positive integer or not specified.' : '';
+      return value !== null && value !== '' && value <= 0
+        ? 'RAM size must be positive integer or not specified.'
+        : '';
     case 'screenSizeInch':
-      return value !== null && value !== '' && value <= 0 ? 'Screen size must be positive number with at most 2 decimal points or not specified.' : '';
+    const decimalCount = value.toString().split('.')[1];
+      return value !== null && value !== '' && value <= 0 || decimalCount && decimalCount.length > 2
+        ? 'Screen size must be positive number with at most 2 decimal points or not specified.'
+        : '';
     case 'storageGb':
-      return value !== null && value !== '' && value <= 0 ? 'Storage size must be positive integer or not specified.' : '';
+      return value !== null && value !== '' && value <= 0
+        ? 'Storage size must be positive integer or not specified.'
+        : '';
     case 'color':
-      return value && value.length > 40 ? 'Color must be 1-40 characters long or not specified.' : '';
+      return value && value.length > 40
+        ? 'Color must be 1-40 characters long or not specified.'
+        : '';
     default:
       return '';
   }
 };
 
 const onChange = (field) => {
-  console.log(`Field changed: ${field}`);
   errors.value[field] = validateField(field, product.value[field]);
-  console.log(`errors.value[field]: ${errors.value[field]}`);
 };
 
 const onInput = (field) => {
@@ -83,9 +101,17 @@ const onInput = (field) => {
 };
 
 const hasErrors = computed(() => {
-  return errors.value.brand || errors.value.model || errors.value.price || 
-         errors.value.description || errors.value.quantity || errors.value.ramGb || 
-         errors.value.screenSizeInch || errors.value.storageGb || errors.value.color;
+  return (
+    errors.value.brand ||
+    errors.value.model ||
+    errors.value.price ||
+    errors.value.description ||
+    errors.value.quantity ||
+    errors.value.ramGb ||
+    errors.value.screenSizeInch ||
+    errors.value.storageGb ||
+    errors.value.color
+  );
 });
 
 const validation = (product) => {
@@ -98,7 +124,7 @@ const validation = (product) => {
   errors.value.screenSizeInch = validateField('screenSizeInch', product.screenSizeInch);
   errors.value.storageGb = validateField('storageGb', product.storageGb);
   errors.value.color = validateField('color', product.color);
-  
+
   return !hasErrors.value;
 };
 
@@ -151,7 +177,7 @@ const cancel = () => {
     ramGb: '',
     screenSizeInch: '',
     storageGb: '',
-    color: ''
+    color: '',
   };
   alertMessage.value = {
     type: 'info',
@@ -179,21 +205,32 @@ const isEqual = (a, b) => {
   return JSON.stringify(a) === JSON.stringify(b);
 };
 
-watch(product, (newVal) => {
-  if (originalProduct.value) {
-    isEdit.value = !isEqual(newVal, originalProduct.value);
-  }
-}, { deep: true });
+watch(
+  product,
+  (newVal) => {
+    if (originalProduct.value) {
+      isEdit.value = !isEqual(newVal, originalProduct.value);
+    }
+  },
+  { deep: true }
+);
 
 const isSaveDisabled = computed(() => {
   if (hasErrors.value) {
     return true;
   }
-  
+
   if (params) {
     return !isEdit.value;
   } else {
-    return !product.value.brand || !product.value.model || !product.value.price || !product.value.description;
+    return (
+      !product.value.brand ||
+      !product.value.model ||
+      product.value.price === null ||
+      product.value.price === undefined ||
+      product.value.price === '' ||
+      !product.value.description
+    );
   }
 });
 
@@ -291,9 +328,12 @@ onMounted(async () => {
                     <select
                       id="brand"
                       v-model="product.brand"
-                      :class="['itbms-brand px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors', errors.brand ? 'border-red-500' : 'border-gray-300']"
-                      @change="onChange('brand')"
+                      :class="[
+                        'itbms-brand px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors',
+                        errors.brand ? 'border-red-500' : 'border-gray-300',
+                      ]"
                       @input="onInput('brand')"
+                      @focusout="onChange('brand')"
                       @keydown.enter="focusNext('model')"
                     >
                       <option disabled value="">Select a brand</option>
@@ -311,11 +351,13 @@ onMounted(async () => {
                       type="text"
                       v-model.trim="product.model"
                       placeholder="Enter model name"
-                      :class="['itbms-model px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors', errors.model ? 'border-red-500' : 'border-gray-300']"
+                      :class="[
+                        'itbms-model px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors',
+                        errors.model ? 'border-red-500' : 'border-gray-300',
+                      ]"
                       @change="onChange('model')"
                       @input="onInput('model')"
                       @keydown.enter="focusNext('price')"
-                      maxlength="60"
                     />
                     <div v-if="errors.model" class="text-red-500 text-sm">{{ errors.model }}</div>
                   </div>
@@ -327,7 +369,10 @@ onMounted(async () => {
                       type="number"
                       v-model.trim="product.price"
                       placeholder="0.00"
-                      :class="['itbms-price px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors', errors.price ? 'border-red-500' : 'border-gray-300']"
+                      :class="[
+                        'itbms-price px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors',
+                        errors.price ? 'border-red-500' : 'border-gray-300',
+                      ]"
                       @change="onChange('price')"
                       @input="onInput('price')"
                       @keydown.enter="focusNext('quantity')"
@@ -342,12 +387,17 @@ onMounted(async () => {
                       type="number"
                       v-model.trim="product.quantity"
                       placeholder="0"
-                      :class="['itbms-quantity px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors', errors.quantity ? 'border-red-500' : 'border-gray-300']"
+                      :class="[
+                        'itbms-quantity px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors',
+                        errors.quantity ? 'border-red-500' : 'border-gray-300',
+                      ]"
                       @change="onChange('quantity')"
                       @input="onInput('quantity')"
                       @keydown.enter="focusNext('ram')"
                     />
-                    <div v-if="errors.quantity" class="text-red-500 text-sm">{{ errors.quantity }}</div>
+                    <div v-if="errors.quantity" class="text-red-500 text-sm">
+                      {{ errors.quantity }}
+                    </div>
                   </div>
 
                   <div class="flex flex-col gap-2">
@@ -357,7 +407,10 @@ onMounted(async () => {
                       type="number"
                       v-model.trim="product.ramGb"
                       placeholder="Enter RAM size"
-                      :class="['itbms-ramGb px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors', errors.ramGb ? 'border-red-500' : 'border-gray-300']"
+                      :class="[
+                        'itbms-ramGb px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors',
+                        errors.ramGb ? 'border-red-500' : 'border-gray-300',
+                      ]"
                       @change="onChange('ramGb')"
                       @input="onInput('ramGb')"
                       @keydown.enter="focusNext('screenSize')"
@@ -366,19 +419,26 @@ onMounted(async () => {
                   </div>
 
                   <div class="flex flex-col gap-2">
-                    <label for="screenSize" class="text-gray-700 font-medium">Screen Size (Inches)</label>
+                    <label for="screenSize" class="text-gray-700 font-medium"
+                      >Screen Size (Inches)</label
+                    >
                     <input
                       id="screenSize"
                       type="number"
                       step="0.1"
                       v-model.trim="product.screenSizeInch"
                       placeholder="0.0"
-                      :class="['itbms-screenSizeInch px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors', errors.screenSizeInch ? 'border-red-500' : 'border-gray-300']"
+                      :class="[
+                        'itbms-screenSizeInch px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors',
+                        errors.screenSizeInch ? 'border-red-500' : 'border-gray-300',
+                      ]"
                       @change="onChange('screenSizeInch')"
                       @input="onInput('screenSizeInch')"
                       @keydown.enter="focusNext('storage')"
                     />
-                    <div v-if="errors.screenSizeInch" class="text-red-500 text-sm">{{ errors.screenSizeInch }}</div>
+                    <div v-if="errors.screenSizeInch" class="text-red-500 text-sm">
+                      {{ errors.screenSizeInch }}
+                    </div>
                   </div>
 
                   <div class="flex flex-col gap-2">
@@ -388,12 +448,17 @@ onMounted(async () => {
                       type="number"
                       v-model.trim="product.storageGb"
                       placeholder="Enter storage size"
-                      :class="['itbms-storageGb px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors', errors.storageGb ? 'border-red-500' : 'border-gray-300']"
+                      :class="[
+                        'itbms-storageGb px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors',
+                        errors.storageGb ? 'border-red-500' : 'border-gray-300',
+                      ]"
                       @change="onChange('storageGb')"
                       @input="onInput('storageGb')"
                       @keydown.enter="focusNext('color')"
                     />
-                    <div v-if="errors.storageGb" class="text-red-500 text-sm">{{ errors.storageGb }}</div>
+                    <div v-if="errors.storageGb" class="text-red-500 text-sm">
+                      {{ errors.storageGb }}
+                    </div>
                   </div>
 
                   <div class="flex flex-col gap-2">
@@ -403,7 +468,10 @@ onMounted(async () => {
                       type="text"
                       v-model.trim="product.color"
                       placeholder="Enter color"
-                      :class="['itbms-color px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors', errors.color ? 'border-red-500' : 'border-gray-300']"
+                      :class="[
+                        'itbms-color px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors',
+                        errors.color ? 'border-red-500' : 'border-gray-300',
+                      ]"
                       @change="onChange('color')"
                       @input="onInput('color')"
                       @keydown.enter="focusNext('description')"
@@ -415,15 +483,20 @@ onMounted(async () => {
                     <label for="description" class="text-gray-700 font-medium">Description</label>
                     <textarea
                       id="description"
-                      v-model="product.description"
+                      v-model.trim="product.description"
                       rows="4"
                       placeholder="Enter product description"
-                      :class="['itbms-description px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors resize-y', errors.description ? 'border-red-500' : 'border-gray-300']"
+                      :class="[
+                        'itbms-description px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors resize-y',
+                        errors.description ? 'border-red-500' : 'border-gray-300',
+                      ]"
                       @change="onChange('description')"
                       @input="onInput('description')"
-                      @keydown.enter="focusNext('save')"
-                    ></textarea>
-                    <div v-if="errors.description" class="text-red-500 text-sm">{{ errors.description }}</div>
+                      @keydown.enter.prevent="focusNext('save')"
+                      ></textarea>
+                    <div v-if="errors.description" class="text-red-500 text-sm">
+                      {{ errors.description }}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -460,6 +533,7 @@ onMounted(async () => {
             class="itbms-save-button cursor-pointer flex items-center gap-2 px-5 py-2.5 rounded-md text-white transition-colors bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:bg-gray-300 disabled:cursor-not-allowed"
             :disabled="isSaveDisabled"
             @keydown.enter="saveProduct"
+            id="save"
           >
             <svg
               class="w-4 h-4"

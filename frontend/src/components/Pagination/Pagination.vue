@@ -1,5 +1,5 @@
 <template>
-  <div v-if="shouldShowPagination" class="flex justify-center mt-6">
+  <div v-show="hasData && totalPages > 1" class="flex justify-center mt-6">
     <nav class="inline-flex items-center gap-2 bg-white shadow-lg border border-gray-200 px-4 py-2 rounded-xl">
       <button 
         @click="changePage(1)" 
@@ -75,6 +75,10 @@ const props = defineProps({
   hasData: {
     type: Boolean,
     default: true
+  },
+  totalItems: {
+    type: Number,
+    default: 0
   }
 })
 
@@ -83,22 +87,26 @@ const emit = defineEmits(['update:currentPage'])
 const startPage = ref(1)
 
 const shouldShowPagination = computed(() => {
-  return props.hasData && props.totalPages > 1
+  return Boolean(props.hasData && props.totalPages && props.totalPages > 1)
 })
 
 function changePage(page) {
-  if (page >= 1 && page <= props.totalPages) {
+  if (page >= 1 && page <= props.totalPages && page !== props.currentPage) {
     emit('update:currentPage', page)
   }
 }
 
 const visiblePages = computed(() => {
+  if (props.totalPages <= 0) return []
+  
   const maxVisiblePages = Math.min(10, props.totalPages)
   const pages = []
   
+  const safeStartPage = Math.max(1, Math.min(startPage.value, props.totalPages - maxVisiblePages + 1))
+  
   for (let i = 0; i < maxVisiblePages; i++) {
-    const pageNumber = startPage.value + i
-    if (pageNumber <= props.totalPages) {
+    const pageNumber = safeStartPage + i
+    if (pageNumber >= 1 && pageNumber <= props.totalPages) {
       pages.push(pageNumber)
     }
   }
@@ -142,10 +150,14 @@ watch(() => props.currentPage, (newPage) => {
   }
 })
 
-watch(() => props.totalPages, () => {
-  const maxStartPage = Math.max(1, props.totalPages - 9)
-  if (startPage.value > maxStartPage) {
-    startPage.value = maxStartPage
+watch(() => props.totalPages, (newTotalPages) => {
+  if (newTotalPages > 0) {
+    const maxStartPage = Math.max(1, newTotalPages - 9)
+    if (startPage.value > maxStartPage) {
+      startPage.value = maxStartPage
+    }
+  } else {
+    startPage.value = 1
   }
 })
 </script>

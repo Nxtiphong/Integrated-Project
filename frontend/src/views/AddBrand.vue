@@ -18,7 +18,7 @@ const originalForm = ref({});
 const isSubmitting = ref(false);
 
 const isDisabled = computed(() => {
-  const nameInvalid = brandForm.name.trim() === '' || isSubmitting.value;
+  const hasErrors = Object.values(isError.value).some(Boolean);
 
   if (params) {
     const noChanges =
@@ -29,26 +29,43 @@ const isDisabled = computed(() => {
         countryOfOrigin: brandForm.countryOfOrigin,
       }) === JSON.stringify(originalForm.value);
 
-    return nameInvalid || noChanges;
+    return hasErrors || noChanges;
   }
 
-  return nameInvalid;
+  return hasErrors;
 });
 
-const isError = ref(false);
+const isFocused = ref({
+  name: false,
+  websiteUrl: false,
+  countryOfOrigin: false,
+});
+
+const isError = computed(() => ({
+  name: isFocused.value.name && (!brandForm.name.trim() || brandForm.name.trim().length > 30),
+  websiteUrl: isFocused.value.websiteUrl && !isValidUrl(brandForm.websiteUrl),
+  countryOfOrigin:
+    isFocused.value.countryOfOrigin &&
+    (!brandForm.countryOfOrigin.trim() || brandForm.countryOfOrigin.trim().length > 80),
+}));
+
+const isValidUrl = (value) => {
+  if (!value.trim()) return true;
+  try {
+    const url = new URL(value);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+};
+
+const markFocused = (field) => {
+  isFocused.value[field] = true;
+};
 
 const focusNext = (refName) => {
   const refInputField = document.getElementById(refName);
   refInputField.focus();
-};
-
-const validateForm = () => {
-  if (!brandForm.name.trim()) {
-    isError.value = true;
-    return false;
-  }
-  isError.value = false;
-  return true;
 };
 
 const handleCancel = () => {
@@ -57,7 +74,6 @@ const handleCancel = () => {
 };
 
 const handleCreate = async () => {
-  if (!validateForm()) return;
   isSubmitting.value = true;
   const result = await submitCreateForm({
     name: brandForm.name,
@@ -187,44 +203,63 @@ onMounted(async () => {
               type="text"
               placeholder="Name"
               v-model.trim="brandForm.name"
+              @blur="markFocused('name')"
               @keydown.enter.prevent="focusNext('websiteUrl')"
               :class="[
                 'itbms-name px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors',
-                isError
+                isError.name
                   ? 'border-red-500 focus:ring-red-200 focus:border-red-500'
                   : 'border-gray-300 focus:ring-primary/20 focus:border-primary',
               ]"
-              maxlength="30"
             />
-            <p v-if="isError" class="text-error text-xs absolute z-10 top-2 right-2">
-              Name is required
+            <p v-if="isError.name" class="text-error text-xs absolute z-10 -bottom-3 right-2">
+              Brand name must be 1-30 characters long.
             </p>
           </div>
 
-          <div class="flex flex-col space-y-2">
+          <div class="flex flex-col space-y-2 relative">
             <label class="font-semibold">Website URL</label>
             <input
               id="websiteUrl"
               type="text"
               placeholder="https://example.com"
               v-model.trim="brandForm.websiteUrl"
+              @blur="markFocused('websiteUrl')"
               @keydown.enter.prevent="focusNext('country')"
-              class="itbms-websiteUrl px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
-              maxlength="40"
+              :class="[
+                'itbms-websiteUrl px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors',
+                isError.websiteUrl
+                  ? 'border-red-500 focus:ring-red-200 focus:border-red-500'
+                  : 'border-gray-300 focus:ring-primary/20 focus:border-primary',
+              ]"
             />
+            <p v-if="isError.websiteUrl" class="text-error text-xs absolute z-10 -bottom-3 right-2">
+              Brand URL must be a valid URL or not specified.
+            </p>
           </div>
 
-          <div class="flex flex-col space-y-2">
+          <div class="flex flex-col space-y-2 relative">
             <label class="font-semibold">Country of Origin</label>
             <input
               id="country"
               type="text"
               placeholder="Country of Origin"
               v-model.trim="brandForm.countryOfOrigin"
+              @blur="markFocused('countryOfOrigin')"
               @keydown.enter.prevent="focusNext('isActive')"
-              class="itbms-countryOfOrigin px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
-              maxlength="80"
+              :class="[
+                'itbms-countryOfOrigin px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors',
+                isError.countryOfOrigin
+                  ? 'border-red-500 focus:ring-red-200 focus:border-red-500'
+                  : 'border-gray-300 focus:ring-primary/20 focus:border-primary',
+              ]"
             />
+            <p
+              v-if="isError.countryOfOrigin"
+              class="text-error text-xs absolute z-10 -bottom-3 right-2"
+            >
+              Brand country of origin must be 1-80 characters long or not specified.
+            </p>
           </div>
 
           <div class="flex space-x-2 justify-start items-center">

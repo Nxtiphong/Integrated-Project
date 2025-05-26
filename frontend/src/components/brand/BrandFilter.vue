@@ -6,10 +6,11 @@ import { useGalleryFilterStore } from '@/stores/useGalleryFilterStore';
 const emit = defineEmits(['filterSaleItemsByBrands']);
 
 const brands = ref([]);
-const { filterLists } = useGalleryFilterStore();
+const saleGalleryFilter = useGalleryFilterStore();
+const isDropdownOpen = ref(false);
 
 const clearFilters = () => {
-  filterLists.splice(0, filterLists.length);
+  saleGalleryFilter.filterLists.splice(0, saleGalleryFilter.filterLists.length);
   handleFilter();
 };
 
@@ -30,11 +31,11 @@ const getAllBrands = async () => {
 };
 
 const toggleBrand = (brandName) => {
-  const index = filterLists.indexOf(brandName);
+  const index = saleGalleryFilter.filterLists.indexOf(brandName);
   if (index > -1) {
-    filterLists.splice(index, 1);
+    saleGalleryFilter.filterLists.splice(index, 1);
   } else {
-    filterLists.push(brandName);
+    saleGalleryFilter.filterLists.push(brandName);
   }
   handleFilter();
 };
@@ -52,7 +53,7 @@ onMounted(() => {
       class="itbms-brand-filter flex gap-1 lg:gap-2 px-2 flex-1 w-lg overflow-x-auto scrollbar-hidden"
     >
       <p
-        v-for="(brand, index) in filterLists"
+        v-for="(brand, index) in saleGalleryFilter.filterLists"
         :key="index"
         class="itbms-filter-item flex items-center select-none justify-center gap-1 bg-primary/80 text-white text-xs lg:text-sm font-medium px-2 lg:px-3 py-1 rounded-full"
       >
@@ -61,31 +62,39 @@ onMounted(() => {
           ><Icon icon="iconoir:delete-circle" class="text-sm lg:text-base" />
         </span>
       </p>
-      <span v-if="filterLists.length === 0" class="text-gray-400 text-sm">Filter by brand(s)</span>
+      <span v-if="saleGalleryFilter.filterLists.length === 0" class="text-gray-400 text-sm"
+        >Filter by brand(s)</span
+      >
     </div>
 
     <div class="flex items-center justify-center rounded-r-lg">
-      <div class="dropdown dropdown-bottom dropdown-end">
+      <div class="relative inline-block text-left">
         <button
-          tabindex="0"
+          @click="isDropdownOpen = !isDropdownOpen"
           class="itbms-brand-filter-button p-2 text-black font-semibold cursor-pointer transition duration-200"
         >
           <Icon icon="lets-icons:filter" class="text-2xl" />
         </button>
 
         <ul
-          tabindex="0"
-          class="dropdown-content lg:menu p-2 shadow-md border border-slate-200 mt-2 bg-white rounded-box h-[250px] w-[250px] lg:w-[550px] overflow-y-auto z-1"
+          v-if="isDropdownOpen"
+          class="absolute right-0 mt-2 max-h-[250px] w-[250px] lg:w-[550px] overflow-y-auto rounded-md border border-gray-300 bg-white shadow-md z-50"
         >
-          <li v-for="brand in brands" :key="brand.id">
-            <label class="label cursor-pointer justify-start text-xs lg:text-base gap-2">
+          <li
+            v-for="brand in brands"
+            :key="brand.id"
+            class="itbms-filter-item px-3 py-2 hover:bg-gray-100 cursor-pointer"
+            @click="toggleBrand(brand.name)"
+            :data-brand-name="brand.name"
+          >
+            <label class="flex items-center space-x-2 text-sm lg:text-base w-full cursor-pointer">
               <input
                 type="checkbox"
-                class="checkbox checkbox-xs lg:checkbox-sm"
-                :checked="filterLists.includes(brand.name)"
-                @change="toggleBrand(brand.name)"
+                class="form-checkbox h-4 w-4 text-blue-600"
+                :checked="saleGalleryFilter.filterLists.includes(brand.name)"
+                @change.stop="toggleBrand(brand.name)"
               />
-              <span class="label-text">{{ brand.name }}</span>
+              <span>{{ brand.name }}</span>
             </label>
           </li>
         </ul>

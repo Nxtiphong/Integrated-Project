@@ -212,7 +212,7 @@ onMounted(async () => {
                   : 'border-gray-300 focus:ring-primary/20 focus:border-primary',
               ]"
             />
-            <p v-if="isError.name" class="text-error text-xs absolute z-10 -bottom-3 right-2">
+            <p v-if="isError.name" class="text-error text-xs absolute z-10 -bottom-3 right-2 itbms-message">
               Brand name must be 1-30 characters long.
             </p>
           </div>
@@ -233,7 +233,7 @@ onMounted(async () => {
                   : 'border-gray-300 focus:ring-primary/20 focus:border-primary',
               ]"
             />
-            <p v-if="isError.websiteUrl" class="text-error text-xs absolute z-10 -bottom-3 right-2">
+            <p v-if="isError.websiteUrl" class="text-error text-xs absolute z-10 -bottom-3 right-2 itbms-message">
               Brand URL must be a valid URL or not specified.
             </p>
           </div>
@@ -256,7 +256,7 @@ onMounted(async () => {
             />
             <p
               v-if="isError.countryOfOrigin"
-              class="text-error text-xs absolute z-10 -bottom-3 right-2"
+              class="text-error text-xs absolute z-10 -bottom-3 right-2 itbms-message"
             >
               Brand country of origin must be 1-80 characters long or not specified.
             </p>

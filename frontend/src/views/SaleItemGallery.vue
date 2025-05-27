@@ -69,9 +69,9 @@ const handleGoLastPage = async () => {
   }
 };
 
-const handleFilterSaleItems = () => {
+const handleFilterSaleItems = async () => {
   saleGalleryFilter.page = 1;
-  loadSaleItems();
+  await loadSaleItems();
 };
 
 const handleSortChange = () => {

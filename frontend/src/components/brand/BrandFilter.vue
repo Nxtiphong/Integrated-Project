@@ -16,6 +16,7 @@ const clearFilters = () => {
 
 const handleFilter = () => {
   emit('filterSaleItemsByBrands');
+  console.log('emitting filter-sale-items-by-brands');
 };
 
 const getAllBrands = async () => {
@@ -84,7 +85,6 @@ onMounted(() => {
             v-for="brand in brands"
             :key="brand.id"
             class="itbms-filter-item px-3 py-2 hover:bg-gray-100 cursor-pointer"
-            @click="toggleBrand(brand.name)"
             :data-brand-name="brand.name"
           >
             <label class="flex items-center space-x-2 text-sm lg:text-base w-full cursor-pointer">
@@ -92,7 +92,7 @@ onMounted(() => {
                 type="checkbox"
                 class="form-checkbox h-4 w-4 text-blue-600"
                 :checked="saleGalleryFilter.filterLists.includes(brand.name)"
-                @change.stop="toggleBrand(brand.name)"
+                @change="toggleBrand(brand.name)"
               />
               <span>{{ brand.name }}</span>
             </label>

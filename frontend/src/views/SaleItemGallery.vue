@@ -1,12 +1,12 @@
 <script setup>
-import { onBeforeMount, onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import SaleItemCard from '@/components/gallery/SaleItemCard.vue';
 import BrandFilter from '@/components/brand/BrandFilter.vue';
-import { useSaleItemStore } from '@/stores/saleItemStore';
+import { useSaleItemStore } from '@/stores/useSaleItemStore';
 import Alert from '@/components/share/Alert.vue';
 import SortComponent from '@/components/gallery/SortComponent.vue';
 import Pagination from '@/components/pagination/Pagination.vue';
-import { useGalleryFilterStore } from '@/stores/useGalleryFilterStore';
+import { useGalleryStateStore } from '@/stores/useGalleryStateStore';
 const saleStore = useSaleItemStore();
 
 const alertMessage = ref({
@@ -19,7 +19,7 @@ const alertMessage = ref({
 const filteredItems = ref([]);
 const isLoading = ref(false);
 
-const saleGalleryFilter = useGalleryFilterStore();
+const saleGalleryState = useGalleryStateStore();
 const fetchSaleItems = async ({
   page = 1,
   size = 10,
@@ -47,7 +47,7 @@ const fetchSaleItems = async ({
 const fetchPage = async (newPage) => {
   try {
     isLoading.value = true;
-    saleGalleryFilter.page = newPage;
+    saleGalleryState.page = newPage;
     await loadSaleItems();
   } catch (error) {
     console.error('Error loading page:', error);
@@ -60,7 +60,7 @@ const handleGoLastPage = async () => {
   try {
     isLoading.value = true;
     await loadSaleItems();
-    saleGalleryFilter.page = saleGalleryFilter.totalPages;
+    saleGalleryState.page = saleGalleryState.totalPages;
     await loadSaleItems();
   } catch (error) {
     console.error('Error loading page:', error);
@@ -70,24 +70,24 @@ const handleGoLastPage = async () => {
 };
 
 const handleFilterSaleItems = async () => {
-  saleGalleryFilter.page = 1;
+  saleGalleryState.page = 1;
   await loadSaleItems();
 };
 
 const handleSortChange = () => {
-  if (saleGalleryFilter.sortDirection === 'none') {
-    saleGalleryFilter.sortField = 'id';
-  } else if (saleGalleryFilter.sortDirection === 'asc') {
-    saleGalleryFilter.sortField = 'brand.name';
-  } else if (saleGalleryFilter.sortDirection === 'desc') {
-    saleGalleryFilter.sortField = 'brand.name';
+  if (saleGalleryState.sortDirection === 'none') {
+    saleGalleryState.sortField = 'id';
+  } else if (saleGalleryState.sortDirection === 'asc') {
+    saleGalleryState.sortField = 'brand.name';
+  } else if (saleGalleryState.sortDirection === 'desc') {
+    saleGalleryState.sortField = 'brand.name';
   }
-  saleGalleryFilter.resetPageOnly();
+  saleGalleryState.resetPageOnly();
   loadSaleItems();
 };
 
 const handlePageSizeChange = () => {
-  saleGalleryFilter.resetPageOnly();
+  saleGalleryState.resetPageOnly();
   loadSaleItems();
 };
 
@@ -95,13 +95,13 @@ const loadSaleItems = async () => {
   isLoading.value = true;
   try {
     const items = await fetchSaleItems({
-      page: saleGalleryFilter.page,
-      size: saleGalleryFilter.pageSize,
-      sortField: saleGalleryFilter.sortField,
-      sortDirection: saleGalleryFilter.sortDirection,
-      filterBrands: saleGalleryFilter.filterLists,
+      page: saleGalleryState.page,
+      size: saleGalleryState.pageSize,
+      sortField: saleGalleryState.sortField,
+      sortDirection: saleGalleryState.sortDirection,
+      filterBrands: saleGalleryState.filterLists,
     });
-    saleGalleryFilter.totalPages = items.totalPages;
+    saleGalleryState.totalPages = items.totalPages;
     filteredItems.value = [...items.content];
   } catch (error) {
     console.error('Error fetching sale items:', error);
@@ -118,7 +118,7 @@ onMounted(() => {
   const hasVisited = sessionStorage.getItem('hasVisitedGallery');
 
   if (!hasVisited) {
-    saleGalleryFilter.resetAll();
+    saleGalleryState.resetAll();
     sessionStorage.setItem('hasVisitedGallery', 'true');
   }
 
@@ -208,8 +208,8 @@ onMounted(() => {
       </div>
       <div>
         <Pagination
-          :currentPage="saleGalleryFilter.page"
-          :totalPages="saleGalleryFilter.totalPages"
+          :currentPage="saleGalleryState.page"
+          :totalPages="saleGalleryState.totalPages"
           @update:currentPage="fetchPage"
           @lastPage="handleGoLastPage"
         />

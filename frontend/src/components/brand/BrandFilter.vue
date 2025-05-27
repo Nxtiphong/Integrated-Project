@@ -1,22 +1,21 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import { Icon } from '@iconify/vue';
-import { useGalleryFilterStore } from '@/stores/useGalleryFilterStore';
+import { useGalleryStateStore } from '@/stores/useGalleryStateStore';
 
 const emit = defineEmits(['filterSaleItemsByBrands']);
 
 const brands = ref([]);
-const saleGalleryFilter = useGalleryFilterStore();
+const saleGalleryState = useGalleryStateStore();
 const isDropdownOpen = ref(false);
 
 const clearFilters = () => {
-  saleGalleryFilter.filterLists.splice(0, saleGalleryFilter.filterLists.length);
+  saleGalleryState.filterLists.splice(0, saleGalleryState.filterLists.length);
   handleFilter();
 };
 
 const handleFilter = () => {
   emit('filterSaleItemsByBrands');
-  console.log('emitting filter-sale-items-by-brands');
 };
 
 const getAllBrands = async () => {
@@ -32,11 +31,11 @@ const getAllBrands = async () => {
 };
 
 const toggleBrand = (brandName) => {
-  const index = saleGalleryFilter.filterLists.indexOf(brandName);
+  const index = saleGalleryState.filterLists.indexOf(brandName);
   if (index > -1) {
-    saleGalleryFilter.filterLists.splice(index, 1);
+    saleGalleryState.filterLists.splice(index, 1);
   } else {
-    saleGalleryFilter.filterLists.push(brandName);
+    saleGalleryState.filterLists.push(brandName);
   }
   handleFilter();
 };
@@ -54,7 +53,7 @@ onMounted(() => {
       class="itbms-brand-filter flex gap-1 lg:gap-2 px-2 flex-1 w-lg overflow-x-auto scrollbar-hidden"
     >
       <p
-        v-for="(brand, index) in saleGalleryFilter.filterLists"
+        v-for="(brand, index) in saleGalleryState.filterLists"
         :key="index"
         class="itbms-filter-item flex items-center select-none justify-center gap-1 bg-primary/80 text-white text-xs lg:text-sm font-medium px-2 lg:px-3 py-1 rounded-full"
       >
@@ -63,7 +62,7 @@ onMounted(() => {
           ><Icon icon="iconoir:delete-circle" class="text-sm lg:text-base" />
         </span>
       </p>
-      <span v-if="saleGalleryFilter.filterLists.length === 0" class="text-gray-400 text-sm"
+      <span v-if="saleGalleryState.filterLists.length === 0" class="text-gray-400 text-sm"
         >Filter by brand(s)</span
       >
     </div>
@@ -91,7 +90,7 @@ onMounted(() => {
               <input
                 type="checkbox"
                 class="form-checkbox h-4 w-4 text-blue-600"
-                :checked="saleGalleryFilter.filterLists.includes(brand.name)"
+                :checked="saleGalleryState.filterLists.includes(brand.name)"
                 @change="toggleBrand(brand.name)"
               />
               <span>{{ brand.name }}</span>

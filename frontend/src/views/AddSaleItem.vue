@@ -2,7 +2,7 @@
 import { ref, onMounted, watch, computed } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 import ProductImage from '@/components/detail/ProductImage.vue';
-import { useSaleItemStore } from '@/stores/saleItemStore';
+import { useSaleItemStore } from '@/stores/useSaleItemStore';
 import Alert from '@/components/share/Alert.vue';
 import { useRoute } from 'vue-router';
 

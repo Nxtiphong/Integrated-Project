@@ -38,7 +38,7 @@ public class SaleItemService {
 
 
     public Page<SaleItem> findAll(int page, int size, String sortField, List<String> filterBrands, String sortDirection) {
-        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField).and(Sort.by(Sort.Direction.ASC, "id"));
         Pageable pageable = PageRequest.of(page, size, sort);
         return filterBrands.isEmpty() ? saleItemRepository.findAll(pageable) : saleItemRepository.findByBrandNameIn(filterBrands, pageable);
     }

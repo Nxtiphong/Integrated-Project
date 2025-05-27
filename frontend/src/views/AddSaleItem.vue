@@ -44,15 +44,13 @@ const errors = ref({
 const validateField = (field, value) => {
   switch (field) {
     case 'brand':
-    return !value || !value.name || value.name.trim() === ''
-        ? 'Brand must be selected.'
-        : '';
+      return !value || !value.name || value.name.trim() === '' ? 'Brand must be selected.' : '';
     case 'model':
       return !value || value.length === 0
         ? 'Model must be 1-60 characters long.'
         : value.length > 60
-        ? 'Model must be 1-60 characters long.'
-        : '';
+          ? 'Model must be 1-60 characters long.'
+          : '';
     case 'price':
       return value === null || value === undefined || value === '' || value < 0
         ? 'Price must be non-negative integer.'
@@ -61,8 +59,8 @@ const validateField = (field, value) => {
       return !value || value.length === 0
         ? 'Description must be 1-65,535 characters long.'
         : value.length > 65535
-        ? 'Description must be 1-65,535 characters long.'
-        : '';
+          ? 'Description must be 1-65,535 characters long.'
+          : '';
     case 'quantity':
       return value !== null && value !== '' && value < 0
         ? 'Quantity must be non-negative integer.'
@@ -73,8 +71,14 @@ const validateField = (field, value) => {
         ? 'RAM size must be positive integer or not specified.'
         : '';
     case 'screenSizeInch':
-    const decimalCount = value.toString().split('.')[1];
-      return value !== null && value !== '' && value <= 0 || decimalCount && decimalCount.length > 2
+      if (value === null || value === undefined || value === '') {
+        return '';
+      }
+
+      const valueStr = String(value);
+      const decimalCount = valueStr.split('.')[1];
+
+      return value <= 0 || (decimalCount && decimalCount.length > 2)
         ? 'Screen size must be positive number with at most 2 decimal points or not specified.'
         : '';
     case 'storageGb':
@@ -212,7 +216,7 @@ watch(
       isEdit.value = !isEqual(newVal, originalProduct.value);
     }
   },
-  { deep: true }
+  { deep: true },
 );
 
 const isSaveDisabled = computed(() => {
@@ -332,7 +336,7 @@ onMounted(async () => {
                         'itbms-brand px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors',
                         errors.brand ? 'border-red-500' : 'border-gray-300',
                       ]"
-                      @input="onInput('brand')"
+                      @change="onInput('brand')"
                       @focusout="onChange('brand')"
                       @keydown.enter="focusNext('model')"
                     >
@@ -493,7 +497,7 @@ onMounted(async () => {
                       @change="onChange('description')"
                       @input="onInput('description')"
                       @keydown.enter.prevent="focusNext('save')"
-                      ></textarea>
+                    ></textarea>
                     <div v-if="errors.description" class="text-red-500 text-sm">
                       {{ errors.description }}
                     </div>
@@ -563,5 +567,4 @@ onMounted(async () => {
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

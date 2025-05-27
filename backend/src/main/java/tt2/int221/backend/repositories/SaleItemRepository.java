@@ -13,12 +13,10 @@ import java.util.List;
 
 @Repository
 public interface SaleItemRepository extends JpaRepository<SaleItem,Integer> {
-    Page<SaleItem> findAllByOrderByCreatedOnAscIdAsc(Pageable pageable);
     List<SaleItem> findAllByOrderByCreatedOnAscIdAsc();
     @Query("SELECT COUNT(s) FROM SaleItem s WHERE s.brand.id = :brandId")
     long countByBrandId(@Param("brandId") Integer brandId);
     List<SaleItem> findAllByBrandId(Integer brandId);
-    Page<SaleItem> findAllByBrand_NameIn(List<String> brandNames, Pageable pageable);
     Page<SaleItem> findByBrandNameIn(List<String> brandNames, Pageable pageable);
 
 }

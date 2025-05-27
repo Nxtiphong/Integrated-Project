@@ -43,13 +43,35 @@ const fetchSaleItems = async ({
   const data = await response.json();
   return data;
 };
-const fetchPage = (newPage) => {
-  saleGalleryFilter.page = newPage;
-  loadSaleItems();
+
+const fetchPage = async (newPage) => {
+  try {
+    isLoading.value = true;
+    saleGalleryFilter.page = newPage;
+    await loadSaleItems();
+  } catch (error) {
+    console.error('Error loading page:', error);
+  } finally {
+    isLoading.value = false;
+  }
 };
 
-const handleFilterSaleItems = () => {
-  fetchPage(1);
+const handleGoLastPage = async () => {
+  try {
+    isLoading.value = true;
+    await loadSaleItems();
+    saleGalleryFilter.page = saleGalleryFilter.totalPages;
+    await loadSaleItems();
+  } catch (error) {
+    console.error('Error loading page:', error);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+const handleFilterSaleItems = async () => {
+  saleGalleryFilter.page = 1;
+  await loadSaleItems();
 };
 
 const handleSortChange = () => {
@@ -189,6 +211,7 @@ onMounted(() => {
           :currentPage="saleGalleryFilter.page"
           :totalPages="saleGalleryFilter.totalPages"
           @update:currentPage="fetchPage"
+          @lastPage="handleGoLastPage"
         />
       </div>
     </div>

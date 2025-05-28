@@ -1,23 +1,23 @@
 <script setup>
-import { useGalleryFilterStore } from '@/stores/useGalleryFilterStore';
+import { useGalleryStateStore } from '@/stores/useGalleryStateStore';
 
-const saleGalleryFilter = useGalleryFilterStore();
+const saleGalleryState = useGalleryStateStore();
 const emit = defineEmits(['sortType', 'pageSize']);
 
 const pageSizeOptions = [5, 10, 20];
 
 const toggleSort = (order) => {
-  saleGalleryFilter.sortDirection = order;
+  saleGalleryState.sortDirection = order;
   emit('sortType');
 };
 
 const handlePageSizeChange = (event) => {
-  saleGalleryFilter.pageSize = parseInt(event.target.value);
+  saleGalleryState.pageSize = parseInt(event.target.value);
   emit('pageSize');
 };
 
 const isSortActive = (order) => {
-  return saleGalleryFilter.sortDirection === order;
+  return saleGalleryState.sortDirection === order;
 };
 </script>
 
@@ -30,7 +30,7 @@ const isSortActive = (order) => {
       <div class="relative">
         <select
           id="page-size"
-          v-model="saleGalleryFilter.pageSize"
+          v-model="saleGalleryState.pageSize"
           @change="handlePageSizeChange"
           class="itbms-page-size appearance-none bg-gray-50 border border-gray-300 text-gray-700 py-2 pl-3 pr-8 rounded-md text-sm cursor-pointer"
         >

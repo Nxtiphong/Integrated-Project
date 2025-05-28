@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router';
 import DeleteModal from '@/components/share/DeleteModal.vue';
 import { deleteSaleItem } from '@/utils/saleitemUtils';
 import Alert from '@/components/share/Alert.vue';
-import { useSaleItemStore } from '@/stores/saleItemStore';
+import { useSaleItemStore } from '@/stores/useSaleItemStore';
 
 const router = useRouter();
 const saleStore = useSaleItemStore();

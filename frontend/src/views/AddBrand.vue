@@ -18,6 +18,8 @@ const originalForm = ref({});
 const isSubmitting = ref(false);
 
 const isDisabled = computed(() => {
+  const nameInvalid = brandForm.name.trim() === '' || isSubmitting.value;
+
   const hasErrors = Object.values(isError.value).some(Boolean);
 
   if (params) {
@@ -29,10 +31,10 @@ const isDisabled = computed(() => {
         countryOfOrigin: brandForm.countryOfOrigin,
       }) === JSON.stringify(originalForm.value);
 
-    return hasErrors || noChanges;
+    return nameInvalid || hasErrors || noChanges;
   }
 
-  return hasErrors;
+  return nameInvalid || hasErrors;
 });
 
 const isFocused = ref({
@@ -212,7 +214,10 @@ onMounted(async () => {
                   : 'border-gray-300 focus:ring-primary/20 focus:border-primary',
               ]"
             />
-            <p v-if="isError.name" class="text-error text-xs absolute z-10 -bottom-3 right-2 itbms-message">
+            <p
+              v-if="isError.name"
+              class="text-error text-xs absolute z-10 -bottom-3 right-2 itbms-message"
+            >
               Brand name must be 1-30 characters long.
             </p>
           </div>
@@ -233,7 +238,10 @@ onMounted(async () => {
                   : 'border-gray-300 focus:ring-primary/20 focus:border-primary',
               ]"
             />
-            <p v-if="isError.websiteUrl" class="text-error text-xs absolute z-10 -bottom-3 right-2 itbms-message">
+            <p
+              v-if="isError.websiteUrl"
+              class="text-error text-xs absolute z-10 -bottom-3 right-2 itbms-message"
+            >
               Brand URL must be a valid URL or not specified.
             </p>
           </div>

@@ -15,7 +15,6 @@ import tt2.int221.backend.entities.SaleItem;
 import tt2.int221.backend.services.SaleItemService;
 
 import java.util.List;
-import java.util.Locale;
 
 @RestController
 @Tag(name = "Sale Items API")

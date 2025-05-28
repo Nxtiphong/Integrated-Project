@@ -128,11 +128,12 @@ const validation = (product) => {
   errors.value.screenSizeInch = validateField('screenSizeInch', product.screenSizeInch);
   errors.value.storageGb = validateField('storageGb', product.storageGb);
   errors.value.color = validateField('color', product.color);
-
+  
   return !hasErrors.value;
 };
 
 const saveProduct = async () => {
+  console.log('Saving product:', product.value);
   if (!validation(product.value)) {
     return;
   }
@@ -258,7 +259,7 @@ onMounted(async () => {
     if (item) {
       const matchedBrand = saleStore.brands.find((b) => b.name === item.brandName);
       const loadedProduct = {
-        brand: matchedBrand || '',
+        brand: matchedBrand,
         model: item.model,
         price: item.price,
         description: item.description,
@@ -345,7 +346,7 @@ onMounted(async () => {
                         {{ brand.name }}
                       </option>
                     </select>
-                    <div v-if="errors.brand" class="text-red-500 text-sm">{{ errors.brand }}</div>
+                    <div v-if="errors.brand" class="text-red-500 text-sm itbms-message">{{ errors.brand }}</div>
                   </div>
 
                   <div class="flex flex-col gap-2">
@@ -363,7 +364,7 @@ onMounted(async () => {
                       @input="onInput('model')"
                       @keydown.enter="focusNext('price')"
                     />
-                    <div v-if="errors.model" class="text-red-500 text-sm">{{ errors.model }}</div>
+                    <div v-if="errors.model" class="text-red-500 text-sm itbms-message">{{ errors.model }}</div>
                   </div>
 
                   <div class="flex flex-col gap-2">
@@ -381,7 +382,7 @@ onMounted(async () => {
                       @input="onInput('price')"
                       @keydown.enter="focusNext('quantity')"
                     />
-                    <div v-if="errors.price" class="text-red-500 text-sm">{{ errors.price }}</div>
+                    <div v-if="errors.price" class="text-red-500 text-sm itbms-message">{{ errors.price }}</div>
                   </div>
 
                   <div class="flex flex-col gap-2">
@@ -399,7 +400,7 @@ onMounted(async () => {
                       @input="onInput('quantity')"
                       @keydown.enter="focusNext('ram')"
                     />
-                    <div v-if="errors.quantity" class="text-red-500 text-sm">
+                    <div v-if="errors.quantity" class="text-red-500 text-sm itbms-message">
                       {{ errors.quantity }}
                     </div>
                   </div>
@@ -419,7 +420,7 @@ onMounted(async () => {
                       @input="onInput('ramGb')"
                       @keydown.enter="focusNext('screenSize')"
                     />
-                    <div v-if="errors.ramGb" class="text-red-500 text-sm">{{ errors.ramGb }}</div>
+                    <div v-if="errors.ramGb" class="text-red-500 text-sm itbms-message">{{ errors.ramGb }}</div>
                   </div>
 
                   <div class="flex flex-col gap-2">
@@ -440,7 +441,7 @@ onMounted(async () => {
                       @input="onInput('screenSizeInch')"
                       @keydown.enter="focusNext('storage')"
                     />
-                    <div v-if="errors.screenSizeInch" class="text-red-500 text-sm">
+                    <div v-if="errors.screenSizeInch" class="text-red-500 text-sm itbms-message">
                       {{ errors.screenSizeInch }}
                     </div>
                   </div>
@@ -460,7 +461,7 @@ onMounted(async () => {
                       @input="onInput('storageGb')"
                       @keydown.enter="focusNext('color')"
                     />
-                    <div v-if="errors.storageGb" class="text-red-500 text-sm">
+                    <div v-if="errors.storageGb" class="text-red-500 text-sm itbms-message">
                       {{ errors.storageGb }}
                     </div>
                   </div>
@@ -480,7 +481,7 @@ onMounted(async () => {
                       @input="onInput('color')"
                       @keydown.enter="focusNext('description')"
                     />
-                    <div v-if="errors.color" class="text-red-500 text-sm">{{ errors.color }}</div>
+                    <div v-if="errors.color" class="text-red-500 text-sm itbms-message">{{ errors.color }}</div>
                   </div>
 
                   <div class="flex flex-col gap-2 md:col-span-2">
@@ -498,7 +499,7 @@ onMounted(async () => {
                       @input="onInput('description')"
                       @keydown.enter.prevent="focusNext('save')"
                     ></textarea>
-                    <div v-if="errors.description" class="text-red-500 text-sm">
+                    <div v-if="errors.description" class="text-red-500 text-sm itbms-message">
                       {{ errors.description }}
                     </div>
                   </div>

@@ -1,6 +1,6 @@
 export const fetchBrandDetail = async (id) => {
    try {
-      const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/brands/${id}`);
+      const res = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/brands/${id}`);
       if (!res.ok) throw new Error('Failed to fetch brand detail')
       return { success: true, data: await res.json() };
    } catch (error) {
@@ -11,7 +11,7 @@ export const fetchBrandDetail = async (id) => {
 
 export const submitCreateForm = async (formData) => {
    try {
-      const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/brands`, {
+      const res = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/brands`, {
          method: 'POST',
          headers: { 'Content-Type': 'application/json' },
          body: JSON.stringify(formData),
@@ -28,7 +28,7 @@ export const submitCreateForm = async (formData) => {
 
 export const submitUpdateForm = async (id, formData) => {
    try {
-      const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/brands/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/brands/${id}`, {
          method: 'PUT',
          headers: { 'Content-Type': 'application/json' },
          body: JSON.stringify(formData),
@@ -43,7 +43,7 @@ export const submitUpdateForm = async (id, formData) => {
 
 export const deleteBrand = async (id) => {
    try {
-      const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/brands/${id}`, {
+      const res = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/brands/${id}`, {
          method: 'DELETE',
       });
 

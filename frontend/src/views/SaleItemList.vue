@@ -21,7 +21,7 @@ const alertMessage = ref({
 
 const fetchSaleItems = async () => {
   try {
-    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items`);
+    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/sale-items`);
     if (!response.ok) throw new Error('Failed to fetch sale items');
     const data = await response.json();
     return data;
@@ -88,7 +88,7 @@ const manageBrand = () => {
 
 const handleDelete = async (id) => {
   try {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items/${id}`, {
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/sale-items/${id}`, {
       method: 'DELETE',
     });
 

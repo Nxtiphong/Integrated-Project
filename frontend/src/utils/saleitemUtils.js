@@ -1,6 +1,6 @@
 export const deleteSaleItem = async (id) => {
     try {
-       const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items/${id}`, {
+       const res = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/sale-items/${id}`, {
           method: 'DELETE',
        });
  

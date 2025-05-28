@@ -140,7 +140,7 @@ const saveProduct = async () => {
     return;
   }
   if (params) {
-    await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items/${params}`, {
+    await fetch(`${import.meta.env.VITE_BASE_URL}/v1/sale-items/${params}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -150,7 +150,7 @@ const saveProduct = async () => {
     saleStore.updated = true;
     router.push(`/sale-items/${params}`);
   } else {
-    await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items`, {
+    await fetch(`${import.meta.env.VITE_BASE_URL}/v1/sale-items`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -38,7 +38,7 @@ const fetchSaleItems = async ({
   if (sortDirection !== 'none') params.append('sortDirection', sortDirection);
 
   const response = await fetch(
-    `${import.meta.env.VITE_BASE_URL}/itb-mshop/v2/sale-items?${params.toString()}`,
+    `${import.meta.env.VITE_BASE_URL}/v2/sale-items?${params.toString()}`,
   );
   const data = await response.json();
   return data;

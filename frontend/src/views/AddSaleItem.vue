@@ -2,7 +2,7 @@
 import { ref, onMounted, watch, computed } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 import ProductImage from '@/components/detail/ProductImage.vue';
-import { useSaleItemStore } from '@/stores/saleItemStore';
+import { useSaleItemStore } from '@/stores/useSaleItemStore';
 import Alert from '@/components/share/Alert.vue';
 import { useRoute } from 'vue-router';
 
@@ -59,9 +59,9 @@ const validateField = (field, value) => {
         : '';
     case 'description':
       return !value || value.length === 0
-        ? 'Description must be 1-65,535 characters long.'
+        ? 'Description must be 1-16,384 characters long.'
         : value.length > 65535
-          ? 'Description must be 1-65,535 characters long.'
+          ? 'Description must be 1-16,384 characters long.'
           : '';
     case 'quantity':
       return value !== null && value !== '' && value < 0
@@ -341,7 +341,7 @@ onMounted(async () => {
                       ]"
                       @keydown.enter="focusNext('model')"
                     >
-                      <option disabled value="">Select a brand</option>
+                      <option value="">Select a brand</option>
                       <option v-for="brand in saleStore.brands" :key="brand.id" :value="brand">
                         {{ brand.name }}
                       </option>

@@ -2,7 +2,7 @@
 import { useRouter } from 'vue-router';
 import notFoundImg from '@/assets/images/404.png';
 import Alert from './Alert.vue';
-import { useSaleItemStore } from '@/stores/saleItemStore';
+import { useSaleItemStore } from '@/stores/useSaleItemStore';
 import { onMounted } from 'vue';
 import { ref } from 'vue';
 

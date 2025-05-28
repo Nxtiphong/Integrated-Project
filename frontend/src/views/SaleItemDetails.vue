@@ -5,11 +5,11 @@ import { useRoute, useRouter } from 'vue-router';
 import notFoundImg from '@/assets/images/404.png';
 import { onMounted, ref } from 'vue';
 import DeleteModal from '@/components/share/DeleteModal.vue';
-import { useSaleItemStore } from '@/stores/saleItemStore';
+import { useSaleItemStore } from '@/stores/useSaleItemStore';
 import Alert from '@/components/share/Alert.vue';
-import { useGalleryFilterStore } from '@/stores/useGalleryFilterStore';
+import { useGalleryStateStore } from '@/stores/useGalleryStateStore';
 
-const saleGalleryFilter = useGalleryFilterStore();
+const saleGalleryState = useGalleryStateStore();
 
 const saleStore = useSaleItemStore();
 const router = useRouter();
@@ -67,7 +67,7 @@ const handleDelete = async () => {
       throw new Error('Failed to delete item');
     } else {
       saleStore.deleted = true;
-      saleGalleryFilter.resetPageOnly();
+      saleGalleryState.resetPageOnly();
 
       router.push('/sale-items');
     }

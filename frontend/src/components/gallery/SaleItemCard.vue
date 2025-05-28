@@ -55,7 +55,7 @@ const toggleFavorite = () => {
       />
     </button>
 
-    <router-link :to="`/sale-items/${id}`" class="block" flex-grow>
+    <router-link :to="`/sale-items/${id}`" class="block">
       <img
         :src="mock_phone"
         alt="product"

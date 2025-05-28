@@ -13,11 +13,5 @@ public class UpdateBrandDTO {
     private String countryOfOrigin;
     @JsonSetter(nulls = Nulls.SKIP)
     private Boolean isActive = true;
-    private void  setName(String name) {
-        this.name = name.trim();
-    }
-    private void  setUrl(String url) {
-        this.websiteUrl = url.trim();
-    }
 }
 

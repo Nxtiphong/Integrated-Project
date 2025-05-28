@@ -44,7 +44,9 @@ const errors = ref({
 const validateField = (field, value) => {
   switch (field) {
     case 'brand':
-      return !value || !value.name || value.name.trim() === '' ? 'Brand must be selected.' : '';
+  return !value || typeof value !== 'object' || !value.name || value.name.trim() === ''
+    ? 'Brand must be selected.'
+    : '';
     case 'model':
       return !value || value.length === 0
         ? 'Model must be 1-60 characters long.'
@@ -138,7 +140,7 @@ const saveProduct = async () => {
     return;
   }
   if (params) {
-    await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items/${params}`, {
+    await fetch(`${import.meta.env.VITE_BASE_URL}/v1/sale-items/${params}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -148,7 +150,7 @@ const saveProduct = async () => {
     saleStore.updated = true;
     router.push(`/sale-items/${params}`);
   } else {
-    await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items`, {
+    await fetch(`${import.meta.env.VITE_BASE_URL}/v1/sale-items`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -158,7 +160,7 @@ const saveProduct = async () => {
     saleStore.created = true;
     router.back();
   }
-};
+  };
 
 const cancel = () => {
   product.value = {
@@ -337,8 +339,6 @@ onMounted(async () => {
                         'itbms-brand px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors',
                         errors.brand ? 'border-red-500' : 'border-gray-300',
                       ]"
-                      @change="onInput('brand')"
-                      @focusout="onChange('brand')"
                       @keydown.enter="focusNext('model')"
                     >
                       <option value="">Select a brand</option>

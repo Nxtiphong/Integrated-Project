@@ -5,11 +5,11 @@ import { useRoute, useRouter } from 'vue-router';
 import notFoundImg from '@/assets/images/404.png';
 import { onMounted, ref } from 'vue';
 import DeleteModal from '@/components/share/DeleteModal.vue';
-import { useSaleItemStore } from '@/stores/saleItemStore';
+import { useSaleItemStore } from '@/stores/useSaleItemStore';
 import Alert from '@/components/share/Alert.vue';
-import { useGalleryFilterStore } from '@/stores/useGalleryFilterStore';
+import { useGalleryStateStore } from '@/stores/useGalleryStateStore';
 
-const saleGalleryFilter = useGalleryFilterStore();
+const saleGalleryState = useGalleryStateStore();
 
 const saleStore = useSaleItemStore();
 const router = useRouter();
@@ -22,7 +22,7 @@ const isLoading = ref(false);
 const fetchProductDetail = async (id) => {
   isLoading.value = true;
   try {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items/${id}`);
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/sale-items/${id}`);
     if (!res.ok) throw new Error('Failed to fetch product id:' + id);
     productDetail.value = await res.json();
   } catch (error) {
@@ -49,7 +49,7 @@ const showDeleteModal = ref(false);
 
 const handleDelete = async () => {
   try {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items/${params}`, {
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/sale-items/${params}`, {
       method: 'DELETE',
     });
 
@@ -67,7 +67,7 @@ const handleDelete = async () => {
       throw new Error('Failed to delete item');
     } else {
       saleStore.deleted = true;
-      saleGalleryFilter.resetPageOnly();
+      saleGalleryState.resetPageOnly();
 
       router.push('/sale-items');
     }

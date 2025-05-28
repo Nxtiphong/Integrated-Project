@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref, watch } from "vue";
 
-export const useGalleryFilterStore = defineStore('saleGalleryFilter', () => {
+export const useGalleryStateStore = defineStore('saleGalleryState', () => {
 
    const saved = JSON.parse(sessionStorage.getItem('saleGalleryState') || '{}');
 
@@ -34,7 +34,7 @@ export const useGalleryFilterStore = defineStore('saleGalleryFilter', () => {
       sortField.value = 'id';
       sortDirection.value = 'none';
       pageSize.value = 10;
-      sessionStorage.removeItem('saleGalleryFilter');
+      sessionStorage.removeItem('saleGalleryState');
    }
 
    function resetPageOnly() {

@@ -12,17 +12,5 @@ public class AddBrandDTO {
     private String countryOfOrigin;
     @JsonSetter(nulls = Nulls.SKIP)
     private Boolean isActive = true;
-    private void  setName(String name) {
-        this.name = name.trim();
-//        if (this.name.length() < 31) {
-//            this.name = this.name.substring(0, 30);
-//        }
-    }
-    private void  setUrl(String url) {
-        this.websiteUrl = url.trim();
-//        if (this.websiteUrl.length() < 41) {
-//            this.websiteUrl = this.websiteUrl.substring(0, 40);
-//        }
-    }
 }
 

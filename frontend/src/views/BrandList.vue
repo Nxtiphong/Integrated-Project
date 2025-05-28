@@ -5,7 +5,6 @@ import { useBrandStore } from '@/stores/useBrandStore';
 import { deleteBrand } from '@/utils/brandUtils';
 import { Icon } from '@iconify/vue';
 import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
 
 const brandStore = useBrandStore();
 
@@ -19,7 +18,7 @@ const isLoading = ref(false);
 const getAllBrands = async () => {
   isLoading.value = true;
   try {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/brands`);
+    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/brands`);
     if (!res.ok) throw new Error('Failed to fetch brands');
     brandStore.brandLists = await res.json();
   } catch (error) {

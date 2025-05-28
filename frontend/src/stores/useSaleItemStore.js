@@ -16,7 +16,7 @@ export const useSaleItemStore = defineStore('saleItem', {
       if (this.brands.length > 0) return
       this.isLoading = true
       try {
-        const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/brands`)
+        const res = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/brands`)
         if (!res.ok) throw new Error('Failed to fetch brands')
         this.brands = await res.json()
       } catch (error) {
@@ -29,7 +29,7 @@ export const useSaleItemStore = defineStore('saleItem', {
     async fetchSaleItems() {
       this.isLoading = true
       try {
-        const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items`)
+        const res = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/sale-items`)
         if (!res.ok) throw new Error('Failed to fetch sale items')
         this.saleItems = await res.json()
       } catch (error) {
@@ -40,7 +40,7 @@ export const useSaleItemStore = defineStore('saleItem', {
     },
     async fetchSaleItemById(id) {
         try {
-            const res = await fetch(`${import.meta.env.VITE_BASE_URL}/itb-mshop/v1/sale-items/${id}`)
+            const res = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/sale-items/${id}`)
             if (!res.ok) throw new Error('Failed to fetch sale item')
             return await res.json()
         } catch (error) {

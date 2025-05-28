@@ -57,9 +57,9 @@ const validateField = (field, value) => {
         : '';
     case 'description':
       return !value || value.length === 0
-        ? 'Description must be 1-65,535 characters long.'
+        ? 'Description must be 1-16,384 characters long.'
         : value.length > 65535
-          ? 'Description must be 1-65,535 characters long.'
+          ? 'Description must be 1-16,384 characters long.'
           : '';
     case 'quantity':
       return value !== null && value !== '' && value < 0
@@ -341,7 +341,7 @@ onMounted(async () => {
                       @focusout="onChange('brand')"
                       @keydown.enter="focusNext('model')"
                     >
-                      <option disabled value="">Select a brand</option>
+                      <option value="">Select a brand</option>
                       <option v-for="brand in saleStore.brands" :key="brand.id" :value="brand">
                         {{ brand.name }}
                       </option>

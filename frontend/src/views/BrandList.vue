@@ -5,7 +5,6 @@ import { useBrandStore } from '@/stores/useBrandStore';
 import { deleteBrand } from '@/utils/brandUtils';
 import { Icon } from '@iconify/vue';
 import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
 
 const brandStore = useBrandStore();
 

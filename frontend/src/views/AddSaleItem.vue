@@ -45,7 +45,7 @@ const validateField = (field, value) => {
   switch (field) {
     case 'brand':
   return !value || typeof value !== 'object' || !value.name || value.name.trim() === ''
-    ? 'Brand must be selected.'
+    ? 'Brand must be selected.' 
     : '';
     case 'model':
       return !value || value.length === 0
@@ -339,6 +339,8 @@ onMounted(async () => {
                         'itbms-brand px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors',
                         errors.brand ? 'border-red-500' : 'border-gray-300',
                       ]"
+                      @change="onInput('brand')"
+                      @focusout="onChange('brand')"
                       @keydown.enter="focusNext('model')"
                     >
                       <option value="">Select a brand</option>

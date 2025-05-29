@@ -109,12 +109,12 @@ watch(
 <template>
   <div v-show="shouldShowPagination" class="flex justify-center flex-col items-center gap-1.5 mt-3">
     <nav
-      class="inline-flex items-center gap-1 bg-white shadow-lg border border-gray-200 px-2.5 py-1 rounded-md"
+      class="inline-flex items-center gap-1 md:gap-2 bg-white shadow-md border border-gray-200 px-2.5 md:px-4 md:py-2 py-1 rounded-md"
     >
       <button
         @click="changePage(1)"
         :disabled="currentPage === 1"
-        class="itbms-page-first flex items-center cursor-pointer justify-center w-8 h-7 text-xs font-medium text-gray-500 bg-white border border-gray-300 rounded hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500 transition-all duration-200"
+        class="itbms-page-first flex items-center cursor-pointer justify-center w-8 h-7 md:w-12 md:h-10 text-xs md:text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500 transition-all duration-200"
       >
         First
       </button>
@@ -122,12 +122,12 @@ watch(
       <button
         @click="goToPreviousPage"
         :disabled="currentPage === 1"
-        class="itbms-page-prev flex items-center cursor-pointer justify-center w-8 h-7 text-xs font-medium text-gray-500 bg-white border border-gray-300 rounded hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500 transition-all duration-200"
+        class="itbms-page-prev flex items-center cursor-pointer justify-center w-8 h-7 md:w-12 md:h-10 text-xs md:text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500 transition-all duration-200"
       >
         Prev
       </button>
 
-      <div class="flex items-center gap-0.5">
+      <div class="flex items-center gap-0.5 md:gap-2">
         <button
           v-for="(page, index) in visiblePages"
           :key="`page-${index}`"
@@ -140,7 +140,7 @@ watch(
                 currentPage !== page,
             },
           ]"
-          class="flex items-center justify-center cursor-pointer w-7 h-7 text-xs font-medium border rounded transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+          class="flex items-center justify-center cursor-pointer w-7 h-7 md:w-10 md:h-10 text-xs md:text-sm font-medium border rounded transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
         >
           {{ page }}
         </button>
@@ -149,7 +149,7 @@ watch(
       <button
         @click="goToNextPage"
         :disabled="currentPage === totalPages"
-        class="itbms-page-next flex items-center cursor-pointer justify-center w-8 h-7 text-xs font-medium text-gray-500 bg-white border border-gray-300 rounded hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500 transition-all duration-200"
+        class="itbms-page-next flex items-center cursor-pointer justify-center w-8 h-7 md:w-12 md:h-10 text-xs md:text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500 transition-all duration-200"
       >
         Next
       </button>
@@ -157,14 +157,14 @@ watch(
       <button
         @click="goToLastPage"
         :disabled="currentPage === totalPages"
-        class="itbms-page-last flex items-center cursor-pointer justify-center w-8 h-7 text-xs font-medium text-gray-500 bg-white border border-gray-300 rounded hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500 transition-all duration-200"
+        class="itbms-page-last flex items-center cursor-pointer justify-center w-8 h-7 md:w-12 md:h-10 text-xs md:text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500 transition-all duration-200"
       >
         Last
       </button>
     </nav>
 
     <div class="flex items-center text-xs text-gray-600">
-      <span class="bg-slate-100 px-2 py-1 rounded text-xs">
+      <span class="bg-slate-100 px-2 md:px-3 md:py-2 py-1 rounded text-xs">
         page {{ currentPage }} of {{ totalPages }}
       </span>
     </div>

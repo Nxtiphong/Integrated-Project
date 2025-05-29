@@ -44,15 +44,9 @@ const errors = ref({
 const validateField = (field, value) => {
   switch (field) {
     case 'brand':
-<<<<<<< HEAD
-  return !value || typeof value !== 'object' || !value.name || value.name.trim() === ''
-    ? 'Brand must be selected.' 
-    : '';
-=======
       return !value || typeof value !== 'object' || !value.name || value.name.trim() === ''
         ? 'Brand must be selected.'
         : '';
->>>>>>> 0d2a7490a53255decfa2fe33386d2331555faf1b
     case 'model':
       return !value || value.length === 0
         ? 'Model must be 1-60 characters long.'

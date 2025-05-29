@@ -44,15 +44,15 @@ const errors = ref({
 const validateField = (field, value) => {
   switch (field) {
     case 'brand':
-  return !value || typeof value !== 'object' || !value.name || value.name.trim() === ''
-    ? 'Brand must be selected.'
-    : '';
+      return !value || typeof value !== 'object' || !value.name || value.name.trim() === ''
+        ? 'Brand must be selected.'
+        : '';
     case 'model':
       return !value || value.length === 0
         ? 'Model must be 1-60 characters long.'
         : value.length > 60
-          ? 'Model must be 1-60 characters long.'
-          : '';
+        ? 'Model must be 1-60 characters long.'
+        : '';
     case 'price':
       return value === null || value === undefined || value === '' || value < 0
         ? 'Price must be non-negative integer.'
@@ -61,8 +61,8 @@ const validateField = (field, value) => {
       return !value || value.length === 0
         ? 'Description must be 1-16,384 characters long.'
         : value.length > 65535
-          ? 'Description must be 1-16,384 characters long.'
-          : '';
+        ? 'Description must be 1-16,384 characters long.'
+        : '';
     case 'quantity':
       return value !== null && value !== '' && value < 0
         ? 'Quantity must be non-negative integer.'
@@ -130,11 +130,11 @@ const validation = (product) => {
   errors.value.screenSizeInch = validateField('screenSizeInch', product.screenSizeInch);
   errors.value.storageGb = validateField('storageGb', product.storageGb);
   errors.value.color = validateField('color', product.color);
-  
+
   return !hasErrors.value;
 };
 
-const saveProduct = async () => {
+const saveSaleItem = async () => {
   console.log('Saving product:', product.value);
   if (!validation(product.value)) {
     return;
@@ -160,7 +160,7 @@ const saveProduct = async () => {
     saleStore.created = true;
     router.back();
   }
-  };
+};
 
 const cancel = () => {
   product.value = {
@@ -219,7 +219,7 @@ watch(
       isEdit.value = !isEqual(newVal, originalProduct.value);
     }
   },
-  { deep: true },
+  { deep: true }
 );
 
 const isSaveDisabled = computed(() => {
@@ -339,6 +339,8 @@ onMounted(async () => {
                         'itbms-brand px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors',
                         errors.brand ? 'border-red-500' : 'border-gray-300',
                       ]"
+                      @change="onInput('brand')"
+                      @focusout="onChange('brand')"
                       @keydown.enter="focusNext('model')"
                     >
                       <option value="">Select a brand</option>
@@ -346,7 +348,9 @@ onMounted(async () => {
                         {{ brand.name }}
                       </option>
                     </select>
-                    <div v-if="errors.brand" class="text-red-500 text-sm itbms-message">{{ errors.brand }}</div>
+                    <div v-if="errors.brand" class="text-red-500 text-sm itbms-message">
+                      {{ errors.brand }}
+                    </div>
                   </div>
 
                   <div class="flex flex-col gap-2">
@@ -364,7 +368,9 @@ onMounted(async () => {
                       @input="onInput('model')"
                       @keydown.enter="focusNext('price')"
                     />
-                    <div v-if="errors.model" class="text-red-500 text-sm itbms-message">{{ errors.model }}</div>
+                    <div v-if="errors.model" class="text-red-500 text-sm itbms-message">
+                      {{ errors.model }}
+                    </div>
                   </div>
 
                   <div class="flex flex-col gap-2">
@@ -382,7 +388,9 @@ onMounted(async () => {
                       @input="onInput('price')"
                       @keydown.enter="focusNext('quantity')"
                     />
-                    <div v-if="errors.price" class="text-red-500 text-sm itbms-message">{{ errors.price }}</div>
+                    <div v-if="errors.price" class="text-red-500 text-sm itbms-message">
+                      {{ errors.price }}
+                    </div>
                   </div>
 
                   <div class="flex flex-col gap-2">
@@ -420,7 +428,9 @@ onMounted(async () => {
                       @input="onInput('ramGb')"
                       @keydown.enter="focusNext('screenSize')"
                     />
-                    <div v-if="errors.ramGb" class="text-red-500 text-sm itbms-message">{{ errors.ramGb }}</div>
+                    <div v-if="errors.ramGb" class="text-red-500 text-sm itbms-message">
+                      {{ errors.ramGb }}
+                    </div>
                   </div>
 
                   <div class="flex flex-col gap-2">
@@ -481,7 +491,9 @@ onMounted(async () => {
                       @input="onInput('color')"
                       @keydown.enter="focusNext('description')"
                     />
-                    <div v-if="errors.color" class="text-red-500 text-sm itbms-message">{{ errors.color }}</div>
+                    <div v-if="errors.color" class="text-red-500 text-sm itbms-message">
+                      {{ errors.color }}
+                    </div>
                   </div>
 
                   <div class="flex flex-col gap-2 md:col-span-2">
@@ -534,10 +546,10 @@ onMounted(async () => {
             Cancel
           </button>
           <button
-            @click="saveProduct"
+            @click="saveSaleItem"
             class="itbms-save-button cursor-pointer flex items-center gap-2 px-5 py-2.5 rounded-md text-white transition-colors bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:bg-gray-300 disabled:cursor-not-allowed"
             :disabled="isSaveDisabled"
-            @keydown.enter="saveProduct"
+            @keydown.enter="saveSaleItem"
             id="save"
           >
             <svg

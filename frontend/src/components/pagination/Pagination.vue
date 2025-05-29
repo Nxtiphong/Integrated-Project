@@ -1,66 +1,3 @@
-<template>
-  <div v-show="hasData && totalPages > 1" class="flex justify-center mt-6">
-    <nav class="inline-flex items-center gap-2 bg-white shadow-lg border border-gray-200 px-4 py-2 rounded-xl">
-      <button 
-        @click="changePage(1)" 
-        :disabled="currentPage === 1"
-        class="itbms-page-first flex items-center cursor-pointer justify-center w-12 h-10 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500 transition-all duration-200"
-      >
-        First
-      </button>
-
-      <button
-        @click="goToPreviousPage"
-        :disabled="currentPage === 1"
-        class="itbms-page-prev flex items-center cursor-pointer justify-center w-12 h-10 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500 transition-all duration-200"
-      >
-        Prev
-      </button>
-
-      <div class="flex items-center gap-1">
-        <button
-          v-for="(page, index) in visiblePages"
-          :key="`page-${index}`"
-          @click="changePage(page)"
-          :class="[
-            `itbms-page-${index}`,
-            {
-              'bg-blue-600 border-blue-600 text-white shadow-md': currentPage === page,
-              'text-gray-500 bg-white border-gray-300 hover:bg-gray-100 hover:text-gray-700':
-                currentPage !== page,
-            },
-          ]"
-          class="flex items-center justify-center cursor-pointer w-10 h-10 text-sm font-medium border rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-        >
-          {{ page }}
-        </button>
-      </div>
-
-      <button
-        @click="goToNextPage"
-        :disabled="currentPage === totalPages"
-        class="itbms-page-next flex items-center cursor-pointer justify-center w-12 h-10 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500 transition-all duration-200"
-      >
-        Next
-      </button>
-
-      <button
-        @click="goToLastPage"
-        :disabled="currentPage === totalPages"
-        class="itbms-page-last flex items-center cursor-pointer justify-center w-12 h-10 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500 transition-all duration-200"
-      >
-        Last
-      </button>
-    </nav>
-
-    <div class="ml-4 flex items-center text-xs text-gray-600">
-      <span class="bg-slate-100 px-3 py-2 rounded-lg">
-        page {{ currentPage }} of {{ totalPages }}
-      </span>
-    </div>
-  </div>
-</template>
-
 <script setup>
 import { computed, ref, watch } from 'vue';
 
@@ -84,12 +21,12 @@ const emit = defineEmits(['update:currentPage', 'lastPage']);
 const startPage = ref(1);
 
 const shouldShowPagination = computed(() => {
-  return Boolean(props.hasData && props.totalPages && props.totalPages > 1)
-})
+  return props.hasData && props.totalPages > 1;
+});
 
 function changePage(page) {
-  if (page >= 1 && page <= props.totalPages && page !== props.currentPage) {
-    emit('update:currentPage', page)
+  if (page >= 1 && page <= props.totalPages) {
+    emit('update:currentPage', page);
   }
 }
 
@@ -98,17 +35,13 @@ const goToLastPage = () => {
 };
 
 const visiblePages = computed(() => {
-  if (props.totalPages <= 0) return []
-  
-  const maxVisiblePages = Math.min(10, props.totalPages)
-  const pages = []
-  
-  const safeStartPage = Math.max(1, Math.min(startPage.value, props.totalPages - maxVisiblePages + 1))
-  
+  const maxVisiblePages = Math.min(10, props.totalPages);
+  const pages = [];
+
   for (let i = 0; i < maxVisiblePages; i++) {
-    const pageNumber = safeStartPage + i
-    if (pageNumber >= 1 && pageNumber <= props.totalPages) {
-      pages.push(pageNumber)
+    const pageNumber = startPage.value + i;
+    if (pageNumber <= props.totalPages) {
+      pages.push(pageNumber);
     }
   }
 
@@ -155,15 +88,85 @@ watch(
   { immediate: true },
 );
 
-watch(() => props.totalPages, (newTotalPages) => {
-  if (newTotalPages > 0) {
-    const maxStartPage = Math.max(1, newTotalPages - 9)
+watch(
+  () => props.totalPages,
+  (newTotalPages) => {
+    const maxStartPage = Math.max(1, newTotalPages - 9);
+
     if (startPage.value > maxStartPage) {
-      startPage.value = maxStartPage
+      startPage.value = maxStartPage;
     }
-  } else {
-    startPage.value = 1
-  }
-})
+
+    if (props.currentPage < startPage.value || props.currentPage >= startPage.value + 10) {
+      const newStartPage = Math.max(1, props.currentPage - 5);
+      startPage.value = Math.min(newStartPage, maxStartPage);
+    }
+  },
+  { immediate: true },
+);
 </script>
 
+<template>
+  <div v-show="shouldShowPagination" class="flex justify-center flex-col items-center gap-1.5 mt-3">
+    <nav
+      class="inline-flex items-center gap-1 bg-white shadow-lg border border-gray-200 px-2.5 py-1 rounded-md"
+    >
+      <button
+        @click="changePage(1)"
+        :disabled="currentPage === 1"
+        class="itbms-page-first flex items-center cursor-pointer justify-center w-8 h-7 text-xs font-medium text-gray-500 bg-white border border-gray-300 rounded hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500 transition-all duration-200"
+      >
+        First
+      </button>
+
+      <button
+        @click="goToPreviousPage"
+        :disabled="currentPage === 1"
+        class="itbms-page-prev flex items-center cursor-pointer justify-center w-8 h-7 text-xs font-medium text-gray-500 bg-white border border-gray-300 rounded hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500 transition-all duration-200"
+      >
+        Prev
+      </button>
+
+      <div class="flex items-center gap-0.5">
+        <button
+          v-for="(page, index) in visiblePages"
+          :key="`page-${index}`"
+          @click="changePage(page)"
+          :class="[
+            `itbms-page-${index}`,
+            {
+              'bg-blue-600 border-blue-600 text-white shadow-md': currentPage === page,
+              'text-gray-500 bg-white border-gray-300 hover:bg-gray-100 hover:text-gray-700':
+                currentPage !== page,
+            },
+          ]"
+          class="flex items-center justify-center cursor-pointer w-7 h-7 text-xs font-medium border rounded transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+        >
+          {{ page }}
+        </button>
+      </div>
+
+      <button
+        @click="goToNextPage"
+        :disabled="currentPage === totalPages"
+        class="itbms-page-next flex items-center cursor-pointer justify-center w-8 h-7 text-xs font-medium text-gray-500 bg-white border border-gray-300 rounded hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500 transition-all duration-200"
+      >
+        Next
+      </button>
+
+      <button
+        @click="goToLastPage"
+        :disabled="currentPage === totalPages"
+        class="itbms-page-last flex items-center cursor-pointer justify-center w-8 h-7 text-xs font-medium text-gray-500 bg-white border border-gray-300 rounded hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500 transition-all duration-200"
+      >
+        Last
+      </button>
+    </nav>
+
+    <div class="flex items-center text-xs text-gray-600">
+      <span class="bg-slate-100 px-2 py-1 rounded text-xs">
+        page {{ currentPage }} of {{ totalPages }}
+      </span>
+    </div>
+  </div>
+</template>

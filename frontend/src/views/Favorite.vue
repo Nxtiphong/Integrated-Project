@@ -13,7 +13,7 @@ const removeFromFavorite = (id) => {
     <div class="p-4">
     <h1 class="text-2xl font-bold mb-4">Your Favorite Products</h1>
 
-    <div v-if="favoriteStore.favorites.length === 0">
+    <div v-if="favoriteStore.favorites.length === 0" class="min-h-screen">
     <p>No favorite products yet.</p>
     </div>
 

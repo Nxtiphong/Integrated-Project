@@ -1,8 +1,9 @@
+import { httpRequest } from "./fetchUtils";
+
 export const fetchBrandDetail = async (id) => {
    try {
-      const res = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/brands/${id}`);
-      if (!res.ok) throw new Error('Failed to fetch brand detail')
-      return { success: true, data: await res.json() };
+      const res = await httpRequest('GET', `v1/brands/${id}`);
+      return { success: true, data: res.data };
    } catch (error) {
       console.error('API error:', error);
       return { success: false, error };
@@ -11,15 +12,11 @@ export const fetchBrandDetail = async (id) => {
 
 export const submitCreateForm = async (formData) => {
    try {
-      const res = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/brands`, {
-         method: 'POST',
-         headers: { 'Content-Type': 'application/json' },
-         body: JSON.stringify(formData),
-      });
-
-      if (!res.ok) throw new Error('Failed to create new brand')
-
-      return { success: true, data: await res.json() };
+      const res = await httpRequest('POST', `v1/brands`, formData)
+      if (res.status !== 201) {
+         throw new Error(`HTTP error ${res.status}`)
+      }
+      return { success: true, data: res.data };
    } catch (error) {
       console.error('API error:', error);
       return { success: false, error };
@@ -28,13 +25,11 @@ export const submitCreateForm = async (formData) => {
 
 export const submitUpdateForm = async (id, formData) => {
    try {
-      const res = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/brands/${id}`, {
-         method: 'PUT',
-         headers: { 'Content-Type': 'application/json' },
-         body: JSON.stringify(formData),
-      });
-      const data = await res.json();
-      return { success: true, data };
+      const res = await httpRequest('PUT', `v1/brands/${id}`, formData)
+      if (res.status !== 200) {
+         throw new Error(`HTTP error ${res.status}`)
+      }
+      return { success: true, data: res.data };
    } catch (error) {
       console.error('API error:', error);
       return { success: false, error };
@@ -43,12 +38,10 @@ export const submitUpdateForm = async (id, formData) => {
 
 export const deleteBrand = async (id) => {
    try {
-      const res = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/brands/${id}`, {
-         method: 'DELETE',
-      });
-
-      if (!res.ok) throw new Error('Failed to delete a brand')
-
+      const res = await httpRequest('DELETE', `v1/brands/${id}`)
+      if (res.status !== 204) {
+         throw new Error(`HTTP error ${res.status}`)
+      }
       return { success: true };
    } catch (error) {
       console.error('API error:', error);

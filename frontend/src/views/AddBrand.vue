@@ -36,9 +36,7 @@ const isValidUrl = (value) => {
 const isError = computed(() => ({
   name: isFocused.value.name && (!brandForm.name?.trim() || brandForm.name.trim().length > 30),
   websiteUrl: isFocused.value.websiteUrl && !isValidUrl(brandForm.websiteUrl),
-  countryOfOrigin:
-    isFocused.value.countryOfOrigin &&
-    (!brandForm.countryOfOrigin.trim() || brandForm.countryOfOrigin.trim().length > 80),
+  countryOfOrigin: isFocused.value.countryOfOrigin && brandForm.countryOfOrigin.trim().length > 80,
 }));
 
 const isDisabled = computed(() => {
@@ -208,7 +206,7 @@ onMounted(async () => {
               :nextFieldId="'isActive'"
               @blur="markFocused('countryOfOrigin')"
               @keydownEnter="focusNext"
-              :custom-class="itbms - countryOfOrigin"
+              :custom-class="'itbms-countryOfOrigin'"
             />
           </div>
 

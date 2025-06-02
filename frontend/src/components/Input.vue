@@ -3,7 +3,7 @@ import { computed } from 'vue';
 
 const props = defineProps({
   id: String,
-  modelValue: String,
+  modelValue: [String, Number],
   label: String,
   type: {
     type: String,
@@ -15,13 +15,13 @@ const props = defineProps({
   required: Boolean,
   focused: Boolean,
   nextFieldId: String,
-  customClass: String,
+  customClass: [String, Number],
 });
 
 const emit = defineEmits(['update:modelValue', 'blur', 'keydownEnter']);
 
 const inputClass = computed(() => [
-  `${props.customClass} px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors w-full`,
+  `${props.customClass} text-xs sm:text-sm md:text-base px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors w-full`,
   props.error
     ? 'border-red-500 focus:ring-red-200 focus:border-red-500'
     : 'border-gray-300 focus:ring-primary/20 focus:border-primary',
@@ -49,7 +49,7 @@ const handleKeydown = (e) => {
 </script>
 
 <template>
-  <label :for="id" class="font-semibold">
+  <label :for="id" class="font-semibold text-xs sm:text-sm md:text-base">
     {{ label }}
     <span v-if="required" class="text-error">*</span>
   </label>
@@ -65,7 +65,7 @@ const handleKeydown = (e) => {
     :class="inputClass"
   />
 
-  <p v-if="error" class="text-error text-xs absolute z-10 -bottom-3 right-2 itbms-message">
+  <p v-if="error" class="text-error text-xs z-10 itbms-message">
     {{ errorMessage }}
   </p>
 </template>

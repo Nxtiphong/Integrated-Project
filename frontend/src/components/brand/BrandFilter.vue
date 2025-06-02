@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue';
 import { Icon } from '@iconify/vue';
 import { useGalleryStateStore } from '@/stores/useGalleryStateStore';
+import { httpRequest } from '@/utils/fetchUtils';
 
 const emit = defineEmits(['filterSaleItemsByBrands']);
 
@@ -20,9 +21,8 @@ const handleFilter = () => {
 
 const getAllBrands = async () => {
   try {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/brands`);
-    if (!res.ok) throw new Error('Failed to fetch brands');
-    brands.value = await res.json();
+    const res = await httpRequest('GET', `v1/brands`);
+    brands.value = res.data;
     brands.value.sort((a, b) => a.name.localeCompare(b.name));
   } catch (error) {
     console.error('API error:', error);

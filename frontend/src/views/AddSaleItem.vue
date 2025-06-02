@@ -5,6 +5,8 @@ import ProductImage from '@/components/detail/ProductImage.vue';
 import { useSaleItemStore } from '@/stores/useSaleItemStore';
 import Alert from '@/components/share/Alert.vue';
 import { useRoute } from 'vue-router';
+import Input from '@/components/Input.vue';
+import { httpRequest } from '@/utils/fetchUtils';
 
 const route = useRoute();
 const params = route.params.id;
@@ -17,6 +19,7 @@ const alertMessage = ref({
   visible: false,
   duration: 3000,
 });
+
 const product = ref({
   brand: '',
   model: '',
@@ -51,8 +54,8 @@ const validateField = (field, value) => {
       return !value || value.length === 0
         ? 'Model must be 1-60 characters long.'
         : value.length > 60
-        ? 'Model must be 1-60 characters long.'
-        : '';
+          ? 'Model must be 1-60 characters long.'
+          : '';
     case 'price':
       return value === null || value === undefined || value === '' || value < 0
         ? 'Price must be non-negative integer.'
@@ -61,13 +64,12 @@ const validateField = (field, value) => {
       return !value || value.length === 0
         ? 'Description must be 1-16,384 characters long.'
         : value.length > 65535
-        ? 'Description must be 1-16,384 characters long.'
-        : '';
+          ? 'Description must be 1-16,384 characters long.'
+          : '';
     case 'quantity':
       return value !== null && value !== '' && value < 0
         ? 'Quantity must be non-negative integer.'
         : '';
-
     case 'ramGb':
       return value !== null && value !== '' && value <= 0
         ? 'RAM size must be positive integer or not specified.'
@@ -76,10 +78,8 @@ const validateField = (field, value) => {
       if (value === null || value === undefined || value === '') {
         return '';
       }
-
       const valueStr = String(value);
       const decimalCount = valueStr.split('.')[1];
-
       return value <= 0 || (decimalCount && decimalCount.length > 2)
         ? 'Screen size must be positive number with at most 2 decimal points or not specified.'
         : '';
@@ -107,56 +107,26 @@ const onInput = (field) => {
 };
 
 const hasErrors = computed(() => {
-  return (
-    errors.value.brand ||
-    errors.value.model ||
-    errors.value.price ||
-    errors.value.description ||
-    errors.value.quantity ||
-    errors.value.ramGb ||
-    errors.value.screenSizeInch ||
-    errors.value.storageGb ||
-    errors.value.color
-  );
+  return Object.values(errors.value).some((error) => error);
 });
 
 const validation = (product) => {
-  errors.value.brand = validateField('brand', product.brand);
-  errors.value.model = validateField('model', product.model);
-  errors.value.price = validateField('price', product.price);
-  errors.value.description = validateField('description', product.description);
-  errors.value.quantity = validateField('quantity', product.quantity);
-  errors.value.ramGb = validateField('ramGb', product.ramGb);
-  errors.value.screenSizeInch = validateField('screenSizeInch', product.screenSizeInch);
-  errors.value.storageGb = validateField('storageGb', product.storageGb);
-  errors.value.color = validateField('color', product.color);
-
+  Object.keys(errors.value).forEach((field) => {
+    errors.value[field] = validateField(field, product[field]);
+  });
   return !hasErrors.value;
 };
 
 const saveSaleItem = async () => {
-  console.log('Saving product:', product.value);
   if (!validation(product.value)) {
     return;
   }
   if (params) {
-    await fetch(`${import.meta.env.VITE_BASE_URL}/v1/sale-items/${params}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(product.value),
-    });
+    await httpRequest('PUT', `v1/sale-items/${params}`, product.value);
     saleStore.updated = true;
     router.push(`/sale-items/${params}`);
   } else {
-    await fetch(`${import.meta.env.VITE_BASE_URL}/v1/sale-items`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(product.value),
-    });
+    await httpRequest('POST', `v1/sale-items`, product.value);
     saleStore.created = true;
     router.back();
   }
@@ -186,6 +156,7 @@ const cancel = () => {
     storageGb: '',
     color: '',
   };
+
   alertMessage.value = {
     type: 'info',
     message: 'Action cancelled',
@@ -193,6 +164,7 @@ const cancel = () => {
     duration: 500,
     countdownVisible: false,
   };
+
   setTimeout(() => {
     router.push('/sale-items');
   }, 1000);
@@ -208,8 +180,20 @@ const focusNext = (nextFieldId) => {
 const originalProduct = ref(null);
 const isEdit = ref(false);
 
+const normalizeProduct = (p) => ({
+  brand: typeof p.brand === 'object' ? p.brand?.id : p.brand,
+  model: String(p.model ?? ''),
+  price: String(p.price ?? ''),
+  description: String(p.description ?? ''),
+  quantity: String(p.quantity ?? ''),
+  ramGb: String(p.ramGb ?? ''),
+  screenSizeInch: String(p.screenSizeInch ?? ''),
+  storageGb: String(p.storageGb ?? ''),
+  color: String(p.color ?? ''),
+});
+
 const isEqual = (a, b) => {
-  return JSON.stringify(a) === JSON.stringify(b);
+  return JSON.stringify(normalizeProduct(a, b)) === JSON.stringify(normalizeProduct(b, b));
 };
 
 watch(
@@ -219,7 +203,7 @@ watch(
       isEdit.value = !isEqual(newVal, originalProduct.value);
     }
   },
-  { deep: true }
+  { deep: true },
 );
 
 const isSaveDisabled = computed(() => {
@@ -244,7 +228,21 @@ const isSaveDisabled = computed(() => {
 const sortBrands = (brands) => {
   return brands.sort((a, b) => a.name.localeCompare(b.name));
 };
+
 const model = ref('');
+
+const handleFieldUpdate = (field, value) => {
+  product.value[field] = value;
+  onInput(field);
+};
+
+const handleFieldBlur = (field) => {
+  onChange(field);
+};
+
+const handleEnterNavigation = (nextFieldId) => {
+  focusNext(nextFieldId);
+};
 
 onMounted(async () => {
   await saleStore.fetchBrands();
@@ -258,22 +256,21 @@ onMounted(async () => {
       return;
     }
     model.value = item.model;
-    if (item) {
-      const matchedBrand = saleStore.brands.find((b) => b.name === item.brandName);
-      const loadedProduct = {
-        brand: matchedBrand,
-        model: item.model,
-        price: item.price,
-        description: item.description,
-        ramGb: item.ramGb,
-        screenSizeInch: item.screenSizeInch,
-        storageGb: item.storageGb,
-        color: item.color,
-        quantity: item.quantity,
-      };
-      product.value = loadedProduct;
-      originalProduct.value = JSON.parse(JSON.stringify(loadedProduct));
-    }
+
+    const matchedBrand = saleStore.brands.find((b) => b.name === item.brandName);
+    const loadedProduct = {
+      brand: matchedBrand,
+      model: item.model,
+      price: item.price,
+      description: item.description,
+      ramGb: item.ramGb,
+      screenSizeInch: item.screenSizeInch,
+      storageGb: item.storageGb,
+      color: item.color,
+      quantity: item.quantity,
+    };
+    product.value = loadedProduct;
+    originalProduct.value = JSON.parse(JSON.stringify(loadedProduct));
   }
 });
 </script>
@@ -329,14 +326,20 @@ onMounted(async () => {
               <div class="bg-white rounded-lg border border-gray-200 p-6">
                 <h2 class="font-semibold text-gray-800 mb-6">Product Details</h2>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div class="flex flex-col gap-2">
-                    <label for="brand" class="text-gray-700 font-medium">Brand</label>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div class="flex flex-col gap-2 pb-2 relative">
+                    <label
+                      for="brand"
+                      class="text-gray-700 font-semibold text-xs sm:text-sm md:text-base"
+                    >
+                      Brand
+                      <span class="text-red-500">*</span>
+                    </label>
                     <select
                       id="brand"
                       v-model="product.brand"
                       :class="[
-                        'itbms-brand px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors',
+                        'itbms-brand  text-xs sm:text-sm md:text-base px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors',
                         errors.brand ? 'border-red-500' : 'border-gray-300',
                       ]"
                       @change="onInput('brand')"
@@ -348,172 +351,160 @@ onMounted(async () => {
                         {{ brand.name }}
                       </option>
                     </select>
-                    <div v-if="errors.brand" class="text-red-500 text-sm itbms-message">
-                      {{ errors.brand }}
-                    </div>
-                  </div>
-
-                  <div class="flex flex-col gap-2">
-                    <label for="model" class="text-gray-700 font-medium">Model</label>
-                    <input
-                      id="model"
-                      type="text"
-                      v-model.trim="product.model"
-                      placeholder="Enter model name"
-                      :class="[
-                        'itbms-model px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors',
-                        errors.model ? 'border-red-500' : 'border-gray-300',
-                      ]"
-                      @change="onChange('model')"
-                      @input="onInput('model')"
-                      @keydown.enter="focusNext('price')"
-                    />
-                    <div v-if="errors.model" class="text-red-500 text-sm itbms-message">
-                      {{ errors.model }}
-                    </div>
-                  </div>
-
-                  <div class="flex flex-col gap-2">
-                    <label for="price" class="text-gray-700 font-medium">Price (Baht)</label>
-                    <input
-                      id="price"
-                      type="number"
-                      v-model.trim="product.price"
-                      placeholder="0.00"
-                      :class="[
-                        'itbms-price px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors',
-                        errors.price ? 'border-red-500' : 'border-gray-300',
-                      ]"
-                      @change="onChange('price')"
-                      @input="onInput('price')"
-                      @keydown.enter="focusNext('quantity')"
-                    />
-                    <div v-if="errors.price" class="text-red-500 text-sm itbms-message">
-                      {{ errors.price }}
-                    </div>
-                  </div>
-
-                  <div class="flex flex-col gap-2">
-                    <label for="quantity" class="text-gray-700 font-medium">Quantity</label>
-                    <input
-                      id="quantity"
-                      type="number"
-                      v-model.trim="product.quantity"
-                      placeholder="0"
-                      :class="[
-                        'itbms-quantity px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors',
-                        errors.quantity ? 'border-red-500' : 'border-gray-300',
-                      ]"
-                      @change="onChange('quantity')"
-                      @input="onInput('quantity')"
-                      @keydown.enter="focusNext('ram')"
-                    />
-                    <div v-if="errors.quantity" class="text-red-500 text-sm itbms-message">
-                      {{ errors.quantity }}
-                    </div>
-                  </div>
-
-                  <div class="flex flex-col gap-2">
-                    <label for="ram" class="text-gray-700 font-medium">RAM (GB)</label>
-                    <input
-                      id="ram"
-                      type="number"
-                      v-model.trim="product.ramGb"
-                      placeholder="Enter RAM size"
-                      :class="[
-                        'itbms-ramGb px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors',
-                        errors.ramGb ? 'border-red-500' : 'border-gray-300',
-                      ]"
-                      @change="onChange('ramGb')"
-                      @input="onInput('ramGb')"
-                      @keydown.enter="focusNext('screenSize')"
-                    />
-                    <div v-if="errors.ramGb" class="text-red-500 text-sm itbms-message">
-                      {{ errors.ramGb }}
-                    </div>
-                  </div>
-
-                  <div class="flex flex-col gap-2">
-                    <label for="screenSize" class="text-gray-700 font-medium"
-                      >Screen Size (Inches)</label
+                    <p
+                      v-if="errors.brand"
+                      class="text-red-500 text-xs z-10 left-0 -bottom-0 itbms-message"
                     >
-                    <input
+                      {{ errors.brand }}
+                    </p>
+                  </div>
+
+                  <div class="flex flex-col gap-2 pb-2 relative">
+                    <Input
+                      id="model"
+                      v-model="product.model"
+                      label="Model"
+                      placeholder="Enter model name"
+                      :error="!!errors.model"
+                      :errorMessage="errors.model"
+                      :required="true"
+                      nextFieldId="price"
+                      customClass="itbms-model"
+                      @update:modelValue="handleFieldUpdate('model', $event)"
+                      @blur="handleFieldBlur('model')"
+                      @keydownEnter="handleEnterNavigation"
+                    />
+                  </div>
+
+                  <div class="flex flex-col gap-2 pb-2 relative">
+                    <Input
+                      id="price"
+                      v-model="product.price"
+                      label="Price (Baht)"
+                      type="number"
+                      placeholder="0.00"
+                      :error="!!errors.price"
+                      :errorMessage="errors.price"
+                      :required="true"
+                      nextFieldId="quantity"
+                      customClass="itbms-price"
+                      @update:modelValue="handleFieldUpdate('price', $event)"
+                      @blur="handleFieldBlur('price')"
+                      @keydownEnter="handleEnterNavigation"
+                    />
+                  </div>
+
+                  <div class="flex flex-col gap-2 pb-2 relative">
+                    <Input
+                      id="quantity"
+                      v-model="product.quantity"
+                      label="Quantity"
+                      type="number"
+                      placeholder="0"
+                      :error="!!errors.quantity"
+                      :errorMessage="errors.quantity"
+                      nextFieldId="ram"
+                      customClass="itbms-quantity"
+                      @update:modelValue="handleFieldUpdate('quantity', $event)"
+                      @blur="handleFieldBlur('quantity')"
+                      @keydownEnter="handleEnterNavigation"
+                    />
+                  </div>
+
+                  <div class="flex flex-col gap-2 pb-2 relative">
+                    <Input
+                      id="ram"
+                      v-model="product.ramGb"
+                      label="RAM (GB)"
+                      type="number"
+                      placeholder="Enter RAM size"
+                      :error="!!errors.ramGb"
+                      :errorMessage="errors.ramGb"
+                      nextFieldId="screenSize"
+                      customClass="itbms-ramGb"
+                      @update:modelValue="handleFieldUpdate('ramGb', $event)"
+                      @blur="handleFieldBlur('ramGb')"
+                      @keydownEnter="handleEnterNavigation"
+                    />
+                  </div>
+
+                  <div class="flex flex-col gap-2 pb-2 relative">
+                    <Input
                       id="screenSize"
+                      v-model="product.screenSizeInch"
+                      label="Screen Size (Inches)"
                       type="number"
-                      step="0.1"
-                      v-model.trim="product.screenSizeInch"
                       placeholder="0.0"
-                      :class="[
-                        'itbms-screenSizeInch px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors',
-                        errors.screenSizeInch ? 'border-red-500' : 'border-gray-300',
-                      ]"
-                      @change="onChange('screenSizeInch')"
-                      @input="onInput('screenSizeInch')"
-                      @keydown.enter="focusNext('storage')"
+                      :error="!!errors.screenSizeInch"
+                      :errorMessage="errors.screenSizeInch"
+                      nextFieldId="storage"
+                      customClass="itbms-screenSizeInch"
+                      @update:modelValue="handleFieldUpdate('screenSizeInch', $event)"
+                      @blur="handleFieldBlur('screenSizeInch')"
+                      @keydownEnter="handleEnterNavigation"
                     />
-                    <div v-if="errors.screenSizeInch" class="text-red-500 text-sm itbms-message">
-                      {{ errors.screenSizeInch }}
-                    </div>
                   </div>
 
-                  <div class="flex flex-col gap-2">
-                    <label for="storage" class="text-gray-700 font-medium">Storage (GB)</label>
-                    <input
+                  <div class="flex flex-col gap-2 pb-2 relative">
+                    <Input
                       id="storage"
+                      v-model="product.storageGb"
+                      label="Storage (GB)"
                       type="number"
-                      v-model.trim="product.storageGb"
                       placeholder="Enter storage size"
-                      :class="[
-                        'itbms-storageGb px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors',
-                        errors.storageGb ? 'border-red-500' : 'border-gray-300',
-                      ]"
-                      @change="onChange('storageGb')"
-                      @input="onInput('storageGb')"
-                      @keydown.enter="focusNext('color')"
+                      :error="!!errors.storageGb"
+                      :errorMessage="errors.storageGb"
+                      nextFieldId="color"
+                      customClass="itbms-storageGb"
+                      @update:modelValue="handleFieldUpdate('storageGb', $event)"
+                      @blur="handleFieldBlur('storageGb')"
+                      @keydownEnter="handleEnterNavigation"
                     />
-                    <div v-if="errors.storageGb" class="text-red-500 text-sm itbms-message">
-                      {{ errors.storageGb }}
-                    </div>
                   </div>
 
-                  <div class="flex flex-col gap-2">
-                    <label for="color" class="text-gray-700 font-medium">Color</label>
-                    <input
+                  <div class="flex flex-col gap-2 pb-2 relative">
+                    <Input
                       id="color"
-                      type="text"
-                      v-model.trim="product.color"
+                      v-model="product.color"
+                      label="Color"
                       placeholder="Enter color"
-                      :class="[
-                        'itbms-color px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors',
-                        errors.color ? 'border-red-500' : 'border-gray-300',
-                      ]"
-                      @change="onChange('color')"
-                      @input="onInput('color')"
-                      @keydown.enter="focusNext('description')"
+                      :error="!!errors.color"
+                      :errorMessage="errors.color"
+                      nextFieldId="description"
+                      customClass="itbms-color"
+                      @update:modelValue="handleFieldUpdate('color', $event)"
+                      @blur="handleFieldBlur('color')"
+                      @keydownEnter="handleEnterNavigation"
                     />
-                    <div v-if="errors.color" class="text-red-500 text-sm itbms-message">
-                      {{ errors.color }}
-                    </div>
                   </div>
 
-                  <div class="flex flex-col gap-2 md:col-span-2">
-                    <label for="description" class="text-gray-700 font-medium">Description</label>
+                  <div class="flex flex-col gap-2 md:col-span-2 relative">
+                    <label
+                      for="description"
+                      class="text-xs sm:text-sm md:text-base text-gray-700 font-semibold"
+                    >
+                      Description
+                      <span class="text-red-500">*</span>
+                    </label>
                     <textarea
                       id="description"
                       v-model.trim="product.description"
                       rows="4"
                       placeholder="Enter product description"
                       :class="[
-                        'itbms-description px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors resize-y',
+                        'itbms-description text-xs sm:text-sm md:text-base px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors resize-y',
                         errors.description ? 'border-red-500' : 'border-gray-300',
                       ]"
                       @change="onChange('description')"
                       @input="onInput('description')"
                       @keydown.enter.prevent="focusNext('save')"
                     ></textarea>
-                    <div v-if="errors.description" class="text-red-500 text-sm itbms-message">
+                    <p
+                      v-if="errors.description"
+                      class="text-red-500 text-xs z-10 -bottom-3 right-2 itbms-message"
+                    >
                       {{ errors.description }}
-                    </div>
+                    </p>
                   </div>
                 </div>
               </div>
@@ -567,6 +558,7 @@ onMounted(async () => {
             Save Product
           </button>
         </div>
+
         <Alert
           :show="alertMessage.visible"
           :type="alertMessage.type"

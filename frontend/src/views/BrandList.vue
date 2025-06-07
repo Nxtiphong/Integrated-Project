@@ -3,6 +3,7 @@ import BrandTable from '@/components/brand/BrandTable.vue';
 import Alert from '@/components/share/Alert.vue';
 import { useBrandStore } from '@/stores/useBrandStore';
 import { deleteBrand } from '@/utils/brandUtils';
+import { httpRequest } from '@/utils/fetchUtils';
 import { Icon } from '@iconify/vue';
 import { onMounted, ref } from 'vue';
 
@@ -18,9 +19,8 @@ const isLoading = ref(false);
 const getAllBrands = async () => {
   isLoading.value = true;
   try {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/brands`);
-    if (!res.ok) throw new Error('Failed to fetch brands');
-    brandStore.brandLists = await res.json();
+    const res = await httpRequest('GET', `v1/brands`);
+    brandStore.brandLists = res.data;
   } catch (error) {
     console.error('API error:', error);
     return { success: false, error };

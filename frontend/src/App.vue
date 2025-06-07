@@ -1,14 +1,16 @@
 <script setup>
-import { RouterView } from 'vue-router';
+import { RouterView, useRoute } from 'vue-router';
 import Navbar from './components/Navbar.vue';
 import Footer from './components/Footer.vue';
+
+const route = useRoute();
 </script>
 
 <template>
   <main>
-    <Navbar />
+    <Navbar v-if="!route.meta.hideLayout" />
     <RouterView />
-    <Footer />
+    <Footer v-if="!route.meta.hideLayout" />
   </main>
 </template>
 

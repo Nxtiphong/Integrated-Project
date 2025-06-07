@@ -8,6 +8,7 @@ import DeleteModal from '@/components/share/DeleteModal.vue';
 import { useSaleItemStore } from '@/stores/useSaleItemStore';
 import Alert from '@/components/share/Alert.vue';
 import { useGalleryStateStore } from '@/stores/useGalleryStateStore';
+import { httpRequest } from '@/utils/fetchUtils';
 
 const saleGalleryState = useGalleryStateStore();
 
@@ -22,9 +23,8 @@ const isLoading = ref(false);
 const fetchProductDetail = async (id) => {
   isLoading.value = true;
   try {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/sale-items/${id}`);
-    if (!res.ok) throw new Error('Failed to fetch product id:' + id);
-    productDetail.value = await res.json();
+    const res = await httpRequest('GET', `v1/sale-items/${id}`);
+    productDetail.value = res.data;
   } catch (error) {
     productDetail.value = null;
     console.error('Error:', error);
@@ -49,9 +49,7 @@ const showDeleteModal = ref(false);
 
 const handleDelete = async () => {
   try {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/sale-items/${params}`, {
-      method: 'DELETE',
-    });
+    const res = await httpRequest('DELETE', `v1/sale-items/${params}`);
 
     if (res.status === 404) {
       alertMessage.value = {
@@ -63,12 +61,9 @@ const handleDelete = async () => {
       setTimeout(() => {
         router.back();
       }, 3000);
-    } else if (!res.ok) {
-      throw new Error('Failed to delete item');
     } else {
       saleStore.deleted = true;
       saleGalleryState.resetPageOnly();
-
       router.push('/sale-items');
     }
   } catch (error) {

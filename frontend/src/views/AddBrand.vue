@@ -1,4 +1,5 @@
 <script setup>
+import Input from '@/components/Input.vue';
 import { useBrandFormStore } from '@/stores/useBrandFormStore';
 import { useBrandStore } from '@/stores/useBrandStore';
 import { fetchBrandDetail, submitCreateForm, submitUpdateForm } from '@/utils/brandUtils';
@@ -14,28 +15,7 @@ const brandStore = useBrandStore();
 
 const brandName = ref('');
 const originalForm = ref({});
-
 const isSubmitting = ref(false);
-
-const isDisabled = computed(() => {
-  const nameInvalid = brandForm.name.trim() === '' || isSubmitting.value;
-
-  const hasErrors = Object.values(isError.value).some(Boolean);
-
-  if (params) {
-    const noChanges =
-      JSON.stringify({
-        name: brandForm.name,
-        websiteUrl: brandForm.websiteUrl,
-        isActive: brandForm.isActive,
-        countryOfOrigin: brandForm.countryOfOrigin,
-      }) === JSON.stringify(originalForm.value);
-
-    return nameInvalid || hasErrors || noChanges;
-  }
-
-  return nameInvalid || hasErrors;
-});
 
 const isFocused = ref({
   name: false,
@@ -43,16 +23,8 @@ const isFocused = ref({
   countryOfOrigin: false,
 });
 
-const isError = computed(() => ({
-  name: isFocused.value.name && (!brandForm.name.trim() || brandForm.name.trim().length > 30),
-  websiteUrl: isFocused.value.websiteUrl && !isValidUrl(brandForm.websiteUrl),
-  countryOfOrigin:
-    isFocused.value.countryOfOrigin &&
-    (!brandForm.countryOfOrigin.trim() || brandForm.countryOfOrigin.trim().length > 80),
-}));
-
 const isValidUrl = (value) => {
-  if (!value.trim()) return true;
+  if (!value?.trim()) return true;
   try {
     const url = new URL(value);
     return url.protocol === 'http:' || url.protocol === 'https:';
@@ -61,13 +33,36 @@ const isValidUrl = (value) => {
   }
 };
 
+const isError = computed(() => ({
+  name: isFocused.value.name && (!brandForm.name?.trim() || brandForm.name.trim().length > 30),
+  websiteUrl: isFocused.value.websiteUrl && !isValidUrl(brandForm.websiteUrl),
+  countryOfOrigin: isFocused.value.countryOfOrigin && brandForm.countryOfOrigin.trim().length > 80,
+}));
+
+const isDisabled = computed(() => {
+  const nameInvalid = !brandForm.name?.trim() || isSubmitting.value;
+  const hasErrors = Object.values(isError.value).some(Boolean);
+
+  if (params) {
+    const currentForm = {
+      name: brandForm.name === '' ? null : brandForm.name,
+      websiteUrl: brandForm.websiteUrl === '' ? null : brandForm.websiteUrl,
+      isActive: brandForm.isActive,
+      countryOfOrigin: brandForm.countryOfOrigin === '' ? null : brandForm.countryOfOrigin,
+    };
+    const noChanges = JSON.stringify(currentForm) === JSON.stringify(originalForm.value);
+    return nameInvalid || hasErrors || noChanges;
+  }
+
+  return nameInvalid || hasErrors;
+});
+
 const markFocused = (field) => {
   isFocused.value[field] = true;
 };
 
 const focusNext = (refName) => {
-  const refInputField = document.getElementById(refName);
-  refInputField.focus();
+  document.getElementById(refName)?.focus();
 };
 
 const handleCancel = () => {
@@ -75,60 +70,37 @@ const handleCancel = () => {
   router.push('/brands');
 };
 
-const handleCreate = async () => {
+const handleSubmit = async () => {
   isSubmitting.value = true;
-  const result = await submitCreateForm({
+
+  const formData = {
     name: brandForm.name,
     websiteUrl: brandForm.websiteUrl || null,
     isActive: brandForm.isActive,
     countryOfOrigin: brandForm.countryOfOrigin || null,
-  });
+  };
+
+  const result = params
+    ? await submitUpdateForm(params, formData)
+    : await submitCreateForm(formData);
 
   if (result.success) {
-    brandStore.isCreateSuccess = true;
+    if (params) {
+      brandStore.isUpdatedSuccess = true;
+    } else {
+      brandStore.isCreateSuccess = true;
+    }
+    resetForm();
     router.push('/brands');
   } else {
-    brandStore.isCreateFailed = true;
-  }
-
-  if (!result.success) {
+    if (params) {
+      brandStore.isUpdatedFailed = true;
+    } else {
+      brandStore.isCreateFailed = true;
+    }
     setTimeout(() => {
       isSubmitting.value = false;
     }, 3000);
-  }
-};
-
-const handleEdit = async () => {
-  if (!validateForm()) return;
-  isSubmitting.value = true;
-  const result = await submitUpdateForm(params, {
-    name: brandForm.name,
-    websiteUrl: brandForm.websiteUrl || null,
-    isActive: brandForm.isActive,
-    countryOfOrigin: brandForm.countryOfOrigin || null,
-  });
-
-  if (result.success) {
-    router.push('/brands');
-    brandStore.isUpdatedSuccess = true;
-  } else {
-    brandStore.isUpdatedFailed = true;
-  }
-
-  if (!result.success) {
-    setTimeout(() => {
-      isSubmitting.value = false;
-    }, 3000);
-  }
-};
-
-const handleSubmit = () => {
-  if (params) {
-    handleEdit();
-    resetForm();
-  } else {
-    handleCreate();
-    resetForm();
   }
 };
 
@@ -138,29 +110,20 @@ onMounted(async () => {
   if (params) {
     const result = await fetchBrandDetail(params);
     if (result.success) {
-      const data = result.data;
-      brandForm.name = data.name;
-      brandForm.websiteUrl = data.websiteUrl;
-      brandForm.isActive = data.isActive;
-      brandForm.countryOfOrigin = data.countryOfOrigin;
-      brandName.value = data.name;
+      const { name, websiteUrl, isActive, countryOfOrigin } = result.data;
 
-      originalForm.value = {
-        name: data.name,
-        websiteUrl: data.websiteUrl,
-        isActive: data.isActive,
-        countryOfOrigin: data.countryOfOrigin,
-      };
+      Object.assign(brandForm, { name, websiteUrl, isActive, countryOfOrigin });
+      brandName.value = name;
+      originalForm.value = { name, websiteUrl, isActive, countryOfOrigin };
     } else {
       router.push('/brands/non-existing-path');
-      return;
     }
   }
 });
 </script>
 
 <template>
-  <div class="">
+  <section>
     <div
       class="breadcrumbs container mx-auto flex items-center justify-between text-xs lg:text-sm mt-4 overflow-x-auto whitespace-nowrap"
     >
@@ -175,9 +138,9 @@ onMounted(async () => {
           <RouterLink to="/brands">Brand List</RouterLink>
         </li>
         <li>
-          <RouterLink :to="params ? `/brands/${params}/edit` : '/brands/add'">{{
-            params ? brandName : 'New Brand'
-          }}</RouterLink>
+          <RouterLink :to="params ? `/brands/${params}/edit` : '/brands/add'">
+            {{ params ? brandName : 'New Brand' }}
+          </RouterLink>
         </li>
       </ul>
     </div>
@@ -199,84 +162,61 @@ onMounted(async () => {
 
         <form @submit.prevent="handleSubmit" class="flex flex-col space-y-5 p-6">
           <div class="flex flex-col space-y-2 relative">
-            <label class="font-semibold">Brand Name <span class="text-error">*</span></label>
-            <input
+            <Input
               id="name"
-              type="text"
+              v-model="brandForm.name"
+              label="Brand Name"
               placeholder="Name"
-              v-model.trim="brandForm.name"
+              :required="true"
+              :error="isError.name"
+              :errorMessage="'Brand name must be 1-30 characters long.'"
+              :focused="isFocused.name"
+              :nextFieldId="'websiteUrl'"
               @blur="markFocused('name')"
-              @keydown.enter.prevent="focusNext('websiteUrl')"
-              :class="[
-                'itbms-name px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors',
-                isError.name
-                  ? 'border-red-500 focus:ring-red-200 focus:border-red-500'
-                  : 'border-gray-300 focus:ring-primary/20 focus:border-primary',
-              ]"
+              @keydownEnter="focusNext"
+              :custom-class="'itbms-name'"
             />
-            <p
-              v-if="isError.name"
-              class="text-error text-xs absolute z-10 -bottom-3 right-2 itbms-message"
-            >
-              Brand name must be 1-30 characters long.
-            </p>
           </div>
 
           <div class="flex flex-col space-y-2 relative">
-            <label class="font-semibold">Website URL</label>
-            <input
+            <Input
               id="websiteUrl"
-              type="text"
+              v-model="brandForm.websiteUrl"
+              label="Website URL"
               placeholder="https://example.com"
-              v-model.trim="brandForm.websiteUrl"
+              :error="isError.websiteUrl"
+              :errorMessage="'Brand URL must be a valid URL or not specified.'"
+              :focused="isFocused.websiteUrl"
+              :nextFieldId="'country'"
               @blur="markFocused('websiteUrl')"
-              @keydown.enter.prevent="focusNext('country')"
-              :class="[
-                'itbms-websiteUrl px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors',
-                isError.websiteUrl
-                  ? 'border-red-500 focus:ring-red-200 focus:border-red-500'
-                  : 'border-gray-300 focus:ring-primary/20 focus:border-primary',
-              ]"
+              @keydownEnter="focusNext"
+              :custom-class="'itbms-websiteUrl'"
             />
-            <p
-              v-if="isError.websiteUrl"
-              class="text-error text-xs absolute z-10 -bottom-3 right-2 itbms-message"
-            >
-              Brand URL must be a valid URL or not specified.
-            </p>
           </div>
 
           <div class="flex flex-col space-y-2 relative">
-            <label class="font-semibold">Country of Origin</label>
-            <input
+            <Input
               id="country"
-              type="text"
+              v-model="brandForm.countryOfOrigin"
+              label="Country of Origin"
               placeholder="Country of Origin"
-              v-model.trim="brandForm.countryOfOrigin"
+              :error="isError.countryOfOrigin"
+              :errorMessage="'Brand country of origin must be 1-80 characters long or not specified.'"
+              :focused="isFocused.countryOfOrigin"
+              :nextFieldId="'isActive'"
               @blur="markFocused('countryOfOrigin')"
-              @keydown.enter.prevent="focusNext('isActive')"
-              :class="[
-                'itbms-countryOfOrigin px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors',
-                isError.countryOfOrigin
-                  ? 'border-red-500 focus:ring-red-200 focus:border-red-500'
-                  : 'border-gray-300 focus:ring-primary/20 focus:border-primary',
-              ]"
+              @keydownEnter="focusNext"
+              :custom-class="'itbms-countryOfOrigin'"
             />
-            <p
-              v-if="isError.countryOfOrigin"
-              class="text-error text-xs absolute z-10 -bottom-3 right-2 itbms-message"
-            >
-              Brand country of origin must be 1-80 characters long or not specified.
-            </p>
           </div>
 
           <div class="flex space-x-2 justify-start items-center">
             <input
-              @keydown.enter.prevent="focusNext('save')"
               id="isActive"
               type="checkbox"
               v-model="brandForm.isActive"
               class="itbms-isActive checkbox checkbox-primary"
+              @keydown.enter.prevent="focusNext('save')"
             />
             <label class="label">Is Active</label>
           </div>
@@ -301,7 +241,7 @@ onMounted(async () => {
         </form>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 
 <style scoped></style>

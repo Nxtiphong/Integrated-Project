@@ -5,6 +5,7 @@ import DeleteModal from '@/components/share/DeleteModal.vue';
 import { deleteSaleItem } from '@/utils/saleitemUtils';
 import Alert from '@/components/share/Alert.vue';
 import { useSaleItemStore } from '@/stores/useSaleItemStore';
+import { httpRequest } from '@/utils/fetchUtils';
 
 const router = useRouter();
 const saleStore = useSaleItemStore();
@@ -21,9 +22,8 @@ const alertMessage = ref({
 
 const fetchSaleItems = async () => {
   try {
-    const response = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/sale-items`);
-    if (!response.ok) throw new Error('Failed to fetch sale items');
-    const data = await response.json();
+    const response = await httpRequest('GET', `v1/sale-items`);
+    const data = response.data;
     return data;
   } catch (error) {
     console.error('Error fetching sale items:', error);
@@ -34,8 +34,8 @@ const fetchSaleItems = async () => {
 };
 
 const handleDeleteSubmit = async () => {
-  const Id = selectedProduct.value?.id;
-  if (!Id) {
+  const id = selectedProduct.value?.id;
+  if (!id) {
     alertMessage.value = {
       type: 'error',
       message: 'Sale Item does not exist',
@@ -44,10 +44,10 @@ const handleDeleteSubmit = async () => {
     return;
   }
 
-  const res = await deleteSaleItem(Id);
+  const res = await deleteSaleItem(id);
 
   if (res.success) {
-    products.value = products.value.filter((item) => item.id !== Id);
+    products.value = products.value.filter((item) => item.id !== id);
     alertMessage.value = {
       type: 'success',
       message: 'The sale item has been deleted.',
@@ -84,41 +84,6 @@ const addSaleItem = () => {
 
 const manageBrand = () => {
   router.push(`/brands`);
-};
-
-const handleDelete = async (id) => {
-  try {
-    const res = await fetch(`${import.meta.env.VITE_BASE_URL}/v1/sale-items/${id}`, {
-      method: 'DELETE',
-    });
-
-    if (res.status === 404) {
-      alertMessage.value = {
-        type: 'error',
-        message: 'The requested sale item does not exist.',
-        visible: true,
-        duration: 3000,
-      };
-      setTimeout(() => {
-        router.back();
-      }, 3000);
-    } else if (!res.ok) {
-      throw new Error('Failed to delete item');
-    } else {
-      saleStore.deleted = true;
-      router.push('/sale-items/list');
-    }
-  } catch (error) {
-    alertMessage.value = {
-      type: 'error',
-      message: 'Something went wrong while deleting the sale item.',
-      visible: true,
-      duration: 3000,
-    };
-    console.error('Delete Error:', error);
-  } finally {
-    showDeleteModal.value = false;
-  }
 };
 
 onMounted(async () => {

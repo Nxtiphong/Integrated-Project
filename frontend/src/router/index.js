@@ -71,6 +71,7 @@ const router = createRouter({
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
       component: NotFoundPage,
+      //   meta: { hideLayout: true } <-- Add this if you want to hide Navbar and Footer
     }
   ],
   linkActiveClass: "text-black font-semibold"

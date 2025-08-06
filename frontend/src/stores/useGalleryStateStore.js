@@ -5,7 +5,9 @@ export const useGalleryStateStore = defineStore('saleGalleryState', () => {
 
    const saved = JSON.parse(sessionStorage.getItem('saleGalleryState') || '{}');
 
-   const filterLists = ref(saved.filterLists || []);
+   const filterBrandLists = ref(saved.filterBrandLists || []);
+   const filterPrice = ref(saved.filterPrice || []);
+   const filterStorageSize = ref(saved.filterStorageSize || []);
    const page = ref(saved.page || 1);
    const totalPages = ref(saved.totalPages || 1);
    const sortField = ref(saved.sortField || 'id');
@@ -13,10 +15,12 @@ export const useGalleryStateStore = defineStore('saleGalleryState', () => {
    const pageSize = ref(saved.pageSize || 10);
 
    watch(
-      [filterLists, page, totalPages, sortField, sortDirection, pageSize],
+      [filterBrandLists, filterPrice, filterStorageSize, page, totalPages, sortField, sortDirection, pageSize],
       () => {
          sessionStorage.setItem('saleGalleryState', JSON.stringify({
-            filterLists: filterLists.value,
+            filterBrandLists: filterBrandLists.value,
+            filterPrice: filterPrice.value,
+            filterStorageSize: filterStorageSize.value,
             page: page.value,
             totalPages: totalPages.value,
             sortField: sortField.value,
@@ -28,7 +32,9 @@ export const useGalleryStateStore = defineStore('saleGalleryState', () => {
    );
 
    function resetAll() {
-      filterLists.value = [];
+      filterBrandLists.value = [];
+      filterPrice.value = [];
+      filterStorageSize.value = [];
       page.value = 1;
       totalPages.value = 1;
       sortField.value = 'id';
@@ -42,7 +48,9 @@ export const useGalleryStateStore = defineStore('saleGalleryState', () => {
    }
 
    return {
-      filterLists,
+      filterBrandLists,
+      filterPrice,
+      filterStorageSize,
       page,
       totalPages,
       sortField,

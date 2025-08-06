@@ -8,6 +8,7 @@ import Alert from '@/components/share/Alert.vue';
 import { useSaleItemStore } from '@/stores/useSaleItemStore';
 import { useGalleryStateStore } from '@/stores/useGalleryStateStore';
 import { httpRequest } from '@/utils/fetchUtils';
+import FilterBar from '@/components/filter/FilterBar.vue';
 
 const saleStore = useSaleItemStore();
 const galleryState = useGalleryStateStore();
@@ -39,13 +40,23 @@ const showAlert = (message, type = 'success') => {
 };
 
 const fetchSaleItems = async (params = {}) => {
-  const { page = 1, size = 10, filterBrands = [], sortField = '', sortDirection = 'asc' } = params;
+  const {
+    page = 1,
+    size = 10,
+    filterBrands = [],
+    filterPrice = [],
+    filterStorageSize = [],
+    sortField = '',
+    sortDirection = 'asc',
+  } = params;
 
   const urlParams = new URLSearchParams();
   urlParams.append('page', page - 1);
   urlParams.append('size', size);
 
   filterBrands.forEach((brand) => urlParams.append('filterBrands', brand));
+  filterPrice.forEach((price) => urlParams.append('filterPrice', price));
+  filterStorageSize.forEach((size) => urlParams.append('filterStorageSize', size));
 
   if (sortField) urlParams.append('sortField', sortField);
   if (sortDirection !== 'none') urlParams.append('sortDirection', sortDirection);
@@ -64,7 +75,9 @@ const loadSaleItems = async () => {
       size: galleryState.pageSize,
       sortField: galleryState.sortField,
       sortDirection: galleryState.sortDirection,
-      filterBrands: galleryState.filterLists,
+      filterBrands: galleryState.filterBrandLists,
+      filterPrice: galleryState.filterPrice,
+      filterStorageSize: galleryState.filterStorageSize,
     });
 
     galleryState.totalPages = items.totalPages;
@@ -92,7 +105,7 @@ const handlePageChange = async (newPage) => {
 const handleGoToLastPage = async () => {
   try {
     isLoading.value = true;
-     await loadSaleItems();
+    await loadSaleItems();
     galleryState.page = galleryState.totalPages;
     await loadSaleItems();
   } catch (error) {
@@ -170,7 +183,7 @@ onMounted(initializeComponent);
         <div
           class="w-full transition-all duration-300 flex flex-col lg:flex-row items-center justify-between gap-4 lg:gap-8"
         >
-          <BrandFilter @filter-sale-items-by-brands="handleFilter" />
+          <FilterBar @filter-sale-items="handleFilter" />
           <div class="w-full flex items-center lg:justify-end lg:w-full">
             <SortComponent @sortType="handleSortChange" @pageSize="handlePageSizeChange" />
           </div>

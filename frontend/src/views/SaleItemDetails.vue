@@ -118,7 +118,7 @@ onMounted(() => {
     <div
       class="py-6 lg:py-10 self-stretch flex flex-col lg:flex-row items-center lg:justify-start gap-4 md:gap-6 lg:gap-12 itbms-row"
     >
-      <ProductImage />
+      <ProductImage :isDetailPage="true" />
       <div class="self-stretch flex-1 flex flex-col justify-start items-start gap-2 lg:gap-4 mt-8">
         <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold leading-10 itbms-model">
           {{ productDetail.model }}

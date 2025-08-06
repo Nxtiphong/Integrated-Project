@@ -217,7 +217,7 @@ onMounted(initializeComponent);
 
           <div
             v-else-if="showNoItems"
-            class="font-medium text-primary flex justify-center items-center min-h-[300px]"
+            class="font-medium text-primary flex justify-center items-center min-h-screen"
           >
             <p class="text-center text-lg">! No sale items</p>
           </div>

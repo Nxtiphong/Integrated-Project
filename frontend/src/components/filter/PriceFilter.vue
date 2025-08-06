@@ -23,7 +23,6 @@ const handleFilter = () => {
   emit('filterSaleItemByPrice');
 };
 
-// Toggle Price Selection
 const togglePrice = (price) => {
   const index = saleGalleryState.filterPrice.indexOf(price);
   if (index > -1) {
@@ -39,17 +38,16 @@ const togglePrice = (price) => {
   <section
     class="join flex items-center space-x-2 lg:space-x-4 lg:w-60 lg:border-r-2 border-slate-200 bg-white lg:p-2"
   >
-    <!-- Selected Price Tags -->
     <div
-      class="itbms-brand-filter flex gap-1 lg:gap-2 px-2 flex-1 w-lg overflow-x-auto scrollbar-hidden"
+      class="itbms-price-filter flex gap-1 lg:gap-2 px-2 flex-1 w-lg overflow-x-auto scrollbar-hidden"
     >
       <p
         v-for="(price, index) in saleGalleryState.filterPrice"
         :key="index"
-        class="itbms-filter-item flex items-center select-none justify-center gap-1 bg-primary/80 text-white text-xs lg:text-sm font-medium px-2 lg:px-3 py-1 rounded-full"
+        class="itbms-price-item flex items-center select-none justify-center gap-1 bg-primary/80 text-white text-xs lg:text-sm font-medium px-2 lg:px-4 py-1 rounded-full"
       >
-        <span class="itbms-filter-item-name">{{ price }}</span>
-        <span class="cursor-pointer itbms-filter-item-clear" @click="togglePrice(price)">
+        <span class="itbms-filter-item-name w-34">{{ price }}</span>
+        <span class="cursor-pointer itbms-price-item-clear" @click="togglePrice(price)">
           <Icon icon="iconoir:delete-circle" class="text-sm lg:text-base" />
         </span>
       </p>
@@ -58,12 +56,11 @@ const togglePrice = (price) => {
       </span>
     </div>
 
-    <!-- Price Filter Dropdown -->
     <div class="flex items-center justify-center rounded-r-lg">
       <div class="relative inline-block text-left">
         <button
           @click="isDropdownOpen = !isDropdownOpen"
-          class="itbms-brand-filter-button p-2 text-black font-semibold cursor-pointer transition duration-200"
+          class="itbms-price-filter-button p-2 text-black font-semibold cursor-pointer transition duration-200"
         >
           <Icon icon="lets-icons:filter" class="text-2xl" />
         </button>
@@ -94,7 +91,12 @@ const togglePrice = (price) => {
 </template>
 
 <style scoped>
-.scrollbar-hidden::-webkit-scrollbar {
+.scrollbar-hidden {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+::-webkit-scrollbar {
   display: none;
 }
 </style>

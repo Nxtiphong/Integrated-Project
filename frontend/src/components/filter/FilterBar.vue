@@ -22,7 +22,7 @@ const clearFilters = () => {
 
 <template>
   <div
-    class="join border-secondary rounded-lg flex flex-wrap lg:flex-nowrap items-center space-x-0 lg:space-x-2 w-full bg-white border p-2 gap-2"
+    class="join border-secondary rounded-lg flex flex-wrap lg:flex-nowrap items-center space-x-0 lg:space-x-2 w-full bg-white border p-1 gap-2"
   >
     <div class="w-full lg:w-auto flex-1">
       <BrandFilter @filter-sale-items-by-brands="handleFilter" />

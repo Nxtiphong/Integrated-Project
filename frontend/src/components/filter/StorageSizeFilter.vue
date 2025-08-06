@@ -31,17 +31,16 @@ const toggleStorageSize = (size) => {
   <section
     class="join flex items-center space-x-2 lg:space-x-4 lg:w-60 lg:border-r-2 border-slate-200 bg-white lg:p-2"
   >
-    <!-- Selected Price Tags -->
     <div
-      class="itbms-brand-filter flex gap-1 lg:gap-2 px-2 flex-1 w-lg overflow-x-auto scrollbar-hidden"
+      class="itbms-storage-size-filter flex gap-1 lg:gap-2 px-2 flex-1 w-lg overflow-x-auto scrollbar-hidden"
     >
       <p
         v-for="(size, index) in saleGalleryState.filterStorageSize"
         :key="index"
-        class="itbms-filter-item flex items-center select-none justify-center gap-1 bg-primary/80 text-white text-xs lg:text-sm font-medium px-2 lg:px-3 py-1 rounded-full"
+        class="itbms-storage-size-item flex items-center select-none justify-center gap-1 bg-primary/80 text-white text-xs lg:text-sm font-medium px-2 lg:px-3 py-1 rounded-full"
       >
-        <span class="itbms-filter-item-name">{{ size }}</span>
-        <span class="cursor-pointer itbms-filter-item-clear" @click="toggleStorageSize(size)">
+        <span class="itbms-storage-size-item">{{ size }}</span>
+        <span class="cursor-pointer itbms-storage-size-item-clear" @click="toggleStorageSize(size)">
           <Icon icon="iconoir:delete-circle" class="text-sm lg:text-base" />
         </span>
       </p>
@@ -50,7 +49,6 @@ const toggleStorageSize = (size) => {
       </span>
     </div>
 
-    <!-- Price Filter Dropdown -->
     <div class="flex items-center justify-center rounded-r-lg">
       <div class="relative inline-block text-left">
         <button
@@ -86,7 +84,11 @@ const toggleStorageSize = (size) => {
 </template>
 
 <style scoped>
-.scrollbar-hidden::-webkit-scrollbar {
+.scrollbar-hidden {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+::-webkit-scrollbar {
   display: none;
 }
 </style>

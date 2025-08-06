@@ -123,7 +123,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <section>
+  <section class="min-h-screen">
     <div
       class="breadcrumbs container mx-auto flex items-center justify-between text-xs lg:text-sm mt-4 overflow-x-auto whitespace-nowrap"
     >

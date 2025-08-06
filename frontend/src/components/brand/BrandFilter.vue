@@ -50,10 +50,10 @@ onMounted(() => {
       <p
         v-for="(brand, index) in saleGalleryState.filterBrandLists"
         :key="index"
-        class="itbms-filter-item flex items-center select-none justify-center gap-1 bg-primary/80 text-white text-xs lg:text-sm font-medium px-2 lg:px-3 py-1 rounded-full"
+        class="itbms-brand-item flex items-center select-none justify-center gap-1 bg-primary/80 text-white text-xs lg:text-sm font-medium px-2 lg:px-3 py-1 rounded-full"
       >
-        <span class="itbms-filter-item-name">{{ brand }}</span>
-        <span class="cursor-pointer itbms-filter-item-clear" @click="toggleBrand(brand)"
+        <span class="itbms-brand-item-name">{{ brand }}</span>
+        <span class="cursor-pointer itbms-brand-item-clear" @click="toggleBrand(brand)"
           ><Icon icon="iconoir:delete-circle" class="text-sm lg:text-base" />
         </span>
       </p>

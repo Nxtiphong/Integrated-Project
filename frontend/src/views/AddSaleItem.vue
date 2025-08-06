@@ -8,6 +8,7 @@ import { useRoute } from 'vue-router';
 import Input from '@/components/Input.vue';
 import { httpRequest } from '@/utils/fetchUtils';
 
+const imageUrls = ref([]);
 const route = useRoute();
 const params = route.params.id;
 const saleStore = useSaleItemStore();
@@ -43,6 +44,16 @@ const errors = ref({
   storageGb: '',
   color: '',
 });
+
+const onImagesChanged = (urls) => {
+  imageUrls.value = urls;
+};
+
+
+
+
+
+
 
 const validateField = (field, value) => {
   switch (field) {
@@ -118,6 +129,7 @@ const validation = (product) => {
 };
 
 const saveSaleItem = async () => {
+    console.log('test url:', imageUrls.value);
   if (!validation(product.value)) {
     return;
   }
@@ -318,7 +330,7 @@ onMounted(async () => {
             <div class="lg:w-2/4">
               <div class="bg-white rounded-lg border border-gray-200 p-4 h-full">
                 <h2 class="font-semibold text-gray-800 mb-4">Product Images</h2>
-                <ProductImage :isAddPage="false" />
+                <ProductImage :isAddPage="false" @imagesChanged="onImagesChanged"/>
               </div>
             </div>
 

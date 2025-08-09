@@ -30,7 +30,7 @@ public class BrandService {
     public BrandResponseDTO getBrandById(Integer id) {
         Brand brand = brandRepository.findById(id).orElseThrow(() ->
                 new NotfoundException("Brand not found with id: " + id));
-        return convertToDTO(brand);
+        return getBrandResponseDTO(brand);
     }
 
     public BrandResponseDTO updateBrand(Integer id, UpdateBrandDTO updateBrandDTO) {
@@ -45,7 +45,7 @@ public class BrandService {
         brand.setCountryOfOrigin(updateBrandDTO.getCountryOfOrigin());
         brand.setIsActive(updateBrandDTO.getIsActive());
         brand = brandRepository.save(brand);
-        return convertToDTO(brand);
+        return getBrandResponseDTO(brand);
     }
 
     public BrandResponseDTO addBrand(Brand brand) {
@@ -53,7 +53,7 @@ public class BrandService {
             throw new RuntimeException("Brand name " + brand.getName()+" already exists");
         }
         brand = brandRepository.save(brand);
-        return convertToDTO(brand);
+        return getBrandResponseDTO(brand);
     }
 
     public void deleteBrand(Integer id) {
@@ -74,10 +74,12 @@ public class BrandService {
         dto.setWebsiteUrl(brand.getWebsiteUrl());
         dto.setCountryOfOrigin(brand.getCountryOfOrigin());
         dto.setIsActive(brand.getIsActive());
-
+        return dto;
+    }
+    public BrandResponseDTO getBrandResponseDTO(Brand brand) {
+        BrandResponseDTO dto = convertToDTO(brand);
         long count = saleItemRepository.countByBrandId(brand.getId());
         dto.setNoOfSaleItems((int) count);
-
         return dto;
     }
 }

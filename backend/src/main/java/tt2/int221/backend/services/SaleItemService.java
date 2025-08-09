@@ -17,6 +17,7 @@ import tt2.int221.backend.exceptions.NotfoundException;
 import tt2.int221.backend.repositories.BrandRepository;
 import tt2.int221.backend.repositories.SaleItemRepository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -37,10 +38,18 @@ public class SaleItemService {
     }
 
 
-    public Page<SaleItem> findAll(int page, int size, String sortField, List<String> filterBrands, String sortDirection) {
-        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField).and(Sort.by(Sort.Direction.ASC, "id"));
+    public Page<SaleItem> findAll(int page, int size, String sortField,
+                                  List<String> filterBrands, Integer minPrice, Integer maxPrice,
+                                  List<Integer> storage, String sortDirection) {
+
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField)
+                .and(Sort.by(Sort.Direction.ASC, "id"));
         Pageable pageable = PageRequest.of(page, size, sort);
-        return filterBrands.isEmpty() ? saleItemRepository.findAll(pageable) : saleItemRepository.findByBrandNameIn(filterBrands, pageable);
+
+        List<Integer> storageFilter = (storage == null || storage.isEmpty()) ? null : storage;
+        List<String> brandsFilter = (filterBrands == null || filterBrands.isEmpty()) ? null : filterBrands;
+
+        return saleItemRepository.filterItems(brandsFilter, minPrice, maxPrice, storageFilter, pageable);
     }
 
 
@@ -55,14 +64,13 @@ public class SaleItemService {
                 .orElseThrow(() ->
                         new NotfoundException("Brand not found with id: " + saleItemDTO.getBrand().getId()));
 
-        saleItemDTO.setModel(saleItemDTO.getModel().trim());
-        saleItemDTO.setDescription(saleItemDTO.getDescription().trim());
-        saleItemDTO.setColor(saleItemDTO.getColor() == null || saleItemDTO.getColor().trim().isEmpty() ? null : saleItemDTO.getColor().trim());
+        saleItemDTO.setModel(saleItemDTO.getModel());
+        saleItemDTO.setDescription(saleItemDTO.getDescription());
+        saleItemDTO.setColor(saleItemDTO.getColor());
 
         SaleItem saleItem = modelMapper.map(saleItemDTO, SaleItem.class);
-
         saleItem.setBrand(brand);
-        saleItem.setQuantity(saleItemDTO.getQuantity() == null || saleItem.getQuantity() < 0 ? 1 : saleItemDTO.getQuantity());
+        saleItem.setQuantity(saleItemDTO.getQuantity());
         saleItem.setModel(saleItemDTO.getModel());
 
         SaleItem savedSaleItem = saleItemRepository.save(saleItem);
@@ -81,15 +89,15 @@ public class SaleItemService {
         Integer brandId = saleItemDTO.getBrand().getId();
         Brand brand = brandRepository.findById(brandId).orElseThrow(() -> new NotfoundException("Brand not found with id: " + brandId));
 
-        editedSaleItem.setModel(saleItemDTO.getModel().trim());
+        editedSaleItem.setModel(saleItemDTO.getModel());
         editedSaleItem.setBrand(brand);
-        editedSaleItem.setDescription(saleItemDTO.getDescription().trim());
+        editedSaleItem.setDescription(saleItemDTO.getDescription());
         editedSaleItem.setPrice(saleItemDTO.getPrice());
-        editedSaleItem.setQuantity(saleItemDTO.getQuantity() == null || saleItemDTO.getQuantity() < 0 ? 1 : saleItemDTO.getQuantity());
+        editedSaleItem.setQuantity(saleItemDTO.getQuantity());
         editedSaleItem.setRamGb(saleItemDTO.getRamGb());
         editedSaleItem.setScreenSizeInch(saleItemDTO.getScreenSizeInch());
         editedSaleItem.setStorageGb(saleItemDTO.getStorageGb());
-        editedSaleItem.setColor(saleItemDTO.getColor() == null || saleItemDTO.getColor().trim().isEmpty() ? null : saleItemDTO.getColor().trim());
+        editedSaleItem.setColor(saleItemDTO.getColor());
 
         SaleItem updatedSaleItem = saleItemRepository.saveAndFlush(editedSaleItem);
         em.refresh(updatedSaleItem);

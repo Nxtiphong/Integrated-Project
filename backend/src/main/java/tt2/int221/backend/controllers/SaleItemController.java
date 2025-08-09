@@ -14,6 +14,7 @@ import tt2.int221.backend.dto.SaleItemDTO;
 import tt2.int221.backend.entities.SaleItem;
 import tt2.int221.backend.services.SaleItemService;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -31,12 +32,15 @@ public class SaleItemController {
     @GetMapping("/v2/sale-items")
     public ResponseEntity<PageDTO<GalleryDTO>> getGalleryDTO(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(defaultValue = "id") String sortField,
             @RequestParam(defaultValue = "") List<String> filterBrands,
+            @RequestParam(required = false) Integer minPrice,
+            @RequestParam(required = false) Integer maxPrice,
+            @RequestParam(required = false) List<Integer> storage,
             @RequestParam(defaultValue = "asc") String sortDirection
     ) {
-        Page<SaleItem> saleItems = service.findAll(page, size, sortField, filterBrands ,sortDirection);
+        Page<SaleItem> saleItems = service.findAll(page, size, sortField, filterBrands, minPrice, maxPrice, storage, sortDirection);
         List<GalleryDTO> galleryDTOs = saleItems.getContent().stream()
                 .map(saleItem -> modelMapper.map(saleItem, GalleryDTO.class))
                 .toList();

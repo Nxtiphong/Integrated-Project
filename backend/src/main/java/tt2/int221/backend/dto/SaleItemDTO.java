@@ -19,4 +19,26 @@ public class SaleItemDTO {
     public BigDecimal getScreenSizeInch() {
         return screenSizeInch == null ? null : screenSizeInch.stripTrailingZeros();
     }
+
+    public void setModel(String model) {
+        this.model = model != null ? model.trim() : null;
+    }
+
+    public void setDescription(String description) {
+        this.description = description != null ? description.trim() : null;
+    }
+
+    public void setColor(String color) {
+        if (color == null || color.trim().isEmpty()) {
+            this.color = null;
+        } else {
+            this.color = color.trim();
+        }
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = (quantity == null || quantity < 0) ? 1 : quantity;
+    }
+
+
 }

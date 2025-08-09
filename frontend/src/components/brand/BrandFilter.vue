@@ -47,33 +47,38 @@ onMounted(() => {
     <div
       class="itbms-brand-filter flex gap-1 lg:gap-2 px-2 flex-1 w-lg overflow-x-auto scrollbar-hidden"
     >
-      <p
-        v-for="(brand, index) in saleGalleryState.filterBrandLists"
-        :key="index"
-        class="itbms-brand-item flex items-center select-none justify-center gap-1 bg-primary/80 text-white text-xs lg:text-sm font-medium px-2 lg:px-3 py-1 rounded-full"
-      >
-        <span class="itbms-brand-item-name">{{ brand }}</span>
-        <span class="cursor-pointer itbms-brand-item-clear" @click="toggleBrand(brand)"
-          ><Icon icon="iconoir:delete-circle" class="text-sm lg:text-base" />
+      <div class="flex items-start flex-col gap-[2px]">
+        <span
+          class="itbms-price-filter text-black text-sm cursor-pointer"
+          @click="isDropdownOpen = !isDropdownOpen"
+        >
+          Brand
         </span>
-      </p>
-      <span v-if="saleGalleryState.filterBrandLists.length === 0" class="text-gray-400 text-sm"
-        >Filter by brand(s)</span
-      >
+        <div
+          class="flex items-start gap-1 flex-1 w-xs md:w-[40rem] lg:w-55 overflow-x-auto scrollbar-hidden"
+        >
+          <p
+            v-for="(brand, index) in saleGalleryState.filterBrandLists"
+            :key="index"
+            class="itbms-brand-item flex items-center select-none justify-center gap-1 bg-primary/80 text-white text-xs lg:text-sm font-medium px-2 lg:px-3 py-1 rounded-full"
+          >
+            <span class="itbms-brand-item-name">{{ brand }}</span>
+            <span class="cursor-pointer itbms-brand-item-clear" @click="toggleBrand(brand)"
+              ><Icon icon="iconoir:delete-circle" class="text-sm lg:text-base" />
+            </span>
+          </p>
+        </div>
+        <span v-if="saleGalleryState.filterBrandLists.length === 0" class="text-gray-400 text-sm"
+          >Filter by brand(s)</span
+        >
+      </div>
     </div>
 
     <div class="flex items-center justify-center rounded-r-lg">
       <div class="relative inline-block text-left">
-        <button
-          @click="isDropdownOpen = !isDropdownOpen"
-          class="itbms-brand-filter-button p-2 text-black font-semibold cursor-pointer transition duration-200"
-        >
-          <Icon icon="lets-icons:filter" class="text-2xl" />
-        </button>
-
         <ul
           v-if="isDropdownOpen"
-          class="absolute right-0 mt-2 max-h-[250px] w-[150px] lg:w-[200px] overflow-y-auto rounded-md border border-gray-300 bg-white shadow-md z-50"
+          class="absolute right-8 top-10 max-h-[250px] w-[150px] lg:w-[200px] overflow-y-auto rounded-md border border-gray-300 bg-white shadow-md z-50"
         >
           <li
             v-for="brand in brands"

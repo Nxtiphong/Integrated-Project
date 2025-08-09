@@ -9,7 +9,7 @@ const saleGalleryState = useGalleryStateStore();
 
 const isDropdownOpen = ref(false);
 
-const priceRange = ['32Gb', '64Gb', '128Gb', '256Gb', '512Gb', '1Tb+'];
+const storageSize = ['32Gb', '64Gb', '128Gb', '256Gb', '512Gb', '1Tb', 'Not specified'];
 
 const handleFilter = () => {
   emit('filterSaleItemByStorageSize');
@@ -29,41 +29,45 @@ const toggleStorageSize = (size) => {
 
 <template>
   <section
-    class="join flex items-center space-x-2 lg:space-x-4 lg:w-60 lg:border-r-2 border-slate-200 bg-white lg:p-2"
+    class="join flex items-start space-x-2 lg:space-x-4 lg:w-60 lg:border-r-2 border-slate-200 bg-white"
   >
-    <div
-      class="itbms-storage-size-filter flex gap-1 lg:gap-2 px-2 flex-1 w-lg overflow-x-auto scrollbar-hidden"
-    >
-      <p
-        v-for="(size, index) in saleGalleryState.filterStorageSize"
-        :key="index"
-        class="itbms-storage-size-item flex items-center select-none justify-center gap-1 bg-primary/80 text-white text-xs lg:text-sm font-medium px-2 lg:px-3 py-1 rounded-full"
-      >
-        <span class="itbms-storage-size-item">{{ size }}</span>
-        <span class="cursor-pointer itbms-storage-size-item-clear" @click="toggleStorageSize(size)">
-          <Icon icon="iconoir:delete-circle" class="text-sm lg:text-base" />
+    <div class="flex gap-1 lg:gap-2 px-2 flex-1">
+      <div class="flex items-start flex-col gap-[2px]">
+        <span
+          class="itbms-storage-size-filter text-black text-sm cursor-pointer"
+          @click="isDropdownOpen = !isDropdownOpen"
+        >
+          Storage Size
         </span>
-      </p>
-      <span v-if="saleGalleryState.filterStorageSize.length === 0" class="text-gray-400 text-sm">
-        Filter by storage size
-      </span>
+        <div class="flex items-start gap-1 flex-1 w-55 overflow-x-auto scrollbar-hidden">
+          <p
+            v-for="(size, index) in saleGalleryState.filterStorageSize"
+            :key="index"
+            class="itbms-storage-size-item flex items-center select-none justify-center gap-1 bg-primary/80 text-white text-xs lg:text-sm font-medium px-2 lg:px-3 py-1 rounded-full"
+          >
+            <span class="itbms-storage-size-item">{{ size }}</span>
+            <span
+              class="cursor-pointer itbms-storage-size-item-clear z-20"
+              @click="toggleStorageSize(size)"
+            >
+              <Icon icon="iconoir:delete-circle" class="text-sm lg:text-base" />
+            </span>
+          </p>
+        </div>
+        <span v-if="saleGalleryState.filterStorageSize.length === 0" class="text-gray-400 text-sm">
+          Storage size(s)
+        </span>
+      </div>
     </div>
 
     <div class="flex items-center justify-center rounded-r-lg">
       <div class="relative inline-block text-left">
-        <button
-          @click="isDropdownOpen = !isDropdownOpen"
-          class="itbms-storage-size-filter-button p-2 text-black font-semibold cursor-pointer transition duration-200"
-        >
-          <Icon icon="lets-icons:filter" class="text-2xl" />
-        </button>
-
         <ul
           v-if="isDropdownOpen"
-          class="absolute right-0 mt-2 max-h-[250px] w-[150px] lg:w-[200px] overflow-y-auto rounded-md border border-gray-300 bg-white shadow-md z-50"
+          class="absolute right-8 top-15 max-h-[250px] w-[150px] lg:w-[200px] overflow-y-auto rounded-md border border-gray-300 bg-white shadow-md z-50"
         >
           <li
-            v-for="(size, index) in priceRange"
+            v-for="(size, index) in storageSize"
             :key="index"
             class="itbms-filter-item px-3 py-2 hover:bg-gray-100 cursor-pointer"
           >

@@ -36,38 +36,44 @@ const togglePrice = (price) => {
 
 <template>
   <section
-    class="join flex items-center space-x-2 lg:space-x-4 lg:w-60 lg:border-r-2 border-slate-200 bg-white lg:p-2"
+    class="join flex items-start space-x-2 lg:space-x-4 lg:w-60 lg:border-r-2 border-slate-200 bg-white"
   >
-    <div
-      class="itbms-price-filter flex gap-1 lg:gap-2 px-2 flex-1 w-lg overflow-x-auto scrollbar-hidden"
-    >
-      <p
-        v-for="(price, index) in saleGalleryState.filterPrice"
-        :key="index"
-        class="itbms-price-item flex items-center select-none justify-center gap-1 bg-primary/80 text-white text-xs lg:text-sm font-medium px-2 lg:px-4 py-1 rounded-full"
-      >
-        <span class="itbms-filter-item-name w-34">{{ price }}</span>
-        <span class="cursor-pointer itbms-price-item-clear" @click="togglePrice(price)">
-          <Icon icon="iconoir:delete-circle" class="text-sm lg:text-base" />
+    <div class="flex gap-1 lg:gap-2 px-2 flex-1">
+      <div class="flex items-start flex-col gap-[2px]">
+        <span
+          class="itbms-price-filter text-black text-sm cursor-pointer"
+          @click="isDropdownOpen = !isDropdownOpen"
+        >
+          Price
         </span>
-      </p>
-      <span v-if="saleGalleryState.filterPrice.length === 0" class="text-gray-400 text-sm">
-        Filter by price
-      </span>
+        <div
+          class="flex items-start gap-1 flex-1 w-xs md:w-[40rem] lg:w-55 overflow-x-auto scrollbar-hidden"
+        >
+          <p
+            v-for="(price, index) in saleGalleryState.filterPrice"
+            :key="index"
+            class="itbms-price-item flex items-center select-none gap-1 bg-primary/80 text-white text-xs lg:text-sm font-medium px-2 lg:px-3 py-1 rounded-full"
+          >
+            <span class="itbms-price-item w-34">{{ price }}</span>
+            <span
+              class="cursor-pointer itbms-storage-price-item-clear z-20"
+              @click="togglePrice(price)"
+            >
+              <Icon icon="iconoir:delete-circle" class="text-sm lg:text-base" />
+            </span>
+          </p>
+        </div>
+        <span v-if="saleGalleryState.filterPrice.length === 0" class="text-gray-400 text-sm">
+          Price Range
+        </span>
+      </div>
     </div>
 
     <div class="flex items-center justify-center rounded-r-lg">
       <div class="relative inline-block text-left">
-        <button
-          @click="isDropdownOpen = !isDropdownOpen"
-          class="itbms-price-filter-button p-2 text-black font-semibold cursor-pointer transition duration-200"
-        >
-          <Icon icon="lets-icons:filter" class="text-2xl" />
-        </button>
-
         <ul
           v-if="isDropdownOpen"
-          class="absolute right-0 mt-2 max-h-[250px] w-[200px] lg:w-[250px] overflow-y-auto rounded-md border border-gray-300 bg-white shadow-md z-50"
+          class="absolute right-8 top-15 max-h-[250px] w-[150px] lg:w-[220px] overflow-y-auto rounded-md border border-gray-300 bg-white shadow-md z-50"
         >
           <li
             v-for="(price, index) in priceRange"

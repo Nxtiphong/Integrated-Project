@@ -39,17 +39,17 @@ public class SaleItemService {
 
 
     public Page<SaleItem> findAll(int page, int size, String sortField,
-                                  List<String> filterBrands, Integer minPrice, Integer maxPrice,
-                                  List<Integer> storage, String sortDirection) {
+                                  List<String> filterBrands, Integer FilterPriceLower, Integer FilterPriceUpper,
+                                  List<Integer> FilterStorages, String sortDirection) {
 
         Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField)
                 .and(Sort.by(Sort.Direction.ASC, "id"));
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        List<Integer> storageFilter = (storage == null || storage.isEmpty()) ? null : storage;
+        List<Integer> storageFilter = (FilterStorages == null || FilterStorages.isEmpty()) ? null : FilterStorages;
         List<String> brandsFilter = (filterBrands == null || filterBrands.isEmpty()) ? null : filterBrands;
 
-        return saleItemRepository.filterItems(brandsFilter, minPrice, maxPrice, storageFilter, pageable);
+        return saleItemRepository.filterItems(brandsFilter, FilterPriceLower, FilterPriceUpper, storageFilter, pageable);
     }
 
 

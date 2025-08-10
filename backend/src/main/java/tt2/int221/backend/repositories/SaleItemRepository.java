@@ -26,12 +26,12 @@ public interface SaleItemRepository extends JpaRepository<SaleItem, Integer> {
     @Query("SELECT s FROM SaleItem s " +
             "JOIN s.brand b " +
             "WHERE (:brandNames IS NULL OR b.name IN :brandNames) " +
-            "AND (:minPrice IS NULL OR s.price >= :minPrice) " +
-            "AND (:maxPrice IS NULL OR s.price <= :maxPrice) " +
+            "AND (:FilterPriceLower IS NULL OR s.price >= :FilterPriceLower) " +
+            "AND (:FilterPriceUpper IS NULL OR s.price <= :FilterPriceUpper) " +
             "AND (:storageGb IS NULL OR s.storageGb IN :storageGb) ")
     Page<SaleItem> filterItems(@Param("brandNames") List<String> brandNames,
-                               @Param("minPrice") Integer minPrice,
-                               @Param("maxPrice") Integer maxPrice,
+                               @Param("FilterPriceLower") Integer FilterPriceLower,
+                               @Param("FilterPriceUpper") Integer FilterPriceUpper,
                                @Param("storageGb") List<Integer> storageGb,
                                Pageable pageable);
 

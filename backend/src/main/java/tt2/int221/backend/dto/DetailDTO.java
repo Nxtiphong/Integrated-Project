@@ -1,6 +1,8 @@
 package tt2.int221.backend.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
+import tt2.int221.backend.serializers.InstantNoZSerializer;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -18,7 +20,9 @@ public class DetailDTO {
     private Integer quantity;
     private Integer storageGb;
     private String color;
+    @JsonSerialize(using = InstantNoZSerializer.class)
     private Instant createdOn;
+    @JsonSerialize(using = InstantNoZSerializer.class)
     private Instant updatedOn;
 
     public BigDecimal getScreenSizeInch() {

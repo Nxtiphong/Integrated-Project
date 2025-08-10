@@ -1,14 +1,26 @@
 package tt2.int221.backend.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
+import tt2.int221.backend.serializers.InstantNoZSerializer;
+
+import java.math.BigDecimal;
+import java.time.Instant;
 
 @Data
 public class GalleryDTO {
     private Integer id;
     private String model;
     private String brandName;
+    private String description;
     private Integer price;
-    private Integer storageGb;
     private Integer ramGb;
+    private BigDecimal screenSizeInch;
+    private Integer quantity;
+    private Integer storageGb;
     private String color;
+    @JsonSerialize(using = InstantNoZSerializer.class)
+    private Instant createdOn;
+    @JsonSerialize(using = InstantNoZSerializer.class)
+    private Instant updatedOn;
 }

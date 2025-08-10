@@ -31,16 +31,16 @@ public class SaleItemController {
 
     @GetMapping("/v2/sale-items")
     public ResponseEntity<PageDTO<GalleryDTO>> getGalleryDTO(
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(required = true) int page,
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(defaultValue = "id") String sortField,
             @RequestParam(defaultValue = "") List<String> filterBrands,
-            @RequestParam(required = false) Integer minPrice,
-            @RequestParam(required = false) Integer maxPrice,
-            @RequestParam(required = false) List<Integer> storage,
+            @RequestParam(required = false) Integer FilterPriceLower,
+            @RequestParam(required = false) Integer FilterPriceUpper,
+            @RequestParam(required = false) List<Integer> FilterStorages,
             @RequestParam(defaultValue = "asc") String sortDirection
     ) {
-        Page<SaleItem> saleItems = service.findAll(page, size, sortField, filterBrands, minPrice, maxPrice, storage, sortDirection);
+        Page<SaleItem> saleItems = service.findAll(page, size, sortField, filterBrands, FilterPriceLower, FilterPriceUpper, FilterStorages, sortDirection);
         List<GalleryDTO> galleryDTOs = saleItems.getContent().stream()
                 .map(saleItem -> modelMapper.map(saleItem, GalleryDTO.class))
                 .toList();

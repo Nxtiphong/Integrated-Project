@@ -9,13 +9,20 @@ const saleGalleryState = useGalleryStateStore();
 
 const isDropdownOpen = ref(false);
 
-const storageSize = ['32Gb', '64Gb', '128Gb', '256Gb', '512Gb', '1Tb', 'Not specified'];
+const storageSize = [
+  { label: '32Gb', size: 32 },
+  { label: '64Gb', size: 64 },
+  { label: '128Gb', size: 128 },
+  { label: '256Gb', size: 256 },
+  { label: '512Gb', size: 512 },
+  { label: '1Tb', size: 1000 },
+  { label: 'Not specified', size: null },
+];
 
 const handleFilter = () => {
   emit('filterSaleItemByStorageSize');
 };
 
-// Toggle Price Selection
 const toggleStorageSize = (size) => {
   const index = saleGalleryState.filterStorageSize.indexOf(size);
   if (index > -1) {
@@ -41,14 +48,16 @@ const toggleStorageSize = (size) => {
         </span>
         <div class="flex items-start gap-1 flex-1 w-55 overflow-x-auto scrollbar-hidden">
           <p
-            v-for="(size, index) in saleGalleryState.filterStorageSize"
+            v-for="(size, index) in storageSize.filter((s) =>
+              saleGalleryState.filterStorageSize.includes(s.size),
+            )"
             :key="index"
             class="itbms-storage-size-item flex items-center select-none justify-center gap-1 bg-primary/80 text-white text-xs lg:text-sm font-medium px-2 lg:px-3 py-1 rounded-full"
           >
-            <span class="itbms-storage-size-item">{{ size }}</span>
+            <span class="itbms-storage-size-item">{{ size.label }}</span>
             <span
               class="cursor-pointer itbms-storage-size-item-clear z-20"
-              @click="toggleStorageSize(size)"
+              @click="toggleStorageSize(size.size)"
             >
               <Icon icon="iconoir:delete-circle" class="text-sm lg:text-base" />
             </span>
@@ -75,10 +84,10 @@ const toggleStorageSize = (size) => {
               <input
                 type="checkbox"
                 class="form-checkbox h-4 w-4 text-blue-600"
-                :checked="saleGalleryState.filterStorageSize.includes(size)"
-                @change="toggleStorageSize(size)"
+                :checked="saleGalleryState.filterStorageSize.includes(size.size)"
+                @change="toggleStorageSize(size.size)"
               />
-              <span>{{ size }}</span>
+              <span>{{ size.label }}</span>
             </label>
           </li>
         </ul>

@@ -17,9 +17,7 @@ import tt2.int221.backend.exceptions.NotfoundException;
 import tt2.int221.backend.repositories.BrandRepository;
 import tt2.int221.backend.repositories.SaleItemRepository;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class SaleItemService {
@@ -39,21 +37,20 @@ public class SaleItemService {
 
 
     public Page<SaleItem> findAll(int page, int size, String sortField,
-                                  List<String> filterBrands, Integer FilterPriceLower, Integer FilterPriceUpper,
-                                  List<Integer> FilterStorages, String sortDirection) {
+                                  List<String> filterBrands, Integer filterPriceLower, Integer filterPriceUpper,
+                                  List<Integer> filterStorages, String sortDirection) {
 
         Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField)
                 .and(Sort.by(Sort.Direction.ASC, "id"));
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        List<Integer> storageFilter = (FilterStorages == null || FilterStorages.isEmpty()) ? null : FilterStorages;
+        List<Integer> storageFilter = (filterStorages == null || filterStorages.isEmpty()) ? null : filterStorages;
         List<String> brandsFilter = (filterBrands == null || filterBrands.isEmpty()) ? null : filterBrands;
 
-        return saleItemRepository.filterItems(brandsFilter, FilterPriceLower, FilterPriceUpper, storageFilter, pageable);
+        return saleItemRepository.filterItems(brandsFilter, filterPriceLower, filterPriceUpper, storageFilter, pageable);
     }
 
-
-    public  List<SaleItem> getAllSaleItemsOrderByCreatedOnAscV2() {
+    public List<SaleItem> getAllSaleItemsOrderByCreatedOnAscV2() {
         return saleItemRepository.findAllByOrderByCreatedOnAscIdAsc();
     }
 

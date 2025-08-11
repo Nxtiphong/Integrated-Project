@@ -44,7 +44,8 @@ const fetchSaleItems = async (params = {}) => {
     page = 1,
     size = 10,
     filterBrands = [],
-    filterPrice = [],
+    minPrice = null,
+    maxPrice = null,
     filterStorageSize = [],
     sortField = '',
     sortDirection = 'asc',
@@ -54,9 +55,13 @@ const fetchSaleItems = async (params = {}) => {
   urlParams.append('page', page - 1);
   urlParams.append('size', size);
 
+  if (minPrice !== null) urlParams.append('filterPriceLower', minPrice);
+  if (maxPrice !== null) urlParams.append('filterPriceUpper', maxPrice);
+
   filterBrands.forEach((brand) => urlParams.append('filterBrands', brand));
-  filterPrice.forEach((price) => urlParams.append('filterPrice', price));
-  filterStorageSize.forEach((size) => urlParams.append('filterStorageSize', size));
+  filterStorageSize
+    .filter((size) => size !== null && size !== undefined)
+    .forEach((size) => urlParams.append('filterStorages', size));
 
   if (sortField) urlParams.append('sortField', sortField);
   if (sortDirection !== 'none') urlParams.append('sortDirection', sortDirection);
@@ -76,7 +81,8 @@ const loadSaleItems = async () => {
       sortField: galleryState.sortField,
       sortDirection: galleryState.sortDirection,
       filterBrands: galleryState.filterBrandLists,
-      filterPrice: galleryState.filterPrice,
+      minPrice: galleryState.minPrice,
+      maxPrice: galleryState.maxPrice,
       filterStorageSize: galleryState.filterStorageSize,
     });
 

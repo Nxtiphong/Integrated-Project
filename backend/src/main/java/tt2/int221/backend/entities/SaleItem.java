@@ -10,6 +10,8 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -53,6 +55,10 @@ public class SaleItem {
     @Lob
     @Column(name = "color")
     private String color;
+
+    @OneToMany(mappedBy = "saleItem", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("imageViewOrder ASC")
+    private Set<SaleItemImage> saleItemImages = new LinkedHashSet<>();
 
     @NotNull
     @Column(name = "quantity", nullable = false)

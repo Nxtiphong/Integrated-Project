@@ -1,20 +1,23 @@
 package tt2.int221.backend.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import tt2.int221.backend.dto.DetailDTO;
 import tt2.int221.backend.dto.GalleryDTO;
 import tt2.int221.backend.dto.PageDTO;
 import tt2.int221.backend.dto.SaleItemDTO;
 import tt2.int221.backend.entities.SaleItem;
+import tt2.int221.backend.services.SaleItemImageService;
 import tt2.int221.backend.services.SaleItemService;
 
-import java.math.BigDecimal;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -24,6 +27,10 @@ public class SaleItemController {
 
     @Autowired
     private SaleItemService service;
+
+    @Autowired
+    private SaleItemImageService imageService;
+
     @Autowired
     private ModelMapper modelMapper;
 
@@ -46,7 +53,7 @@ public class SaleItemController {
                 .toList();
         PageDTO<GalleryDTO> response = new PageDTO<>(
                 galleryDTOs,
-                sortField + ": "+ sortDirection.toUpperCase(),
+                sortField + ": " + sortDirection.toUpperCase(),
                 saleItems.getNumber(),
                 saleItems.getSize(),
                 saleItems.getTotalElements(),
@@ -58,7 +65,7 @@ public class SaleItemController {
     }
 
     @GetMapping("/v1/sale-items")
-    public ResponseEntity<List<GalleryDTO>> getGalleryDTOV2(){
+    public ResponseEntity<List<GalleryDTO>> getGalleryDTOV2() {
         List<GalleryDTO> response = service.getAllSaleItemsOrderByCreatedOnAscV2().stream()
                 .map(saleItem -> modelMapper.map(saleItem, GalleryDTO.class))
                 .toList();
@@ -76,19 +83,19 @@ public class SaleItemController {
         return ResponseEntity.ok(detailDTO);
     }
 
-    @Operation(summary = "Create new sale item", description = "Return a new sale item detail")
-    @PostMapping("/v1/sale-items")
-    public ResponseEntity<DetailDTO> createSaleItem(@RequestBody SaleItemDTO saleItem) {
-        if (saleItem == null) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        SaleItem createdSaleItem = service.createSaleItem(saleItem);
-        DetailDTO detailDTO = modelMapper.map(createdSaleItem, DetailDTO.class);
-        detailDTO.setBrandName(createdSaleItem.getBrand().getName());
-
-        return ResponseEntity.status(201).body(detailDTO);
-    }
+//    @Operation(summary = "Create new sale item", description = "Return a new sale item detail")
+//    @PostMapping("/v1/sale-items")
+//    public ResponseEntity<DetailDTO> createSaleItem(@RequestBody SaleItemDTO saleItem) {
+//        if (saleItem == null) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//
+//        SaleItem createdSaleItem = service.createSaleItem(saleItem);
+//        DetailDTO detailDTO = modelMapper.map(createdSaleItem, DetailDTO.class);
+//        detailDTO.setBrandName(createdSaleItem.getBrand().getName());
+//
+//        return ResponseEntity.status(201).body(detailDTO);
+//    }
 
     @Operation(summary = "Update exists sale item by id", description = "Return an updated sale item detail")
     @PutMapping("/v1/sale-items/{id}")
@@ -108,6 +115,48 @@ public class SaleItemController {
     @DeleteMapping("/v1/sale-items/{id}")
     public ResponseEntity<Void> deleteSaleItem(@PathVariable Integer id) {
         service.deleteSaleItemById(id);
+        return ResponseEntity.status(204).build();
+    }
+
+    @Operation(summary = "Create new sale item w/ images")
+    @PostMapping("/v2/sale-items")
+    @ApiResponse(responseCode = "201", description = "Sale item created")
+    @ApiResponse(responseCode = "500", description = "Sale item create failed")
+    public ResponseEntity<DetailDTO> createSaleItem(@ModelAttribute SaleItemDTO saleItem,
+                                                    @RequestParam(required = false) List<MultipartFile> images) throws IOException {
+        if (saleItem == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        SaleItem createdSaleItem = service.createSaleItem(saleItem, images);
+
+        DetailDTO detailDTO = modelMapper.map(createdSaleItem, DetailDTO.class);
+        detailDTO.setBrandName(createdSaleItem.getBrand().getName());
+        return ResponseEntity.status(201).body(detailDTO);
+    }
+
+    @Operation(summary = "Get a sale item by id", description = "Return a sale item by id with images")
+    @GetMapping("/v2/sale-items/{id}")
+    public ResponseEntity<DetailDTO> findByIdWithImages(@PathVariable Integer id) {
+        SaleItem saleItem = service.getSaleItemById(id);
+        if (saleItem == null) {
+            return ResponseEntity.notFound().build();
+        }
+        DetailDTO detailDTO = modelMapper.map(saleItem, DetailDTO.class);
+        return ResponseEntity.ok(detailDTO);
+    }
+
+    @Operation(summary = "Delete sale item by id", description = "Return status 204 if delete successfully")
+    @DeleteMapping("/v2/sale-items/{id}")
+    public ResponseEntity<Void> deleteSaleItemWithImages(@PathVariable Integer id) {
+        service.deleteSaleItemById(id);
+        return ResponseEntity.status(204).build();
+    }
+
+    @Operation(summary = "Delete individual image", description = "Return status 204 if delete successfully")
+    @DeleteMapping("/v2/sale-items/images")
+    public ResponseEntity<Void> deleteSaleItemWithImages(@RequestParam String fileName, @RequestParam Integer id) {
+        imageService.deleteImage(id, fileName);
         return ResponseEntity.status(204).build();
     }
 

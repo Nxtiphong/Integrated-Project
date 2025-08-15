@@ -10,13 +10,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import tt2.int221.backend.dto.SaleItemDTO;
 import tt2.int221.backend.entities.Brand;
 import tt2.int221.backend.entities.SaleItem;
+import tt2.int221.backend.entities.SaleItemImage;
 import tt2.int221.backend.exceptions.NotfoundException;
 import tt2.int221.backend.repositories.BrandRepository;
 import tt2.int221.backend.repositories.SaleItemRepository;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -29,6 +32,8 @@ public class SaleItemService {
     private ModelMapper modelMapper;
     @PersistenceContext
     private EntityManager em;
+    @Autowired
+    private SaleItemImageService imageService;
 
     public SaleItem getSaleItemById(Integer id) {
         return saleItemRepository.findById(id)
@@ -55,27 +60,27 @@ public class SaleItemService {
     }
 
     @Transactional
-    public SaleItem createSaleItem(SaleItemDTO saleItemDTO) {
+    public SaleItem createSaleItem(SaleItemDTO saleItemDTO, List<MultipartFile> images) throws IOException {
         Integer brandId = saleItemDTO.getBrand().getId();
         Brand brand = brandRepository.findById(brandId)
                 .orElseThrow(() ->
                         new NotfoundException("Brand not found with id: " + saleItemDTO.getBrand().getId()));
 
-        saleItemDTO.setModel(saleItemDTO.getModel());
-        saleItemDTO.setDescription(saleItemDTO.getDescription());
-        saleItemDTO.setColor(saleItemDTO.getColor());
-
         SaleItem saleItem = modelMapper.map(saleItemDTO, SaleItem.class);
+        saleItem.setId(null);
         saleItem.setBrand(brand);
-        saleItem.setQuantity(saleItemDTO.getQuantity());
-        saleItem.setModel(saleItemDTO.getModel());
 
-        SaleItem savedSaleItem = saleItemRepository.save(saleItem);
-        em.refresh(savedSaleItem);
+        saleItemRepository.save(saleItem);
 
-        return saleItemRepository.findById(savedSaleItem.getId())
+        if (images != null && !images.isEmpty()) {
+            imageService.uploadImage(saleItem, images);
+        }
+
+        em.refresh(saleItem);
+
+        return saleItemRepository.findById(saleItem.getId())
                 .orElseThrow(() ->
-                        new NotfoundException("Sale-Item not found with id: " + savedSaleItem.getId()));
+                        new NotfoundException("Sale-Item not found with id: " + saleItem.getId()));
     }
 
     @Transactional
@@ -103,9 +108,11 @@ public class SaleItemService {
     }
 
     public void deleteSaleItemById(Integer id) {
+
         if (!saleItemRepository.existsById(id)) {
             throw new NotfoundException("Sale-Item not found with id: " + id);
         }
+        imageService.deleteImages(id);
         saleItemRepository.deleteById(id);
     }
 }

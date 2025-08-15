@@ -12,9 +12,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import tt2.int221.backend.dto.SaleItemDTO;
+import tt2.int221.backend.dto.SaleItemWithImageDTO;
 import tt2.int221.backend.entities.Brand;
 import tt2.int221.backend.entities.SaleItem;
-import tt2.int221.backend.entities.SaleItemImage;
 import tt2.int221.backend.exceptions.NotfoundException;
 import tt2.int221.backend.repositories.BrandRepository;
 import tt2.int221.backend.repositories.SaleItemRepository;
@@ -107,8 +107,34 @@ public class SaleItemService {
         return saleItemRepository.findById(updatedSaleItem.getId()).orElseThrow(() -> new NotfoundException("Sale-Item not found with id: " + updatedSaleItem.getId()));
     }
 
-    public void deleteSaleItemById(Integer id) {
+    @Transactional
+    public SaleItem updateSaleItemWithImageById(Integer id, SaleItemWithImageDTO saleItemDTO) throws IOException {
 
+        SaleItem editedSaleItem = getSaleItemById(id);
+
+        Integer brandId = saleItemDTO.getSaleItem().getBrand().getId();
+        Brand brand = brandRepository.findById(brandId).orElseThrow(() -> new NotfoundException("Brand not found with id: " + brandId));
+
+        editedSaleItem.setModel(saleItemDTO.getSaleItem().getModel());
+        editedSaleItem.setBrand(brand);
+        editedSaleItem.setDescription(saleItemDTO.getSaleItem().getDescription());
+        editedSaleItem.setPrice(saleItemDTO.getSaleItem().getPrice());
+        editedSaleItem.setQuantity(saleItemDTO.getSaleItem().getQuantity());
+        editedSaleItem.setRamGb(saleItemDTO.getSaleItem().getRamGb());
+        editedSaleItem.setScreenSizeInch(saleItemDTO.getSaleItem().getScreenSizeInch());
+        editedSaleItem.setStorageGb(saleItemDTO.getSaleItem().getStorageGb());
+        editedSaleItem.setColor(saleItemDTO.getSaleItem().getColor());
+
+        imageService.updateSaleItemImages(editedSaleItem, saleItemDTO.getImageInfos());
+
+        SaleItem updatedSaleItem = saleItemRepository.saveAndFlush(editedSaleItem);
+        em.refresh(updatedSaleItem);
+
+        return saleItemRepository.findById(updatedSaleItem.getId())
+                .orElseThrow(() -> new NotfoundException("Sale-Item not found with id: " + updatedSaleItem.getId()));
+    }
+
+    public void deleteSaleItemById(Integer id) {
         if (!saleItemRepository.existsById(id)) {
             throw new NotfoundException("Sale-Item not found with id: " + id);
         }

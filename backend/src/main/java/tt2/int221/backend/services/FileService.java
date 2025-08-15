@@ -13,8 +13,10 @@ import tt2.int221.backend.utils.FileStorageProperties;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -76,7 +78,7 @@ public class FileService {
         }
     }
 
-    public void removeFile(String fileName)  {
+    public void removeFile(String fileName) {
         try {
             Path filePath = this.fileStoragePath.resolve(fileName).normalize();
             if (!Files.exists(filePath)) {
@@ -113,26 +115,13 @@ public class FileService {
         return result;
     }
 
-    public List<String> getMatchedFiles(String pattern) {
-        List<String> matchesList = new ArrayList<>();
-        FileVisitor<Path> matcherVisitor = new SimpleFileVisitor<>() {
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attributes)
-                    throws IOException {
-                FileSystem fs = FileSystems.getDefault();
-                PathMatcher matcher = fs.getPathMatcher("glob:" + pattern);
-                Path name = file.getFileName();
-                if (matcher.matches(name)) {
-                    matchesList.add(name.toString());
-                }
-                return FileVisitResult.CONTINUE;
+    public String updateImage(String oldFileName, MultipartFile newFile) throws IOException {
+        if (oldFileName != null && !oldFileName.isBlank()) {
+            Path oldFilePath = this.fileStoragePath.resolve(oldFileName).normalize();
+            if (Files.exists(oldFilePath)) {
+                Files.delete(oldFilePath);
             }
-        };
-        try {
-            Files.walkFileTree(this.fileStoragePath, matcherVisitor);
-        } catch (IOException ex) {
-            throw new RuntimeException(ex.getMessage());
         }
-        return matchesList;
+        return saveFile(newFile);
     }
 }

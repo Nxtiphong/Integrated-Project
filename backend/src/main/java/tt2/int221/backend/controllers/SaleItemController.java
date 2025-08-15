@@ -9,10 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import tt2.int221.backend.dto.DetailDTO;
-import tt2.int221.backend.dto.GalleryDTO;
-import tt2.int221.backend.dto.PageDTO;
-import tt2.int221.backend.dto.SaleItemDTO;
+import tt2.int221.backend.dto.*;
 import tt2.int221.backend.entities.SaleItem;
 import tt2.int221.backend.services.SaleItemImageService;
 import tt2.int221.backend.services.SaleItemService;
@@ -155,9 +152,23 @@ public class SaleItemController {
 
     @Operation(summary = "Delete individual image", description = "Return status 204 if delete successfully")
     @DeleteMapping("/v2/sale-items/images")
-    public ResponseEntity<Void> deleteSaleItemWithImages(@RequestParam String fileName, @RequestParam Integer id) {
+    public ResponseEntity<Void> deleteSaleItemWithImage(@RequestParam String fileName, @RequestParam Integer id) {
         imageService.deleteImage(id, fileName);
         return ResponseEntity.status(204).build();
     }
 
+    @Operation(summary = "Update Sale item with Image", description = "Return a updated sale item with image")
+    @PutMapping("/v2/sale-items/{id}")
+    public ResponseEntity<DetailDTO> updateSaleItemWithImage(@PathVariable Integer id,
+                                                             @ModelAttribute SaleItemWithImageDTO saleItem) throws IOException {
+        if (saleItem == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        SaleItem updatedSaleItem = service.updateSaleItemWithImageById(id, saleItem);
+        DetailDTO detailDTO = modelMapper.map(updatedSaleItem, DetailDTO.class);
+        detailDTO.setBrandName(updatedSaleItem.getBrand().getName());
+
+        return ResponseEntity.status(200).body(detailDTO);
+    }
 }

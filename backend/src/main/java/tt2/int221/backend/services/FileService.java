@@ -47,28 +47,29 @@ public class FileService {
         return supportedContentTypes.contains(contentType);
     }
 
-    public String saveFile(MultipartFile file) throws IOException {
+    public String saveFile(MultipartFile file, String fileName) throws IOException {
         if (!isValidContentType(file)) {
-            throw new IOException("Invalid content type.");
+            throw new IOException("Invalid content type: " + file.getOriginalFilename());
         }
-        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+
+        if (fileName.contains("..")) {
+            throw new IOException("Invalid file name: " + fileName);
+        }
+
         try {
-            if (fileName.contains("..")) {
-                throw new IOException("Cannot upload files in directory." + fileName);
-            }
             Path targetFile = this.fileStoragePath.resolve(fileName);
             Files.copy(file.getInputStream(), targetFile, StandardCopyOption.REPLACE_EXISTING);
-            return fileName;
+            return fileName; // return the actual stored name
         } catch (IOException e) {
             throw new RuntimeException("Could not upload file: " + fileName, e);
         }
     }
 
-    public Resource loadFile(String fileName) throws IOException {
+    public Resource loadFile(String fileName) {
         try {
             Path filePath = this.fileStoragePath.resolve(fileName).normalize();
             Resource resource = new UrlResource(filePath.toUri());
-            if (resource.exists()) {
+            if (resource.exists() && resource.isReadable()) {
                 return resource;
             } else {
                 throw new NotfoundException("File not found: " + fileName);
@@ -90,38 +91,55 @@ public class FileService {
         }
     }
 
-    public List<String> storeMultipartFile(List<MultipartFile> files) {
+    public List<String> storeMultipartFile(List<MultipartFile> files, List<String> customFileNames) {
+
+        if (files.size() != customFileNames.size()) {
+            throw new IllegalArgumentException("Files and custom filenames size must match");
+        }
+
         List<String> result = new ArrayList<>(files.size());
 
-        files.forEach(file -> {
+        for (int i = 0; i < files.size(); i++) {
+            MultipartFile file = files.get(i);
+            String fileName = StringUtils.cleanPath(customFileNames.get(i));
+
             try {
                 if (!isValidContentType(file)) {
-                    throw new IOException("Invalid content type." + file.getOriginalFilename());
+                    throw new IOException("Invalid content type: " + file.getOriginalFilename());
                 }
-
-                String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
                 if (fileName.contains("..")) {
                     throw new IOException("Cannot upload files in directory." + fileName);
                 }
+
                 Path targetFile = this.fileStoragePath.resolve(fileName);
                 Files.copy(file.getInputStream(), targetFile, StandardCopyOption.REPLACE_EXISTING);
 
-                result.add(file.getOriginalFilename());
+                result.add(fileName);
             } catch (IOException e) {
                 throw new RuntimeException("Could not store file " + file.getOriginalFilename(), e);
             }
-        });
+        }
         return result;
     }
 
-    public String updateImage(String oldFileName, MultipartFile newFile) throws IOException {
+    public String updateImage(String oldFileName, MultipartFile newFile, String customFileName) throws IOException {
         if (oldFileName != null && !oldFileName.isBlank()) {
             Path oldFilePath = this.fileStoragePath.resolve(oldFileName).normalize();
             if (Files.exists(oldFilePath)) {
                 Files.delete(oldFilePath);
             }
         }
-        return saveFile(newFile);
+        return saveFile(newFile, customFileName);
     }
+
+    public String buildCustomFileName(Integer saleItemId, Integer viewOrder, MultipartFile file) {
+        String extension = "";
+        String originalName = file.getOriginalFilename();
+        if (originalName != null && originalName.contains(".")) {
+            extension = originalName.substring(originalName.lastIndexOf(".")); // keep .jpg, .png etc.
+        }
+        return saleItemId + "." + viewOrder + extension;
+    }
+
 }

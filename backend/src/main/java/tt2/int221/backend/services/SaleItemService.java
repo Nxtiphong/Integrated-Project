@@ -5,6 +5,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -140,5 +141,9 @@ public class SaleItemService {
         }
         imageService.deleteImages(id);
         saleItemRepository.deleteById(id);
+    }
+
+    public Resource loadFile(String fileName) throws IOException {
+        return imageService.loadFile(fileName);
     }
 }

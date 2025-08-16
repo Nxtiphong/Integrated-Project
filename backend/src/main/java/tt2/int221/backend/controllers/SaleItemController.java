@@ -5,7 +5,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +17,7 @@ import tt2.int221.backend.services.SaleItemImageService;
 import tt2.int221.backend.services.SaleItemService;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 
 @RestController
@@ -125,8 +128,6 @@ public class SaleItemController {
             return ResponseEntity.badRequest().build();
         }
 
-        System.out.println(images);
-
         SaleItem createdSaleItem = service.createSaleItem(saleItem, images);
 
         DetailDTO detailDTO = modelMapper.map(createdSaleItem, DetailDTO.class);
@@ -172,5 +173,27 @@ public class SaleItemController {
         detailDTO.setBrandName(updatedSaleItem.getBrand().getName());
 
         return ResponseEntity.status(200).body(detailDTO);
+    }
+
+    @Operation(summary = "Get Sale item Image", description = "Return an Image file for sale item")
+    @GetMapping("/v2/sale-items/images")
+    public ResponseEntity<byte[]> getSaleItemFile(@RequestParam String fileName) throws IOException {
+        if (fileName.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Resource resource = service.loadFile(fileName);
+
+        String contentType = Files.probeContentType(resource.getFile().toPath());
+        if (contentType == null) {
+            contentType = "application/octet-stream";
+        }
+
+        byte[] fileBytes = resource.getInputStream().readAllBytes();
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .contentLength(fileBytes.length)
+                .body(fileBytes);
     }
 }

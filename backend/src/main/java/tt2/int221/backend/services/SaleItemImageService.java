@@ -3,6 +3,7 @@ package tt2.int221.backend.services;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import tt2.int221.backend.dto.SaleItemImageRequestDTO;
@@ -168,6 +169,10 @@ public class SaleItemImageService {
 
             saleItemImageRepository.save(imageEntity);
         }
+    }
+
+    public Resource loadFile(String fileName) throws IOException {
+        return fileService.loadFile(fileName);
     }
 }
 

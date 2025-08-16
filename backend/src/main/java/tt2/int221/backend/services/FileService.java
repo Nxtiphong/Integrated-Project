@@ -69,7 +69,7 @@ public class FileService {
         try {
             Path filePath = this.fileStoragePath.resolve(fileName).normalize();
             Resource resource = new UrlResource(filePath.toUri());
-            if (resource.exists()) {
+            if (resource.exists() && resource.isReadable()) {
                 return resource;
             } else {
                 throw new NotfoundException("File not found: " + fileName);

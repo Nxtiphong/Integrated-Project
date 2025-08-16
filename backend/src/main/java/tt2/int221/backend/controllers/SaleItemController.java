@@ -125,6 +125,8 @@ public class SaleItemController {
             return ResponseEntity.badRequest().build();
         }
 
+        System.out.println(images);
+
         SaleItem createdSaleItem = service.createSaleItem(saleItem, images);
 
         DetailDTO detailDTO = modelMapper.map(createdSaleItem, DetailDTO.class);

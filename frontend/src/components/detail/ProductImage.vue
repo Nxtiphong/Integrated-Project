@@ -1,112 +1,252 @@
 <script setup>
-import { ref } from 'vue';
-import mockPhoneImage1 from '@/assets/images/mock_phone.png';
-import mockPhoneImage2 from '@/assets/images/mock_phone2.png';
-import mockPhoneImage3 from '@/assets/images/mock_phone3.png';
-import mockPhoneImage4 from '@/assets/images/mock_phone4.png';
+import { ref, computed, watch } from 'vue'
+import Alert from '@/components/share/Alert.vue'
 
 const props = defineProps({
-  isDetailPage: {
-    type: Boolean,
-    default: false,
-  },
-});
+  isDetailPage: { type: Boolean, default: false },
+  saleItemImages: { type: Array, default: () => [] },
+})
 
-const emit = defineEmits(['imagesChanged']);
+const emit = defineEmits(['imagesChanged'])
 
-const uploadedImages = ref([]);
-const selectedImage = ref(null);
-const fileInput = ref(null);
+const alertMessage = ref({ type: '', message: '', visible: false, duration: 3000, countdownVisible: false })
+const showAlert = (type, message, duration = 3000) => {
+  alertMessage.value = { type, message, visible: true, duration, countdownVisible: false }
+}
 
-const defaultMockImages = [
-  { file: null, url: mockPhoneImage1 },
-  { file: null, url: mockPhoneImage2 },
-  { file: null, url: mockPhoneImage3 },
-  { file: null, url: mockPhoneImage4 },
-];
+const apiBase = (
+  import.meta.env.VITE_BASE_URL ||
+  (typeof window !== 'undefined' ? window.location.origin : '')
+).replace(/\/+$/, '')
 
-uploadedImages.value = [...defaultMockImages];
-selectedImage.value = defaultMockImages[0].url;
+const toImageUrl = (fileName) => fileName
+  ? `${apiBase}/v2/sale-items/images?fileName=${encodeURIComponent(fileName)}`
+  : null
 
-const triggerUpload = () => {
-  fileInput.value?.click();
-};
-const handleUpload = (event) => {
-  const files = event.target.files;
-  if (!files || !files.length) return;
+const slots = ref([
+  { position: 1, fileName: null, url: null, file: null, filename: null },
+  { position: 2, fileName: null, url: null, file: null, filename: null },
+  { position: 3, fileName: null, url: null, file: null, filename: null },
+  { position: 4, fileName: null, url: null, file: null, filename: null },
+])
 
-  const file = files[0];
+const selectedIndex = ref(0)
 
-  if (uploadedImages.value.length >= 4) {
-    alert('อัปโหลดได้สูงสุด 4 รูป');
-    return;
+const oneBasedOrderToIndex = (order) => {
+  const n = Number(order)
+  if (!Number.isFinite(n)) return 0
+  return Math.min(Math.max(n - 1, 0), 3)
+}
+
+const indexToOneBasedOrder = (idx) => Math.min(Math.max(idx + 1, 1), 4)
+
+function emitImagesPayload () {
+  const payload = slots.value
+    .filter((s) => !!(s.file || s.fileName))
+    .map((s) => ({
+      order: s.position,
+      file: s.file ?? null,
+      fileName: s.fileName ?? null,
+    }))
+  console.log('imagesChanged payload:', payload)
+  emit('imagesChanged', payload)
+}
+
+const mapFromSaleItemImages = (images = []) => {
+  slots.value = [1, 2, 3, 4].map((p) => ({
+    position: p, fileName: null, url: null, file: null, filename: null,
+  }))
+
+  images.forEach((img) => {
+    const idx = oneBasedOrderToIndex(img?.imageViewOrder ?? 1)
+    if (slots.value[idx]) {
+      slots.value[idx].fileName = img.fileName ?? null
+      slots.value[idx].url = null            
+      slots.value[idx].file = null
+      slots.value[idx].filename = img.fileName ?? null
+      slots.value[idx].position = idx + 1   
+    }
+  })
+
+  const firstHas = slots.value.findIndex((_, i) => !!thumbSrcAt(i))
+  selectedIndex.value = firstHas >= 0 ? firstHas : 0
+
+  emitImagesPayload()
+}
+
+const thumbSrcAt = (idx) => {
+  const s = slots.value[idx]
+  if (!s) return null
+  if (s.url) return s.url
+  if (s.fileName) return toImageUrl(s.fileName)
+  return null
+}
+
+watch(() => props.saleItemImages, (v) => mapFromSaleItemImages(v || []), {
+  immediate: true,
+  deep: true,
+})
+
+const fileInput = ref(null)
+const currentFilesCount = computed(() => slots.value.filter((s) => s.file || s.fileName).length)
+const triggerUpload = () => fileInput.value?.click()
+const canMoveUp = (idx) => idx > 0
+const canMoveDown = (idx) => idx < slots.value.length - 1
+
+const handleUpload = (e) => {
+  const files = Array.from(e.target.files || [])
+  if (!files.length) return
+
+  const emptyIndexes = slots.value
+    .map((s, i) => (!s.file && !s.fileName ? i : -1))
+    .filter((i) => i !== -1)
+
+  if (!emptyIndexes.length) {
+    showAlert('error', 'อัปโหลดได้สูงสุด 4 รูป')
+    e.target.value = ''
+    return
   }
 
-  const url = URL.createObjectURL(file);
-  uploadedImages.value.push({ file, url });
-
-  if (!selectedImage.value) {
-    selectedImage.value = url;
+  const willTake = files.slice(0, emptyIndexes.length)
+  if (files.length > emptyIndexes.length) {
+    const list = willTake.map((f) => `• ${f.name}`).join('\n')
+    showAlert('error', `เลือกได้สูงสุด 4 รูป\nระบบจะใช้เฉพาะไฟล์ต่อไปนี้:\n${list}`)
   }
 
-  emit('imagesChanged', uploadedImages.value.map(img => img.file));
+  willTake.forEach((file, i) => {
+    const idx = emptyIndexes[i]
+    slots.value[idx].file = file
+    slots.value[idx].url = URL.createObjectURL(file)
+    slots.value[idx].filename = file.name
+    slots.value[idx].fileName = null         
+  })
 
-  event.target.value = '';
-};
+  const firstHas = slots.value.findIndex((_, i) => !!thumbSrcAt(i))
+  selectedIndex.value = firstHas >= 0 ? firstHas : 0
 
-const selectImage = (url) => {
-  selectedImage.value = url;
-};
+  emitImagesPayload()
+  e.target.value = ''
+}
 
-const removeImage = (index) => {
-  const removedUrl = uploadedImages.value[index].url;
-  uploadedImages.value.splice(index, 1);
-  if (selectedImage.value === removedUrl) {
-    selectedImage.value = uploadedImages.value[0]?.url || null;
-  }
-};
+const selectSlot = (idx) => { selectedIndex.value = idx }
+
+const clearSlot = (idx) => {
+  slots.value[idx] = { position: indexToOneBasedOrder(idx), fileName: null, url: null, file: null, filename: null }
+  const firstHas = slots.value.findIndex((_, i) => !!thumbSrcAt(i))
+  selectedIndex.value = firstHas >= 0 ? firstHas : idx
+  emitImagesPayload()
+}
+
+const moveUp = (idx) => {
+  if (!canMoveUp(idx)) return
+  const a = slots.value
+  ;[a[idx - 1], a[idx]] = [a[idx], a[idx - 1]]
+  a.forEach((s, i) => (s.position = indexToOneBasedOrder(i)))
+  emitImagesPayload()
+}
+const moveDown = (idx) => {
+  if (!canMoveDown(idx)) return
+  const a = slots.value
+  ;[a[idx + 1], a[idx]] = [a[idx], a[idx + 1]]
+  a.forEach((s, i) => (s.position = indexToOneBasedOrder(i)))
+  emitImagesPayload()
+}
+
+const selectedUrl = computed(() => thumbSrcAt(selectedIndex.value))
 </script>
 
 <template>
   <div class="flex flex-col-reverse lg:flex-row justify-center items-center gap-6 lg:gap-12">
+    <!-- thumbnails -->
     <div class="flex flex-row lg:flex-col justify-center items-center gap-4 lg:gap-6">
-      <div v-for="(img, index) in uploadedImages" :key="index" class="relative group">
+      <div
+        v-for="(slot, index) in slots"
+        :key="slot.file?.name || slot.fileName || slot.position"
+        class="relative group flex flex-col items-center"
+      >
         <img
+          v-if="thumbSrcAt(index)"
+          :src="thumbSrcAt(index)"
           :class="[
-            `itbms-picture-file${index+1}`,
+            `itbms-picture-file${index + 1}`,
             'w-16 h-20 object-contain cursor-pointer transition-opacity duration-200',
-            selectedImage === img.url ? 'opacity-100' : 'opacity-40 hover:opacity-80',
+            selectedIndex === index ? 'opacity-100' : 'opacity-40 hover:opacity-80',
           ]"
-          :src="img.url"
           alt="thumbnail"
-          @click="selectImage(img.url)"
+          @click="selectSlot(index)"
         />
-        <button
-          v-if="!props.isDetailPage"
-          @click="removeImage(index)"
-          :class="`itbms-picture-file${index+1}-clear`"
-          class="absolute top-1 right-1 bg-red-500 text-white rounded-full px-2 py-1 text-xs opacity-80 hover:opacity-100"
-        >
-          ลบ
-        </button>
+        <div v-else class="w-16 h-20 border rounded bg-gray-50 flex items-center justify-center text-[10px] text-gray-400">
+          (ว่าง)
+        </div>
+
+        <div class="text-[10px] mt-1 max-w-16 text-center truncate" :title="slot.filename || slot.fileName || 'empty slot'">
+          {{ slot.filename || slot.fileName || '(ว่าง)' }}
+        </div>
+
+        <div v-if="!props.isDetailPage" class="flex gap-1 mt-1">
+          <button
+            :class="`itbms-picture-file${index + 1}-up px-2 py-0.5 rounded bg-gray-200 cursor-pointer hover:bg-gray-300`"
+            v-if="index > 0"
+            @click="moveUp(index)"
+          >
+            ↑
+          </button>
+          <button
+            :class="`itbms-picture-file${index + 1}-down px-2 py-0.5 rounded bg-gray-200 cursor-pointer hover:bg-gray-300`"
+            v-if="index < slots.length - 1"
+            @click="moveDown(index)"
+          >
+            ↓
+          </button>
+          <button
+            v-if="slot.file || slot.fileName"
+            :class="`itbms-picture-file${index + 1}-clear cursor-pointer hover:bg-red-600`"
+            class="px-2 py-0.5 rounded bg-red-500 text-white"
+            @click="clearSlot(index)"
+            title="ลบรูปนี้"
+          >
+            ×
+          </button>
+        </div>
       </div>
     </div>
 
+    <!-- รูปใหญ่ -->
     <img
-      v-if="selectedImage"
+      v-if="selectedUrl"
       class="w-full max-w-[280px] sm:max-w-[300px] md:max-w-[320px] lg:max-w-[310px] xl:max-w-[390px] lg:h-[520px] object-contain"
-      :src="selectedImage"
+      :src="selectedUrl"
       alt="selected"
     />
 
-    <input type="file" accept="image/*" ref="fileInput" class="hidden" @change="handleUpload" />
+    <!-- อัปโหลด -->
+    <input
+      v-if="!props.isDetailPage"
+      type="file"
+      accept="image/*"
+      multiple
+      ref="fileInput"
+      class="hidden"
+      @change="handleUpload"
+    />
   </div>
 
-  <button
-    v-if="!props.isDetailPage && uploadedImages.length < 4"
-    class="itbms-upload-button cursor-pointer flex items-center gap-2 px-5 py-2.5 rounded-md text-white transition-colors bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:bg-gray-300 disabled:cursor-not-allowed"
-    @click="triggerUpload"
-  >
-    + เพิ่มรูป
-  </button>
+  <div class="mt-4 flex gap-3" v-if="!props.isDetailPage">
+    <button
+      :disabled="currentFilesCount >= 4"
+      class="itbms-upload-button cursor-pointer flex items-center gap-2 px-5 py-2.5 rounded-md text-white transition-colors bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:bg-gray-300 disabled:cursor-not-allowed"
+      @click="currentFilesCount >= 4 ? showAlert('error', 'อัปโหลดได้สูงสุด 4 รูป') : triggerUpload()"
+    >
+      + Upload Pictures
+    </button>
+  </div>
+
+  <Alert
+    :show="alertMessage.visible"
+    :type="alertMessage.type"
+    :message="alertMessage.message"
+    @update:show="alertMessage.visible = $event"
+    :duration="alertMessage.duration"
+    :countdownVisible="alertMessage.countdownVisible"
+  />
 </template>

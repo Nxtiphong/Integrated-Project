@@ -15,6 +15,7 @@ import tt2.int221.backend.repositories.SaleItemRepository;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -121,20 +122,20 @@ public class SaleItemImageService {
                 .filter(img -> !requestedOrders.contains(img.getImageViewOrder()))
                 .toList();
 
-        // Determine current max order from existing images
-        int maxOrder = existingImages.stream()
-                .map(SaleItemImage::getImageViewOrder)
-                .max(Integer::compareTo)
-                .orElse(0);
-
-        // Keep a running counter for new files
-        int nextOrder = maxOrder + 1;
-
         for (SaleItemImageRequestDTO imageInfo : imagesInfo) {
+            // First try to find by filename
             SaleItemImage imageEntity = existingImages.stream()
                     .filter(img -> img.getFileName().equals(imageInfo.getFileName()))
                     .findFirst()
                     .orElse(null);
+
+            // If not found by filename, try by order (in case of replacement)
+            if (imageEntity == null) {
+                imageEntity = existingImages.stream()
+                        .filter(img -> Objects.equals(img.getImageViewOrder(), imageInfo.getOrder()))
+                        .findFirst()
+                        .orElse(null);
+            }
 
             boolean isNew = false;
 
@@ -157,14 +158,8 @@ public class SaleItemImageService {
                     fileService.removeFile(imageEntity.getFileName());
                 }
 
-                int orderNumber;
-                if (isNew) {
-                    orderNumber = nextOrder++;  // increment for each new file
-                    imageEntity.setImageViewOrder(orderNumber);
-                } else {
-                    orderNumber = imageInfo.getOrder();
-                    imageEntity.setImageViewOrder(orderNumber);
-                }
+                int orderNumber = imageInfo.getOrder();
+                imageEntity.setImageViewOrder(orderNumber);
 
                 String customFileName = fileService.buildCustomFileName(
                         editedSaleItem.getId(),

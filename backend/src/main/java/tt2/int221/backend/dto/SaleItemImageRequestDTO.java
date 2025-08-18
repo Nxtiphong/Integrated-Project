@@ -7,6 +7,5 @@ import org.springframework.web.multipart.MultipartFile;
 public class SaleItemImageRequestDTO {
     private Integer order;
     private String fileName;
-    private Integer status;
     private MultipartFile imageFile;
 }

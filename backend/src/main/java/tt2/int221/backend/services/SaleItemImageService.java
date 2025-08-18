@@ -14,9 +14,7 @@ import tt2.int221.backend.repositories.SaleItemImageRepository;
 import tt2.int221.backend.repositories.SaleItemRepository;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -104,6 +102,11 @@ public class SaleItemImageService {
     public void updateSaleItemImages(SaleItem editedSaleItem,
                                      List<SaleItemImageRequestDTO> imagesInfo) throws IOException {
         if (imagesInfo == null || imagesInfo.isEmpty()) {
+            List<SaleItemImage> existingImages = getImagesBySaleItem(editedSaleItem.getId());
+            for (SaleItemImage saleItemImage : existingImages) {
+                fileService.removeFile(saleItemImage.getFileName());
+                saleItemImageRepository.delete(saleItemImage);
+            }
             return;
         }
 
@@ -113,20 +116,18 @@ public class SaleItemImageService {
                 .map(SaleItemImageRequestDTO::getOrder)
                 .collect(Collectors.toSet());
 
-        // Remove existing image that not on longer in request
-        for (SaleItemImage existing : new ArrayList<>(existingImages)) {
-            if (!requestedOrders.contains(existing.getImageViewOrder())) {
-                fileService.removeFile(existing.getFileName());
-                saleItemImageRepository.delete(existing);
-            }
-        }
+        // Collect existing image that not on longer in request
+        List<SaleItemImage> imagesToRemove = existingImages.stream()
+                .filter(img -> !requestedOrders.contains(img.getImageViewOrder()))
+                .toList();
 
         for (SaleItemImageRequestDTO imageInfo : imagesInfo) {
             SaleItemImage imageEntity = existingImages.stream()
-                    .filter(img -> Objects.equals(img.getFileName(), imageInfo.getFileName())
-                            || Objects.equals(img.getImageViewOrder(), imageInfo.getOrder()))
+                    .filter(img -> img.getFileName().equals(imageInfo.getFileName()))
                     .findFirst()
                     .orElse(null);
+
+            boolean isNew = false;
 
             if (imageEntity == null) {
                 if (existingImages.size() >= 4) {
@@ -134,44 +135,55 @@ public class SaleItemImageService {
                 }
                 imageEntity = new SaleItemImage();
                 imageEntity.setSaleItem(editedSaleItem);
+                isNew = true;
             }
 
             // Always update the order
-            if (imageInfo.getOrder() == null) {
+            if (imageInfo.getOrder() == null && !isNew) {
                 throw new IllegalArgumentException("Image order must not be null.");
             }
-            imageEntity.setImageViewOrder(imageInfo.getOrder());
 
-            // User send new image
+            // Handle file upload or reuse existing file
             if (imageInfo.getImageFile() != null && !imageInfo.getImageFile().isEmpty()) {
-
                 if (imageEntity.getFileName() != null) {
                     fileService.removeFile(imageEntity.getFileName());
                 }
 
+                Integer orderNumber;
+                if (isNew) {
+                    orderNumber = existingImages.size() + 1;
+                    imageEntity.setImageViewOrder(imageInfo.getOrder());
+                } else {
+                    orderNumber = imageInfo.getOrder();
+                    imageEntity.setImageViewOrder(orderNumber);
+                }
+
                 String customFileName = fileService.buildCustomFileName(
                         editedSaleItem.getId(),
-                        imageInfo.getOrder(),
-                        imageInfo.getImageFile()
-                );
+                        orderNumber,
+                        imageInfo.getImageFile());
 
                 String newFileName = fileService.updateImage(
                         imageInfo.getFileName(),
                         imageInfo.getImageFile(),
-                        customFileName
-                );
+                        customFileName);
+
                 imageEntity.setFileName(newFileName);
-
-                // User only reorders (no new file)
-            } else if (imageEntity.getFileName() == null && imageInfo.getFileName() != null) {
-                imageEntity.setFileName(imageInfo.getFileName());
+            } else if (imageEntity.getFileName() == null) {
+                // No new file provided and no existing filename = invalid
+                throw new IllegalArgumentException("Image file must not be null for a new image.");
+            } else {
+                imageEntity.setImageViewOrder(imageInfo.getOrder());
             }
-
             saleItemImageRepository.save(imageEntity);
+        }
+        for (SaleItemImage image : imagesToRemove) {
+            fileService.removeFile(image.getFileName());
+            saleItemImageRepository.delete(image);
         }
     }
 
-    public Resource loadFile(String fileName) throws IOException {
+    public Resource loadFile(String fileName) {
         return fileService.loadFile(fileName);
     }
 }

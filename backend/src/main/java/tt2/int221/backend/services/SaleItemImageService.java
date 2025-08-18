@@ -121,6 +121,15 @@ public class SaleItemImageService {
                 .filter(img -> !requestedOrders.contains(img.getImageViewOrder()))
                 .toList();
 
+        // Determine current max order from existing images
+        int maxOrder = existingImages.stream()
+                .map(SaleItemImage::getImageViewOrder)
+                .max(Integer::compareTo)
+                .orElse(0);
+
+        // Keep a running counter for new files
+        int nextOrder = maxOrder + 1;
+
         for (SaleItemImageRequestDTO imageInfo : imagesInfo) {
             SaleItemImage imageEntity = existingImages.stream()
                     .filter(img -> img.getFileName().equals(imageInfo.getFileName()))
@@ -138,7 +147,6 @@ public class SaleItemImageService {
                 isNew = true;
             }
 
-            // Always update the order
             if (imageInfo.getOrder() == null && !isNew) {
                 throw new IllegalArgumentException("Image order must not be null.");
             }
@@ -149,10 +157,10 @@ public class SaleItemImageService {
                     fileService.removeFile(imageEntity.getFileName());
                 }
 
-                Integer orderNumber;
+                int orderNumber;
                 if (isNew) {
-                    orderNumber = existingImages.size() + 1;
-                    imageEntity.setImageViewOrder(imageInfo.getOrder());
+                    orderNumber = nextOrder++;  // increment for each new file
+                    imageEntity.setImageViewOrder(orderNumber);
                 } else {
                     orderNumber = imageInfo.getOrder();
                     imageEntity.setImageViewOrder(orderNumber);
@@ -170,7 +178,6 @@ public class SaleItemImageService {
 
                 imageEntity.setFileName(newFileName);
             } else if (imageEntity.getFileName() == null) {
-                // No new file provided and no existing filename = invalid
                 throw new IllegalArgumentException("Image file must not be null for a new image.");
             } else {
                 imageEntity.setImageViewOrder(imageInfo.getOrder());

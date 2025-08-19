@@ -16,8 +16,6 @@ import tt2.int221.backend.repositories.SaleItemRepository;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -59,6 +57,7 @@ public class SaleItemImageService {
             SaleItemImage saleItemImage = new SaleItemImage();
             saleItemImage.setSaleItem(createdSaleItem);
             saleItemImage.setImageViewOrder(viewOrder);
+            saleItemImage.setStatus("ONLINE");
             saleItemImage.setFileName(savedFile);
 
             createdSaleItem.getSaleItemImages().add(saleItemImage);
@@ -89,23 +88,14 @@ public class SaleItemImageService {
 
         List<SaleItemImage> existingImages = getImagesBySaleItem(editedSaleItem.getId());
 
-        Set<Integer> requestedOrders = imagesInfo.stream()
-                .map(SaleItemImageRequestDTO::getOrder)
-                .collect(Collectors.toSet());
-
-        // Collect existing image that not on longer in request
-        List<SaleItemImage> imagesToRemove = existingImages.stream()
-                .filter(img -> !requestedOrders.contains(img.getImageViewOrder()))
-                .toList();
-
         for (SaleItemImageRequestDTO imageInfo : imagesInfo) {
-            // First try to find by filename
+
             SaleItemImage imageEntity = existingImages.stream()
                     .filter(img -> img.getFileName().equals(imageInfo.getFileName()))
                     .findFirst()
                     .orElse(null);
 
-            // If not found by filename, try by order (in case of replacement)
+            // If not found by filename, try by order (replacement scenario)
             if (imageEntity == null) {
                 imageEntity = existingImages.stream()
                         .filter(img -> Objects.equals(img.getImageViewOrder(), imageInfo.getOrder()))
@@ -114,8 +104,7 @@ public class SaleItemImageService {
             }
 
             boolean isNew = false;
-
-            if (imageEntity == null) {
+            if (imageEntity == null && imageInfo.getStatus().equals("NEW")) {
                 if (existingImages.size() >= 4) {
                     throw new IllegalStateException("Cannot add more than 4 images to a sale item.");
                 }
@@ -128,36 +117,64 @@ public class SaleItemImageService {
                 throw new IllegalArgumentException("Image order must not be null.");
             }
 
-            // Handle file upload or reuse existing file
-            if (imageInfo.getImageFile() != null && !imageInfo.getImageFile().isEmpty()) {
-                if (imageEntity.getFileName() != null) {
-                    fileService.removeFile(imageEntity.getFileName());
-                }
+            switch (imageInfo.getStatus()) {
+                case "ONLINE":
+                    if (imageEntity != null) {
+                        imageEntity.setImageViewOrder(imageInfo.getOrder());
+                        imageEntity.setStatus("ONLINE");
+                        saleItemImageRepository.save(imageEntity);
+                    }
+                    break;
 
-                int orderNumber = imageInfo.getOrder();
-                imageEntity.setImageViewOrder(orderNumber);
+                case "DELETE":
+                    if (imageEntity != null) {
+                        fileService.removeFile(imageEntity.getFileName());
+                        saleItemImageRepository.delete(imageEntity);
+                        existingImages.remove(imageEntity);
+                    }
+                    continue;
 
-                String customFileName = fileService.buildCustomFileName(
-                        editedSaleItem.getId(),
-                        orderNumber,
-                        imageInfo.getImageFile());
+                case "MOVE":
+                    if (imageEntity != null) {
+                        imageEntity.setImageViewOrder(imageInfo.getOrder());
+                        imageEntity.setStatus("ONLINE");
+                        saleItemImageRepository.save(imageEntity);
+                    }
+                    break;
 
-                String newFileName = fileService.updateImage(
-                        imageInfo.getFileName(),
-                        imageInfo.getImageFile(),
-                        customFileName);
+                case "NEW":
+                    if (imageInfo.getOrder() == null) {
+                        throw new IllegalArgumentException("Order must not be null for a new image.");
+                    }
 
-                imageEntity.setFileName(newFileName);
-            } else if (imageEntity.getFileName() == null) {
-                throw new IllegalArgumentException("Image file must not be null for a new image.");
-            } else {
-                imageEntity.setImageViewOrder(imageInfo.getOrder());
+                    if (imageInfo.getImageFile() == null || imageInfo.getImageFile().isEmpty()) {
+                        throw new IllegalArgumentException("Image file must not be null for a new image.");
+                    }
+
+                    SaleItemImage newEntity = new SaleItemImage();
+                    newEntity.setSaleItem(editedSaleItem);
+                    newEntity.setImageViewOrder(imageInfo.getOrder());
+
+                    String customFileName = fileService.buildCustomFileName(
+                            editedSaleItem.getId(),
+                            imageInfo.getOrder(),
+                            imageInfo.getImageFile());
+
+                    String newFileName = fileService.updateImage(
+                            imageInfo.getFileName(),
+                            imageInfo.getImageFile(),
+                            customFileName);
+
+                    newEntity.setFileName(newFileName);
+                    newEntity.setStatus("ONLINE");
+
+                    saleItemImageRepository.save(newEntity);
+
+                    break;
+
+                default:
+                    throw new IllegalArgumentException("Unsupported status: " + imageInfo.getStatus());
             }
-            saleItemImageRepository.save(imageEntity);
-        }
-        for (SaleItemImage image : imagesToRemove) {
-            fileService.removeFile(image.getFileName());
-            saleItemImageRepository.delete(image);
         }
     }
 

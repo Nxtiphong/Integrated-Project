@@ -224,8 +224,7 @@ const saveSaleItem = async () => {
 const cancel = () => {
   product.value = { brand: '', model: '', price: null, description: '', ramGb: null, screenSizeInch: null, storageGb: null, color: '', quantity: null }
   Object.keys(errors.value).forEach((k) => (errors.value[k] = ''))
-  alertMessage.value = { type: 'info', message: 'Action cancelled', visible: true, duration: 500, countdownVisible: false }
-  setTimeout(() => { router.push('/sale-items') }, 1000)
+  router.push('/sale-items')
 }
 
 onMounted(async () => {

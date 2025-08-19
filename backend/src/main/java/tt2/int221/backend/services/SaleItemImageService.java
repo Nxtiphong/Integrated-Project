@@ -118,7 +118,7 @@ public class SaleItemImageService {
             }
 
             switch (imageInfo.getStatus()) {
-                case "ONLINE":
+                case "ONLINE", "MOVE":
                     if (imageEntity != null) {
                         imageEntity.setImageViewOrder(imageInfo.getOrder());
                         imageEntity.setStatus("ONLINE");
@@ -133,14 +133,6 @@ public class SaleItemImageService {
                         existingImages.remove(imageEntity);
                     }
                     continue;
-
-                case "MOVE":
-                    if (imageEntity != null) {
-                        imageEntity.setImageViewOrder(imageInfo.getOrder());
-                        imageEntity.setStatus("ONLINE");
-                        saleItemImageRepository.save(imageEntity);
-                    }
-                    break;
 
                 case "NEW":
                     if (imageInfo.getOrder() == null) {

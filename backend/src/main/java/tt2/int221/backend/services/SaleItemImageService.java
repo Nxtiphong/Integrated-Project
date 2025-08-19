@@ -66,30 +66,6 @@ public class SaleItemImageService {
         }
     }
 
-    public void deleteImage(Integer saleItemId, String fileName) {
-        if (!saleItemImageRepository.existsBySaleItemId(saleItemId)) {
-            throw new NotfoundException("Not found images with sale item id: " + saleItemId);
-        }
-        List<SaleItemImage> images = getImagesBySaleItem(saleItemId);
-
-        SaleItemImage targetImage = images.stream()
-                .filter(img -> img.getFileName().equals(fileName))
-                .findFirst()
-                .orElseThrow(() -> new NotfoundException("Image not found with file name: " + fileName));
-
-        int deleteOrder = targetImage.getImageViewOrder();
-
-        saleItemImageRepository.delete(targetImage);
-        fileService.removeFile(targetImage.getFileName());
-
-        for (var image : images) {
-            if (image.getImageViewOrder() > deleteOrder) {
-                image.setImageViewOrder(image.getImageViewOrder() - 1);
-                saleItemImageRepository.save(image);
-            }
-        }
-    }
-
     public void deleteImages(Integer saleItemId) {
         List<SaleItemImage> images = getImagesBySaleItem(saleItemId);
 

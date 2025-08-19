@@ -39,7 +39,7 @@ public class FileService {
         }
     }
 
-    private boolean isValidContentType(MultipartFile file) throws IOException {
+    private boolean isValidContentType(MultipartFile file) {
         String contentType = file.getContentType();
         List<String> supportedContentTypes = Arrays.stream(fileStorageProperties.getSupportFileTypes()).toList();
         return supportedContentTypes.contains(contentType);
@@ -103,9 +103,8 @@ public class FileService {
         String extension = "";
         String originalName = file.getOriginalFilename();
         if (originalName != null && originalName.contains(".")) {
-            extension = originalName.substring(originalName.lastIndexOf(".")); // keep .jpg, .png etc.
+            extension = originalName.substring(originalName.lastIndexOf("."));
         }
         return saleItemId + "." + viewOrder + extension;
     }
-
 }

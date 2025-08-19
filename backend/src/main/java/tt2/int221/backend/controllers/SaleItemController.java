@@ -153,13 +153,6 @@ public class SaleItemController {
         return ResponseEntity.status(204).build();
     }
 
-    @Operation(summary = "Delete individual image", description = "Return status 204 if delete successfully")
-    @DeleteMapping("/v2/sale-items/images")
-    public ResponseEntity<Void> deleteSaleItemWithImage(@RequestParam String fileName, @RequestParam Integer id) {
-        imageService.deleteImage(id, fileName);
-        return ResponseEntity.status(204).build();
-    }
-
     @Operation(summary = "Update Sale item with Image", description = "Return a updated sale item with image")
     @PutMapping("/v2/sale-items/{id}")
     public ResponseEntity<DetailDTO> updateSaleItemWithImage(@PathVariable Integer id,

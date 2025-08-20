@@ -11,13 +11,7 @@ const params = route.params.id
 const saleStore = useSaleItemStore()
 const router = useRouter()
 
-const alertMessage = ref({
-  type: '',
-  message: '',
-  visible: false,
-  duration: 3000,
-  countdownVisible: false,
-})
+const alertMessage = ref({ type: '', message: '', visible: false, duration: 3000, countdownVisible: false })
 
 const product = ref({
   brand: '',
@@ -48,7 +42,7 @@ const saleItemImages = ref([])
 const imagesPayload = ref([])
 const onImagesChanged = (payload) => {
   imagesPayload.value = payload || []
-  if (params) isEdit.value = true
+  if (params) isEditImages.value = true
 }
 
 const validateField = (field, value) => {
@@ -96,8 +90,9 @@ const validateField = (field, value) => {
 }
 
 const onChange = (field) => { errors.value[field] = validateField(field, product.value[field]) }
-const onInput = (field) => { if (errors.value[field]) errors.value[field] = '' }
+const onInput  = (field) => { if (errors.value[field]) errors.value[field] = '' }
 const hasErrors = computed(() => Object.values(errors.value).some((e) => e))
+
 const validation = (p) => {
   Object.keys(errors.value).forEach((field) => {
     errors.value[field] = validateField(field, p[field])
@@ -106,7 +101,10 @@ const validation = (p) => {
 }
 
 const originalProduct = ref(null)
-const isEdit = ref(false)
+
+const isEditProduct = ref(false)
+const isEditImages  = ref(false)
+
 const normalizeProduct = (p) => ({
   brand: typeof p.brand === 'object' ? p.brand?.id : p.brand,
   model: String(p.model ?? ''),
@@ -122,12 +120,12 @@ const isEqual = (a, b) =>
   JSON.stringify(normalizeProduct(a, b)) === JSON.stringify(normalizeProduct(b, b))
 
 watch(product, (v) => {
-  if (originalProduct.value) isEdit.value = !isEqual(v, originalProduct.value)
+  if (originalProduct.value) isEditProduct.value = !isEqual(v, originalProduct.value)
 }, { deep: true })
 
 const isSaveDisabled = computed(() => {
   if (hasErrors.value) return true
-  if (params) return !isEdit.value
+  if (params) return !(isEditProduct.value || isEditImages.value)
   return (
     !product.value.brand ||
     !product.value.model ||
@@ -148,6 +146,7 @@ const saveSaleItem = async () => {
   if (!validation(product.value)) return
 
   if (!params) {
+    // CREATE
     const fd = new FormData()
     fd.append('model', String(product.value.model ?? ''))
     fd.append('description', String(product.value.description ?? ''))
@@ -159,15 +158,15 @@ const saveSaleItem = async () => {
     fd.append('color', String(product.value.color ?? ''))
     if (product.value.brand?.id != null) fd.append('brand.id', String(product.value.brand.id))
 
+    // สร้างใช้รูปแบบเก่า images[] + imageViewOrders[] (ตาม BE สร้าง)
     const ordered = [...imagesPayload.value]
+      .filter(x => x.status === 'NEW' && x.imageFile)
       .sort((a, b) => a.order - b.order)
-      .map((x, idx) => ({ file: x.file, order: idx }))
+      .map((x, idx) => ({ file: x.imageFile, order: idx })) // 0..3 ต่อเนื่อง
 
     ordered.forEach(({ file, order }) => {
-      if (file) {
-        fd.append('images', file, file.name)
-        fd.append('imageViewOrders', String(order))
-      }
+      fd.append('images', file, file.name)
+      fd.append('imageViewOrders', String(order))
     })
 
     try {
@@ -178,12 +177,12 @@ const saveSaleItem = async () => {
         return
       }
       const detail = await res.json()
-      saleStore.created = true
       router.push(`/sale-items/${detail.id}`)
-    } catch (err) {
+    } catch {
       alertMessage.value = { type: 'error', message: 'Network error: cannot create sale item', visible: true, duration: 3000 }
     }
   } else {
+    // UPDATE + status
     try {
       const fd = new FormData()
       if (product.value.brand?.id != null) fd.append('saleItem.brand.id', String(product.value.brand.id))
@@ -196,15 +195,19 @@ const saveSaleItem = async () => {
       fd.append('saleItem.storageGb', String(product.value.storageGb ?? ''))
       fd.append('saleItem.color', String(product.value.color ?? ''))
 
+      // imagesPayload จาก ProductImage: [{status, order(1-based), fileName?, imageFile?}]
       const list = [...imagesPayload.value]
-        .filter(x => x && (x.file || x.fileName))
+        .filter(x => x && (x.status === 'DELETE' || x.imageFile || x.fileName))
         .sort((a, b) => a.order - b.order)
 
       list.forEach((info, i) => {
         const base = `imageInfos[${i}]`
-        fd.append(`${base}.order`, String(info.order))
-        if (info.file) fd.append(`${base}.imageFile`, info.file, info.file.name)
-        if (info.fileName) fd.append(`${base}.fileName`, info.fileName)
+        fd.append(`${base}.status`, info.status)
+        fd.append(`${base}.order`,  String(info.order))
+        if (info.fileName)  fd.append(`${base}.fileName`, info.fileName)
+        if (info.status === 'NEW' && info.imageFile) {
+          fd.append(`${base}.imageFile`, info.imageFile, info.imageFile.name)
+        }
       })
 
       const res = await fetch(`${apiBase}/v2/sale-items/${params}`, { method: 'PUT', body: fd })
@@ -213,9 +216,12 @@ const saveSaleItem = async () => {
         alertMessage.value = { type: 'error', message: `Update failed: ${msg}`, visible: true, duration: 3000 }
         return
       }
-      saleStore.updated = true
+
+      isEditProduct.value = false
+      isEditImages.value = false
+
       router.push(`/sale-items/${params}`)
-    } catch (err) {
+    } catch {
       alertMessage.value = { type: 'error', message: 'Network error: cannot update sale item', visible: true, duration: 3000 }
     }
   }
@@ -234,7 +240,6 @@ onMounted(async () => {
   if (params) {
     const item = await saleStore.fetchSaleItemById(params)
     if (!item) {
-      saleStore.noExist = true
       router.push('/non-existing-path')
       return
     }
@@ -255,6 +260,9 @@ onMounted(async () => {
     }
     product.value = loadedProduct
     originalProduct.value = JSON.parse(JSON.stringify(loadedProduct))
+
+    isEditProduct.value = false
+    isEditImages.value  = false
   }
 })
 </script>

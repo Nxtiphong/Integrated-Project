@@ -8,6 +8,7 @@ import Alert from '@/components/share/Alert.vue';
 import { useSaleItemStore } from '@/stores/useSaleItemStore';
 import { useGalleryStateStore } from '@/stores/useGalleryStateStore';
 import { httpRequest } from '@/utils/fetchUtils';
+import FilterBar from '@/components/filter/FilterBar.vue';
 
 const saleStore = useSaleItemStore();
 const galleryState = useGalleryStateStore();
@@ -39,13 +40,28 @@ const showAlert = (message, type = 'success') => {
 };
 
 const fetchSaleItems = async (params = {}) => {
-  const { page = 1, size = 10, filterBrands = [], sortField = '', sortDirection = 'asc' } = params;
+  const {
+    page = 1,
+    size = 10,
+    filterBrands = [],
+    minPrice = null,
+    maxPrice = null,
+    filterStorageSize = [],
+    sortField = '',
+    sortDirection = 'asc',
+  } = params;
 
   const urlParams = new URLSearchParams();
   urlParams.append('page', page - 1);
   urlParams.append('size', size);
 
+  if (minPrice !== null) urlParams.append('filterPriceLower', minPrice);
+  if (maxPrice !== null) urlParams.append('filterPriceUpper', maxPrice);
+
   filterBrands.forEach((brand) => urlParams.append('filterBrands', brand));
+  filterStorageSize
+    .filter((size) => size !== null && size !== undefined)
+    .forEach((size) => urlParams.append('filterStorages', size));
 
   if (sortField) urlParams.append('sortField', sortField);
   if (sortDirection !== 'none') urlParams.append('sortDirection', sortDirection);
@@ -64,7 +80,10 @@ const loadSaleItems = async () => {
       size: galleryState.pageSize,
       sortField: galleryState.sortField,
       sortDirection: galleryState.sortDirection,
-      filterBrands: galleryState.filterLists,
+      filterBrands: galleryState.filterBrandLists,
+      minPrice: galleryState.minPrice,
+      maxPrice: galleryState.maxPrice,
+      filterStorageSize: galleryState.filterStorageSize,
     });
 
     galleryState.totalPages = items.totalPages;
@@ -170,7 +189,7 @@ onMounted(initializeComponent);
         <div
           class="w-full transition-all duration-300 flex flex-col lg:flex-row items-center justify-between gap-4 lg:gap-8"
         >
-          <BrandFilter @filter-sale-items-by-brands="handleFilter" />
+          <FilterBar @filter-sale-items="handleFilter" />
           <div class="w-full flex items-center lg:justify-end lg:w-full">
             <SortComponent @sortType="handleSortChange" @pageSize="handlePageSizeChange" />
           </div>
@@ -204,7 +223,7 @@ onMounted(initializeComponent);
 
           <div
             v-else-if="showNoItems"
-            class="font-medium text-primary flex justify-center items-center min-h-[300px]"
+            class="font-medium text-primary flex justify-center items-center min-h-screen"
           >
             <p class="text-center text-lg">! No sale items</p>
           </div>

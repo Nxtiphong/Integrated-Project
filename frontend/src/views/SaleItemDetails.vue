@@ -25,6 +25,7 @@ const fetchProductDetail = async (id) => {
   try {
     const res = await httpRequest('GET', `v1/sale-items/${id}`);
     productDetail.value = res.data;
+    console.log('Product Detail:', productDetail.value);
   } catch (error) {
     productDetail.value = null;
     console.error('Error:', error);
@@ -115,10 +116,15 @@ onMounted(() => {
         <li class="font-bold">{{ productDetail.model }}</li>
       </ul>
     </div>
+
     <div
       class="py-6 lg:py-10 self-stretch flex flex-col lg:flex-row items-center lg:justify-start gap-4 md:gap-6 lg:gap-12 itbms-row"
     >
-      <ProductImage :isDetailPage="true" />
+      <ProductImage
+        :isDetailPage="true"
+        :saleItemImages="productDetail.saleItemImages"
+      />
+
       <div class="self-stretch flex-1 flex flex-col justify-start items-start gap-2 lg:gap-4 mt-8">
         <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold leading-10 itbms-model">
           {{ productDetail.model }}
@@ -139,10 +145,13 @@ onMounted(() => {
           </span>
           <span class="text-lg itbms-quantity-unit">units</span>
         </p>
+
         <ProductSpec :product="productDetail" />
+
         <p class="text-sm md:text-lg lg:text-xl text-secondary-accent itbms-description">
           {{ productDetail.description }}
         </p>
+
         <div class="mt-4">
           <div class="flex flex-col md:flex-row gap-2">
             <div class="itbms-edit-button">
@@ -155,25 +164,24 @@ onMounted(() => {
         </div>
       </div>
     </div>
-    <div class="itbms-message">
-      <Alert
-        :show="alertMessage.visible"
-        :type="alertMessage.type"
-        :message="alertMessage.message"
-        @update:show="alertMessage.visible = $event"
-        :duration="alertMessage.duration"
-      />
-    </div>
 
-    <div class="itbms-message">
-      <DeleteModal
-        v-model="showDeleteModal"
-        :title="`Delete ${productDetail.model}`"
-        :message="`Do you want to delete this sale item?`"
-        @confirm="handleDelete"
-        @cancel="cancelModal"
-      />
-    </div>
+    <Alert
+      :show="alertMessage.visible"
+      :type="alertMessage.type"
+      :message="alertMessage.message"
+      @update:show="alertMessage.visible = $event"
+      :duration="alertMessage.duration"
+      class="itbms-message"
+    />
+
+    <DeleteModal
+      v-model="showDeleteModal"
+      :title="`Delete ${productDetail.model}`"
+      :message="`Do you want to delete this sale item?`"
+      @confirm="handleDelete"
+      @cancel="cancelModal"
+      class="itbms-message"
+    />
   </div>
 
   <div

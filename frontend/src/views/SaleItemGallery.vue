@@ -92,7 +92,7 @@ const handlePageChange = async (newPage) => {
 const handleGoToLastPage = async () => {
   try {
     isLoading.value = true;
-     await loadSaleItems();
+    await loadSaleItems();
     galleryState.page = galleryState.totalPages;
     await loadSaleItems();
   } catch (error) {

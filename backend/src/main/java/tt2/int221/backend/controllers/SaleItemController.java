@@ -35,12 +35,12 @@ public class SaleItemController {
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(defaultValue = "id") String sortField,
             @RequestParam(defaultValue = "") List<String> filterBrands,
-            @RequestParam(required = false) Integer FilterPriceLower,
-            @RequestParam(required = false) Integer FilterPriceUpper,
-            @RequestParam(required = false) List<Integer> FilterStorages,
+            @RequestParam(required = false) Integer filterPriceLower,
+            @RequestParam(required = false) Integer filterPriceUpper,
+            @RequestParam(required = false) List<Integer> filterStorages,
             @RequestParam(defaultValue = "asc") String sortDirection
     ) {
-        Page<SaleItem> saleItems = service.findAll(page, size, sortField, filterBrands, FilterPriceLower, FilterPriceUpper, FilterStorages, sortDirection);
+        Page<SaleItem> saleItems = service.findAll(page, size, sortField, filterBrands, filterPriceLower, filterPriceUpper, filterStorages, sortDirection);
         List<GalleryDTO> galleryDTOs = saleItems.getContent().stream()
                 .map(saleItem -> modelMapper.map(saleItem, GalleryDTO.class))
                 .toList();

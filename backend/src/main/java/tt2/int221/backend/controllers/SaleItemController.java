@@ -45,9 +45,10 @@ public class SaleItemController {
             @RequestParam(required = false) Integer filterPriceLower,
             @RequestParam(required = false) Integer filterPriceUpper,
             @RequestParam(required = false) List<Integer> filterStorages,
+            @RequestParam(required = false) String searchKeyword,
             @RequestParam(defaultValue = "asc") String sortDirection
     ) {
-        Page<SaleItem> saleItems = service.findAll(page, size, sortField, filterBrands, filterPriceLower, filterPriceUpper, filterStorages, sortDirection);
+        Page<SaleItem> saleItems = service.findAll(page, size, sortField, filterBrands, filterPriceLower, filterPriceUpper, filterStorages, searchKeyword, sortDirection);
         List<GalleryDTO> galleryDTOs = saleItems.getContent().stream()
                 .map(saleItem -> modelMapper.map(saleItem, GalleryDTO.class))
                 .toList();

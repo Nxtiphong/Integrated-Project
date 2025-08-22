@@ -19,8 +19,6 @@ public interface SaleItemRepository extends JpaRepository<SaleItem, Integer> {
 
     List<SaleItem> findAllByBrandId(Integer brandId);
 
-    Page<SaleItem> findByBrandNameIn(List<String> brandNames, Pageable pageable);
-
     @Query("SELECT s FROM SaleItem s " +
             "JOIN s.brand b " +
             "WHERE (:brandNames IS NULL OR b.name IN :brandNames) " +
@@ -33,6 +31,21 @@ public interface SaleItemRepository extends JpaRepository<SaleItem, Integer> {
                                @Param("storageGb") List<Integer> storageGb,
                                Pageable pageable);
 
+    @Query("SELECT s FROM SaleItem s " +
+            "JOIN s.brand b " +
+            "WHERE (:brandNames IS NULL OR b.name IN :brandNames) " +
+            "AND (:filterPriceLower IS NULL OR s.price >= :filterPriceLower) " +
+            "AND (:filterPriceUpper IS NULL OR s.price <= :filterPriceUpper) " +
+            "AND (:storageGb IS NULL OR s.storageGb IN :storageGb)" +
+            "AND (:searchKeyword IS NULL OR s.model LIKE CONCAT('%', :searchKeyword, '%')" +
+            "     OR s.description LIKE CONCAT('%', :searchKeyword, '%') " +
+            "     OR s.color LIKE CONCAT('%', :searchKeyword, '%')) ")
+    Page<SaleItem> filterSaleItems(@Param("brandNames") List<String> brandNames,
+                                   @Param("filterPriceLower") Integer filterPriceLower,
+                                   @Param("filterPriceUpper") Integer filterPriceUpper,
+                                   @Param("storageGb") List<Integer> storageGb,
+                                   @Param("searchKeyword") String searchKeyword,
+                                   Pageable pageable);
 }
 
 

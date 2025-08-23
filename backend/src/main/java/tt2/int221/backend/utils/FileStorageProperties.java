@@ -11,5 +11,6 @@ import org.springframework.stereotype.Component;
 @Setter
 public class FileStorageProperties {
     private String uploadDir;
+    private String userUploadDir;
     private String[] supportFileTypes;
 }

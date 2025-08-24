@@ -143,7 +143,7 @@ public class SaleItemService {
         saleItemRepository.deleteById(id);
     }
 
-    public Resource loadFile(String fileName) throws IOException {
+    public Resource loadFile(String fileName) {
         return imageService.loadFile(fileName);
     }
 }

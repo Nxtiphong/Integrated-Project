@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface SaleItemImageRepository extends JpaRepository<SaleItemImage, Integer> {
     List<SaleItemImage> findBySaleItemIdOrderByImageViewOrderAsc(Integer saleItemId);
+
+    SaleItemImage findByFileName(String fileName);
 }

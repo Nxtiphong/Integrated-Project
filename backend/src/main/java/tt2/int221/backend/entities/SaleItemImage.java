@@ -25,6 +25,11 @@ public class SaleItemImage {
     @Column(name = "fileName", nullable = false)
     private String fileName;
 
+    @Size(max = 255)
+    @NotNull
+    @Column(name = "actualFileName", nullable = false)
+    private String actualFileName;
+
     @Size(max = 80)
     @NotNull
     @Column(name = "status", nullable = false, length = 80)

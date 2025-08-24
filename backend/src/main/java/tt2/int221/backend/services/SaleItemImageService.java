@@ -51,14 +51,15 @@ public class SaleItemImageService {
             );
 
             // Save file physically
-            String savedFile = fileService.saveFile(files.get(i), customFileName);
+            fileService.saveFile(files.get(i), files.get(i).getOriginalFilename(), createdSaleItem.getId());
 
             // Save DB
             SaleItemImage saleItemImage = new SaleItemImage();
             saleItemImage.setSaleItem(createdSaleItem);
             saleItemImage.setImageViewOrder(viewOrder);
+            saleItemImage.setActualFileName(files.get(i).getOriginalFilename());
             saleItemImage.setStatus("ONLINE");
-            saleItemImage.setFileName(savedFile);
+            saleItemImage.setFileName(customFileName);
 
             createdSaleItem.getSaleItemImages().add(saleItemImage);
             saleItemImageRepository.save(saleItemImage);
@@ -69,7 +70,7 @@ public class SaleItemImageService {
         List<SaleItemImage> images = getImagesBySaleItem(saleItemId);
 
         for (var image : images) {
-            fileService.removeFile(image.getFileName());
+            fileService.removeFile(image.getActualFileName(), saleItemId);
         }
 
         saleItemImageRepository.deleteById(saleItemId);
@@ -80,7 +81,7 @@ public class SaleItemImageService {
         if (imagesInfo == null || imagesInfo.isEmpty()) {
             List<SaleItemImage> existingImages = getImagesBySaleItem(editedSaleItem.getId());
             for (SaleItemImage saleItemImage : existingImages) {
-                fileService.removeFile(saleItemImage.getFileName());
+                fileService.removeFile(saleItemImage.getFileName(), editedSaleItem.getId());
                 saleItemImageRepository.delete(saleItemImage);
             }
             return;
@@ -118,7 +119,7 @@ public class SaleItemImageService {
             }
 
             switch (imageInfo.getStatus()) {
-                case "ONLINE", "MOVE":
+                case "ONLINE":
                     if (imageEntity != null) {
                         imageEntity.setImageViewOrder(imageInfo.getOrder());
                         imageEntity.setStatus("ONLINE");
@@ -128,11 +129,26 @@ public class SaleItemImageService {
 
                 case "DELETE":
                     if (imageEntity != null) {
-                        fileService.removeFile(imageEntity.getFileName());
+                        fileService.removeFile(imageEntity.getActualFileName(), editedSaleItem.getId());
                         saleItemImageRepository.delete(imageEntity);
                         existingImages.remove(imageEntity);
                     }
                     continue;
+
+                case "MOVE":
+                    if (imageEntity != null) {
+
+                        String customFileName = fileService.buildCustomFileName(
+                                editedSaleItem.getId(),
+                                imageInfo.getOrder(),
+                                imageInfo.getFileName());
+
+                        imageEntity.setFileName(customFileName);
+                        imageEntity.setImageViewOrder(imageInfo.getOrder());
+                        imageEntity.setStatus("ONLINE");
+                        saleItemImageRepository.save(imageEntity);
+                    }
+                    break;
 
                 case "NEW":
                     if (imageInfo.getOrder() == null) {
@@ -152,12 +168,13 @@ public class SaleItemImageService {
                             imageInfo.getOrder(),
                             imageInfo.getImageFile());
 
-                    String newFileName = fileService.updateImage(
-                            imageInfo.getFileName(),
+                    fileService.updateImage(
+                            imageInfo.getImageFile().getOriginalFilename(),
                             imageInfo.getImageFile(),
-                            customFileName);
+                            editedSaleItem.getId());
 
-                    newEntity.setFileName(newFileName);
+                    newEntity.setFileName(customFileName);
+                    newEntity.setActualFileName(imageInfo.getImageFile().getOriginalFilename());
                     newEntity.setStatus("ONLINE");
 
                     saleItemImageRepository.save(newEntity);
@@ -171,7 +188,8 @@ public class SaleItemImageService {
     }
 
     public Resource loadFile(String fileName) {
-        return fileService.loadFile(fileName);
+        SaleItemImage existFile = saleItemImageRepository.findByFileName(fileName);
+        return fileService.loadFile(existFile.getSaleItem().getId() + "/" + existFile.getActualFileName());
     }
 }
 

@@ -45,7 +45,7 @@ public class FileService {
         return supportedContentTypes.contains(contentType);
     }
 
-    public String saveFile(MultipartFile file, String fileName) throws IOException {
+    public String saveFile(MultipartFile file, String fileName, Integer saleItemId) throws IOException {
         if (!isValidContentType(file)) {
             throw new IOException("Invalid content type: " + file.getOriginalFilename());
         }
@@ -55,9 +55,14 @@ public class FileService {
         }
 
         try {
-            Path targetFile = this.fileStoragePath.resolve(fileName);
+            Path saleItemDir = this.fileStoragePath.resolve(String.valueOf(saleItemId));
+            Files.createDirectories(saleItemDir);
+
+            Path targetFile = saleItemDir.resolve(fileName);
+
             Files.copy(file.getInputStream(), targetFile, StandardCopyOption.REPLACE_EXISTING);
-            return fileName; // actual stored name
+
+            return saleItemId + "/" + fileName; // actual stored name
         } catch (IOException e) {
             throw new RuntimeException("Could not upload file: " + fileName, e);
         }
@@ -77,26 +82,34 @@ public class FileService {
         }
     }
 
-    public void removeFile(String fileName) {
+    public void removeFile(String fileName, Integer saleItemId) {
         try {
-            Path filePath = this.fileStoragePath.resolve(fileName).normalize();
+            Path saleItemDir = this.fileStoragePath.resolve(String.valueOf(saleItemId));
+
+            Path filePath = saleItemDir.resolve(fileName).normalize();
+
             if (!Files.exists(filePath)) {
-                throw new NotfoundException("File not found: " + fileName);
+                throw new NotfoundException("File not found: " + saleItemId + "/" + fileName);
             }
             Files.delete(filePath);
+
+            if (Files.isDirectory(saleItemDir) && Files.list(saleItemDir).findAny().isEmpty()) {
+                Files.delete(saleItemDir); // delete dir if empty
+            }
+
         } catch (IOException e) {
-            throw new RuntimeException("Could not remove file: " + fileName, e);
+            throw new RuntimeException("Could not remove file: " + saleItemId + "/" + fileName, e);
         }
     }
 
-    public String updateImage(String oldFileName, MultipartFile newFile, String customFileName) throws IOException {
+    public String updateImage(String oldFileName, MultipartFile newFile, Integer saleItemId) throws IOException {
         if (oldFileName != null && !oldFileName.isBlank()) {
             Path oldFilePath = this.fileStoragePath.resolve(oldFileName).normalize();
             if (Files.exists(oldFilePath)) {
                 Files.delete(oldFilePath);
             }
         }
-        return saveFile(newFile, customFileName);
+        return saveFile(newFile, newFile.getOriginalFilename(), saleItemId);
     }
 
     public String buildCustomFileName(Integer saleItemId, Integer viewOrder, MultipartFile file) {
@@ -104,6 +117,14 @@ public class FileService {
         String originalName = file.getOriginalFilename();
         if (originalName != null && originalName.contains(".")) {
             extension = originalName.substring(originalName.lastIndexOf("."));
+        }
+        return saleItemId + "." + viewOrder + extension;
+    }
+
+    public String buildCustomFileName(Integer saleItemId, Integer viewOrder, String existingFileName) {
+        String extension = "";
+        if (existingFileName != null && existingFileName.contains(".")) {
+            extension = existingFileName.substring(existingFileName.lastIndexOf("."));
         }
         return saleItemId + "." + viewOrder + extension;
     }

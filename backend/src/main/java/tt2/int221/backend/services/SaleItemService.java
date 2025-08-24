@@ -44,7 +44,7 @@ public class SaleItemService {
 
     public Page<SaleItem> findAll(int page, int size, String sortField,
                                   List<String> filterBrands, Integer filterPriceLower, Integer filterPriceUpper,
-                                  List<Integer> filterStorages, String sortDirection) {
+                                  List<Integer> filterStorages, String searchKeyword, String sortDirection) {
 
         Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField)
                 .and(Sort.by(Sort.Direction.ASC, "id"));
@@ -53,7 +53,7 @@ public class SaleItemService {
         List<Integer> storageFilter = (filterStorages == null || filterStorages.isEmpty()) ? null : filterStorages;
         List<String> brandsFilter = (filterBrands == null || filterBrands.isEmpty()) ? null : filterBrands;
 
-        return saleItemRepository.filterItems(brandsFilter, filterPriceLower, filterPriceUpper, storageFilter, pageable);
+        return saleItemRepository.filterSaleItems(brandsFilter, filterPriceLower, filterPriceUpper, storageFilter, searchKeyword, pageable);
     }
 
     public List<SaleItem> getAllSaleItemsOrderByCreatedOnAscV2() {

@@ -131,3 +131,16 @@ VALUES
 (83, 10, 'Find X5 Lite', 'Previous gen lite', 8, 14850, 6.43, 8, 128, 'Starry Black'),
 (84, 10, 'A77', 'Budget friendly', 20, 8250, 6.56, 6, 128, 'Ocean Blue'),
 (85, 10, 'Reno6 Pro', 'Classic premium', 7, 16500, 6.55, 12, 256, 'Arctic Blue');
+
+
+CREATE TABLE saleItem_images (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    fileName VARCHAR(255) NOT NULL,
+    actualFileName VARCHAR(255) NOT NULL,
+    status VARCHAR(80) NOT NULL,
+    imageViewOrder INT NOT NULL,
+    sale_item_id INT NOT NULL,
+    createdOn DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updatedOn DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (sale_item_id) REFERENCES saleItem(id) ON DELETE CASCADE
+);

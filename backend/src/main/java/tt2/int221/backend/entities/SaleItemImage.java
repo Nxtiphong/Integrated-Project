@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -25,6 +24,16 @@ public class SaleItemImage {
     @NotNull
     @Column(name = "fileName", nullable = false)
     private String fileName;
+
+    @Size(max = 255)
+    @NotNull
+    @Column(name = "actualFileName", nullable = false)
+    private String actualFileName;
+
+    @Size(max = 80)
+    @NotNull
+    @Column(name = "status", nullable = false, length = 80)
+    private String status;
 
     @NotNull
     @Column(name = "imageViewOrder", nullable = false)

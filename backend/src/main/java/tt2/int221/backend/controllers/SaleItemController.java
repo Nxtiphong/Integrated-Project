@@ -45,9 +45,10 @@ public class SaleItemController {
             @RequestParam(required = false) Integer filterPriceLower,
             @RequestParam(required = false) Integer filterPriceUpper,
             @RequestParam(required = false) List<Integer> filterStorages,
+            @RequestParam(required = false) String searchKeyword,
             @RequestParam(defaultValue = "asc") String sortDirection
     ) {
-        Page<SaleItem> saleItems = service.findAll(page, size, sortField, filterBrands, filterPriceLower, filterPriceUpper, filterStorages, sortDirection);
+        Page<SaleItem> saleItems = service.findAll(page, size, sortField, filterBrands, filterPriceLower, filterPriceUpper, filterStorages, searchKeyword, sortDirection);
         List<GalleryDTO> galleryDTOs = saleItems.getContent().stream()
                 .map(saleItem -> modelMapper.map(saleItem, GalleryDTO.class))
                 .toList();
@@ -150,13 +151,6 @@ public class SaleItemController {
     @DeleteMapping("/v2/sale-items/{id}")
     public ResponseEntity<Void> deleteSaleItemWithImages(@PathVariable Integer id) {
         service.deleteSaleItemById(id);
-        return ResponseEntity.status(204).build();
-    }
-
-    @Operation(summary = "Delete individual image", description = "Return status 204 if delete successfully")
-    @DeleteMapping("/v2/sale-items/images")
-    public ResponseEntity<Void> deleteSaleItemWithImage(@RequestParam String fileName, @RequestParam Integer id) {
-        imageService.deleteImage(id, fileName);
         return ResponseEntity.status(204).build();
     }
 

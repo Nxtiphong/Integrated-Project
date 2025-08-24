@@ -24,22 +24,63 @@ import java.util.List;
 @Service
 public class FileService {
     private final Path fileStoragePath;
+    private final Path userStoragePath;
     private final FileStorageProperties fileStorageProperties;
 
     @Autowired
     public FileService(FileStorageProperties fileStorageProperties) {
         this.fileStorageProperties = fileStorageProperties;
-        this.fileStoragePath = Paths.get(fileStorageProperties.getUploadDir()).toAbsolutePath().normalize();
+        //sale item
+        this.fileStoragePath = Paths.get(fileStorageProperties.getUploadDir())
+                .toAbsolutePath().normalize();
+        // user id card
+        this.userStoragePath = Paths.get(fileStorageProperties.getUserUploadDir())
+                .toAbsolutePath().normalize();
+
         try {
             if (!Files.exists(this.fileStoragePath)) {
                 Files.createDirectories(this.fileStoragePath);
+            }
+            if (!Files.exists(this.userStoragePath)) {
+                Files.createDirectories(this.userStoragePath);
             }
         } catch (IOException e) {
             throw new RuntimeException("Could not create the directory where the upload files will be uploaded.", e);
         }
     }
 
-    private boolean isValidContentType(MultipartFile file) {
+    public String saveUserFile(MultipartFile file, String fileName) throws IOException {
+        if (!isValidContentType(file)) {
+            throw new IOException("Invalid content type: " + file.getOriginalFilename());
+        }
+        if (fileName.contains("..")) {
+            throw new IOException("Invalid file name: " + fileName);
+        }
+        try {
+            Path targetFile = this.userStoragePath.resolve(fileName);
+            Files.copy(file.getInputStream(), targetFile, StandardCopyOption.REPLACE_EXISTING);
+            return fileName;
+        } catch (IOException e) {
+            throw new RuntimeException("Could not upload user file: " + fileName, e);
+        }
+    }
+
+    public Resource loadUserFile(String fileName) {
+        try {
+            Path filePath = this.userStoragePath.resolve(fileName).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+            if (resource.exists() && resource.isReadable()) {
+                return resource;
+            } else {
+                throw new NotfoundException("User file not found: " + fileName);
+            }
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Could not load user file: " + fileName, e);
+        }
+    }
+
+
+        private boolean isValidContentType(MultipartFile file) throws IOException {
         String contentType = file.getContentType();
         List<String> supportedContentTypes = Arrays.stream(fileStorageProperties.getSupportFileTypes()).toList();
         return supportedContentTypes.contains(contentType);

@@ -8,6 +8,7 @@ import NotFoundPage from '@/components/share/NotFoundPage.vue'
 import SaleItemList from '@/views/SaleItemList.vue'
 import BrandList from '@/views/BrandList.vue'
 import AddBrand from '@/views/AddBrand.vue'
+import RegisterForm from '@/views/RegisterForm.vue'
 
 const router = createRouter({
   history: createWebHistory('/tt2'),
@@ -72,6 +73,11 @@ const router = createRouter({
       name: 'NotFound',
       component: NotFoundPage,
       //   meta: { hideLayout: true } <-- Add this if you want to hide Navbar and Footer
+    },
+    {
+      path: '/register',
+      name: 'RegisterForm',
+      component: RegisterForm,
     }
   ],
   linkActiveClass: "text-black font-semibold"

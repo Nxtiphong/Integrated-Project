@@ -14,9 +14,10 @@ export const useGalleryStateStore = defineStore('saleGalleryState', () => {
    const sortField = ref(saved.sortField || 'id');
    const sortDirection = ref(saved.sortDirection || 'none');
    const pageSize = ref(saved.pageSize || 10);
+   const keywords = ref(saved.keywords || null);
 
    watch(
-      [filterBrandLists, filterStorageSize, minPrice, maxPrice, page, totalPages, sortField, sortDirection, pageSize],
+      [filterBrandLists, filterStorageSize, minPrice, maxPrice, page, totalPages, sortField, sortDirection, pageSize, keywords],
       () => {
          sessionStorage.setItem('saleGalleryState', JSON.stringify({
             filterBrandLists: filterBrandLists.value,
@@ -28,6 +29,7 @@ export const useGalleryStateStore = defineStore('saleGalleryState', () => {
             sortField: sortField.value,
             sortDirection: sortDirection.value,
             pageSize: pageSize.value,
+            keywords: keywords.value,
          }));
       },
       { deep: true }
@@ -43,6 +45,7 @@ export const useGalleryStateStore = defineStore('saleGalleryState', () => {
       sortField.value = 'id';
       sortDirection.value = 'none';
       pageSize.value = 10;
+      keywords.value = '';
       sessionStorage.removeItem('saleGalleryState');
    }
 
@@ -62,5 +65,6 @@ export const useGalleryStateStore = defineStore('saleGalleryState', () => {
       pageSize,
       resetAll,
       resetPageOnly,
+      keywords
    };
 });

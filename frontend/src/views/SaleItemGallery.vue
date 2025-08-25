@@ -1,7 +1,6 @@
 <script setup>
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref, computed, watch } from 'vue';
 import SaleItemCard from '@/components/gallery/SaleItemCard.vue';
-import BrandFilter from '@/components/brand/BrandFilter.vue';
 import SortComponent from '@/components/gallery/SortComponent.vue';
 import Pagination from '@/components/pagination/Pagination.vue';
 import Alert from '@/components/share/Alert.vue';
@@ -49,6 +48,7 @@ const fetchSaleItems = async (params = {}) => {
     filterStorageSize = [],
     sortField = '',
     sortDirection = 'asc',
+    keywords = '',
   } = params;
 
   const urlParams = new URLSearchParams();
@@ -63,6 +63,7 @@ const fetchSaleItems = async (params = {}) => {
     .filter((size) => size !== null && size !== undefined)
     .forEach((size) => urlParams.append('filterStorages', size));
 
+  if (keywords) urlParams.append('searchKeyword', keywords);
   if (sortField) urlParams.append('sortField', sortField);
   if (sortDirection !== 'none') urlParams.append('sortDirection', sortDirection);
 
@@ -84,6 +85,7 @@ const loadSaleItems = async () => {
       minPrice: galleryState.minPrice,
       maxPrice: galleryState.maxPrice,
       filterStorageSize: galleryState.filterStorageSize,
+      keywords: galleryState.keywords,
     });
 
     galleryState.totalPages = items.totalPages;
@@ -162,6 +164,17 @@ const initializeComponent = () => {
     saleStore.deleted = false;
   }
 };
+
+
+watch(
+  () => galleryState.keywords,
+  async (newKeyword, oldKeyword) => {
+    if(newKeyword !== oldKeyword){
+      galleryState.resetPageOnly();
+      await loadSaleItems();
+    }
+  }
+)
 
 onMounted(initializeComponent);
 </script>

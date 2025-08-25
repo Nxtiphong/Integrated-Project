@@ -23,47 +23,44 @@ public class UserService {
 
     @Transactional
     public User createUser(CreateUserDTO dto,
-                           MultipartFile nationalFrontFile,
-                           MultipartFile nationalBackFile) throws IOException {
+                           MultipartFile idCardImageFront,
+                           MultipartFile idCardImageBack) throws IOException {
 
         if (userRepository.existsByEmail(dto.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "email already in use");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already in use");
         }
 
         User u = new User();
-        u.setNickname(dto.getNickname());
+        u.setNickName(dto.getNickName());
         u.setEmail(dto.getEmail());
         u.setPassword(dto.getPassword()); // ยังไม่ hash รอ sprint ต่อไป
         u.setFullName(dto.getFullName());
-        u.setRole(dto.getRole());
+        u.setUserType(dto.getUserType());
+        u.setIsActive(false);
 
-        if (dto.getRole() == Role.SELLER) {
-            if (nationalFrontFile == null || nationalFrontFile.isEmpty()
-                    || nationalBackFile == null || nationalBackFile.isEmpty()) {
+        if (dto.getUserType() == Role.SELLER) {
+            if (idCardImageFront == null || idCardImageFront.isEmpty()
+                    || idCardImageBack == null || idCardImageBack.isEmpty()) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                         "Seller ต้องอัปโหลดไฟล์บัตรประชาชนทั้งด้านหน้าและด้านหลัง");
             }
-        }
 
-        if (dto.getRole() == Role.SELLER) {
-            u.setMobileNumber(dto.getMobileNumber());
-            u.setBankName(dto.getBankName());
-            u.setBankAccountNumber(dto.getBankAccountNumber());
-            u.setNationalIdNumber(dto.getNationalIdNumber());
+            u.setPhoneNumber(dto.getPhoneNumber());
+            u.setBankAccount(dto.getBankAccount());
+            u.setIdCardNumber(dto.getIdCardNumber());
 
-            if (nationalFrontFile != null && !nationalFrontFile.isEmpty()) {
-                // ตั้งชื่อไฟล์เอง
+            if (!idCardImageFront.isEmpty()) {
                 String fileName = "nid_front_" + System.currentTimeMillis() +
-                        getExtension(nationalFrontFile.getOriginalFilename());
-                String storedName = fileService.saveUserFile(nationalFrontFile, fileName);
-                u.setNationalFrontUrl(storedName);
+                        getExtension(idCardImageFront.getOriginalFilename());
+                String storedName = fileService.saveUserFile(idCardImageFront, fileName);
+                u.setIdCardImageFront(storedName);
             }
 
-            if (nationalBackFile != null && !nationalBackFile.isEmpty()) {
+            if (!idCardImageBack.isEmpty()) {
                 String fileName = "nid_back_" + System.currentTimeMillis() +
-                        getExtension(nationalBackFile.getOriginalFilename());
-                String storedName = fileService.saveUserFile(nationalBackFile, fileName);
-                u.setNationalBackUrl(storedName);
+                        getExtension(idCardImageBack.getOriginalFilename());
+                String storedName = fileService.saveUserFile(idCardImageBack, fileName);
+                u.setIdCardImageBack(storedName);
             }
         }
 
@@ -76,4 +73,5 @@ public class UserService {
         }
         return "";
     }
+
 }

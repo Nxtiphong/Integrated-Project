@@ -99,11 +99,26 @@ public class FileService {
             Path saleItemDir = this.fileStoragePath.resolve(String.valueOf(saleItemId));
             Files.createDirectories(saleItemDir);
 
+            String baseName = fileName;
+            String extension = "";
+            int dotIndex = fileName.lastIndexOf(".");
+            if (dotIndex > 0) {
+                baseName = fileName.substring(0, dotIndex);
+                extension = fileName.substring(dotIndex);
+            }
+
             Path targetFile = saleItemDir.resolve(fileName);
+            int counter = 1;
+
+            while (Files.exists(targetFile)) {
+                String newFileName = baseName + "(" + counter + ")" + extension;
+                targetFile = saleItemDir.resolve(newFileName);
+                counter++;
+            }
 
             Files.copy(file.getInputStream(), targetFile, StandardCopyOption.REPLACE_EXISTING);
 
-            return saleItemId + "/" + fileName; // actual stored name
+            return saleItemId + "/" + fileName;
         } catch (IOException e) {
             throw new RuntimeException("Could not upload file: " + fileName, e);
         }

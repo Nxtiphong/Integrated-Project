@@ -8,13 +8,13 @@ const router = useRouter();
 // accounttype
 const accountType = ref("BUYER");
 
-// form state
+
 const form = ref({
-    nickname: "",
+    nickName: "",
     email: "",
     password: "",
     fullName: "",
-    role: "",
+    userType: "",
     mobile: "",
     bankAccountNumber: "",
     bankName: "",
@@ -23,17 +23,17 @@ const form = ref({
     nationalBackFile: null,
 });
 
-// state
+
 const isSubmitting = ref(false);
 const errorMessage = ref("");
 const successMessage = ref("");
 
-// handle file input
+
 const handleFileUpload = (event, field) => {
     form.value[field] = event.target.files[0];
 };
 
-// submit
+
 const handleSubmit = async () => {
     isSubmitting.value = true;
     errorMessage.value = "";
@@ -43,32 +43,32 @@ const handleSubmit = async () => {
     // use FormData Only (text + file)
     const payload = new FormData();
     payload.append("accountType", accountType.value);
-    payload.append("nickname", form.value.nickname);
+    payload.append("nickName", form.value.nickName);
     payload.append("email", form.value.email);
     payload.append("password", form.value.password);
     payload.append("fullName", form.value.fullName);
-    payload.append("role", accountType.value);
+    payload.append("userType", accountType.value);
 
     if (accountType.value === "SELLER") {
-        payload.append("mobileNumber", form.value.mobile);
-        payload.append("bankAccountNumber", form.value.bankAccountNumber);
+        payload.append("phoneNumber", form.value.mobile);
+        payload.append("bankAccount", form.value.bankAccountNumber);
         payload.append("bankName", form.value.bankName);
-        payload.append("nationalIdNumber", form.value.nationalIdNumber);
+        payload.append("idCardNumber", form.value.nationalIdNumber);
 
         if (form.value.nationalFrontFile) {
-        payload.append("nationalFrontFile", form.value.nationalFrontFile);
+        payload.append("idCardImageFront", form.value.nationalFrontFile);
         }
         if (form.value.nationalBackFile) {
-        payload.append("nationalBackFile", form.value.nationalBackFile);
+        payload.append("idCardImageBack", form.value.nationalBackFile);
         }
     }
 
-    const res = await httpRequest("POST", "v1/register", payload);
+    const res = await httpRequest("POST", "v2/users/register", payload);
 
-    successMessage.value = "🎉 Register success!";
+    successMessage.value = "Register success!";
     console.log("register response:", res);
 
-    // redirect ไปหน้า login
+    // redirect 
     setTimeout(() => {
         router.push("/");
     }, 1500);
@@ -83,8 +83,6 @@ const handleSubmit = async () => {
 <template>
     <div class="max-w-lg mx-auto p-6 bg-white rounded-2xl shadow-md">
     <h2 class="text-2xl font-bold mb-6 text-center">Register</h2>
-
-    <!-- account type -->
     <div class="flex justify-center gap-6 mb-6">
         <label class="flex items-center gap-2">
         <input
@@ -113,8 +111,8 @@ const handleSubmit = async () => {
                 <input v-model="form.fullName" type="text" class="input input-bordered w-full" required />
         </div>
         <div>
-            <label class="block font-medium">Nickname</label>
-                <input v-model="form.nickname" type="text" class="input input-bordered w-full" required />
+            <label class="block font-medium">NickName</label>
+                <input v-model="form.nickName" type="text" class="input input-bordered w-full" required />
         </div>
         <div>
             <label class="block font-medium">Email</label>

@@ -9,30 +9,22 @@ import java.io.File;
 @Data
 public class CreateUserResponseDTO {
     private Integer id;
-    private String nickname;
+    private String nickName;
     private String email;
     private String fullName;
-    private Role role;
-    private String mobileNumber;
-    private String bankName;
-    private String bankAccountNumber;
-    private String nationalIdNumber;
-    private String nationalFrontUrl;
-    private String nationalBackUrl;
+    private String phoneNumber;
+    private Boolean isActive;
+    private Role userType;
 
-    public static CreateUserResponseDTO from(User user) {
+    public static CreateUserResponseDTO from(User u) {
         CreateUserResponseDTO dto = new CreateUserResponseDTO();
-        dto.setId(user.getId());
-        dto.setNickname(user.getNickname());
-        dto.setEmail(user.getEmail());
-        dto.setFullName(user.getFullName());
-        dto.setRole(user.getRole());
-        dto.setMobileNumber(user.getMobileNumber());
-        dto.setBankName(user.getBankName());
-        dto.setBankAccountNumber(user.getBankAccountNumber());
-        dto.setNationalIdNumber(user.getNationalIdNumber());
-        dto.setNationalFrontUrl(user.getNationalFrontUrl());
-        dto.setNationalBackUrl(user.getNationalBackUrl());
+        dto.setId(u.getId());
+        dto.setNickName(u.getNickName());
+        dto.setEmail(u.getEmail());
+        dto.setFullName(u.getFullName());
+        dto.setPhoneNumber(u.getPhoneNumber());
+        dto.setIsActive(u.getIsActive());
+        dto.setUserType(u.getUserType());
         return dto;
     }
 }

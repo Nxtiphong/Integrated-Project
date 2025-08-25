@@ -3,25 +3,24 @@ package tt2.int221.backend.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 import tt2.int221.backend.enums.Role;
 
 @Data
 public class CreateUserDTO {
-
     @NotBlank
-    private String nickname;
+    private String nickName;
 
     @NotBlank
     @Email
     private String email;
 
     @NotBlank
-    @Size(min = 8, message = "password ต้องยาวอย่างน้อย 8 ตัวอักษร")
+    @Size(min = 8, message = "Password ต้องยาวอย่างน้อย 8 ตัวอักษร")
     @Pattern(
-            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,}$",
-            message = "password ต้องมี a-z, A-Z, ตัวเลข และอักขระพิเศษ"
+            regexp="^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,}$",
+            message="Password ต้องมี a-z, A-Z, ตัวเลข และอักขระพิเศษ"
     )
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @NotBlank
@@ -29,23 +28,19 @@ public class CreateUserDTO {
     private String fullName;
 
     @NotNull
-    private Role role;
+    private Role userType;
+    private String phoneNumber;
+    private String bankAccount;
+    private String idCardNumber;
+    private MultipartFile idCardImageFront;
+    private MultipartFile idCardImageBack;
 
-    //role = SELLER
-    private String mobileNumber;
-    private String bankName;
-    private String bankAccountNumber;
-    private String nationalIdNumber;
-    private String nationalFrontUrl;
-    private String nationalBackUrl;
-
-    @AssertTrue(message = "เมื่อ role=SELLER ต้องกรอก: mobileNumber, bankName, bankAccountNumber, nationalIdNumber, nationalFrontUrl, nationalBackUrl")
+    @AssertTrue(message = "เมื่อ userType=SELLER ต้องกรอก phoneNumber, bankAccount, idCardNumber และแนบไฟล์รูปบัตร")
     public boolean isSellerFieldsPresentIfSeller() {
-        if (role != Role.SELLER) return true;
-        return isNotBlank(mobileNumber)
-                && isNotBlank(bankName)
-                && isNotBlank(bankAccountNumber)
-                && isNotBlank(nationalIdNumber);
+        if (userType != Role.SELLER) return true;
+        return isNotBlank(phoneNumber)
+                && isNotBlank(bankAccount)
+                && isNotBlank(idCardNumber);
     }
 
     private boolean isNotBlank(String s) {

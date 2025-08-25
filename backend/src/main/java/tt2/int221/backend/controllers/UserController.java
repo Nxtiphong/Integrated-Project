@@ -16,12 +16,12 @@ import tt2.int221.backend.services.UserService;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("")
+@RequestMapping("/v2/users")
 public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/v1/register")
+    @PostMapping("/register")
     @Operation(summary = "Create new user w/ files", description = "Register a new user with national ID images")
     @ApiResponse(responseCode = "201", description = "User created")
     @ApiResponse(responseCode = "400", description = "Validation error")
@@ -29,11 +29,11 @@ public class UserController {
     @ApiResponse(responseCode = "500", description = "User create failed")
     public ResponseEntity<CreateUserResponseDTO> registerUser(
             @Valid @ModelAttribute CreateUserDTO userForm,
-            @RequestParam(required = false) MultipartFile nationalFrontFile,
-            @RequestParam(required = false) MultipartFile nationalBackFile
+            @RequestParam(required = false) MultipartFile idCardImageFront,
+            @RequestParam(required = false) MultipartFile idCardImageBack
     ) throws IOException {
 
-        User createdUser = userService.createUser(userForm, nationalFrontFile, nationalBackFile);
+        User createdUser = userService.createUser(userForm, idCardImageFront, idCardImageBack);
         CreateUserResponseDTO response = CreateUserResponseDTO.from(createdUser);
         return ResponseEntity.status(201).body(response);
     }

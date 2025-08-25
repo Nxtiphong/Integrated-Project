@@ -15,13 +15,7 @@ const apiBase = (
 const toImageUrl = (fileName) =>
   fileName ? `${apiBase}/v2/sale-items/images?fileName=${encodeURIComponent(fileName)}` : null
 
-const alertMessage = ref({
-  type: '',
-  message: '',
-  visible: false,
-  duration: 3000,
-  countdownVisible: false,
-})
+const alertMessage = ref({ type: '', message: '', visible: false, duration: 3000, countdownVisible: false })
 const showAlert = (type, message, duration = 3000) => {
   alertMessage.value = { type, message, visible: true, duration, countdownVisible: false }
 }
@@ -34,10 +28,10 @@ const slots = ref([
 ])
 
 const selectedIndex = ref(0)
-const prevOrderByFileName = ref({})
+const prevOrderByFileName = ref({})   
 
-const iToOrder = (idx) => Math.min(Math.max(idx + 1, 1), 4)
-const orderToIndex = (order) => Math.min(Math.max(Number(order || 1) - 1, 0), 3)
+const iToOrder   = (idx)   => Math.min(Math.max(idx + 1, 1), 4)
+const orderToIdx = (order) => Math.min(Math.max(Number(order || 1) - 1, 0), 3)
 
 const thumbSrcAt = (idx) => {
   const s = slots.value[idx]
@@ -55,12 +49,12 @@ function emitImagesPayload () {
       payload.push({ status: 'DELETE', order: s.deletedOrder ?? s.position, fileName: s.deletedFileName })
     }
 
-    if (s.isDeleted) continue
-
     if (s.file) {
       payload.push({ status: 'NEW', order: s.position, imageFile: s.file })
       continue
     }
+
+    if (s.isDeleted) continue
 
     if (s.fileName) {
       const prevOrder = prevOrderByFileName.value[s.fileName]
@@ -82,16 +76,17 @@ const mapFromSaleItemImages = (images = []) => {
   const m = {}
   images.forEach(img => {
     const order1 = Number(img.imageViewOrder || 1)
-    const idx = orderToIndex(order1)
+    const idx = orderToIdx(order1)
     if (slots.value[idx]) {
-      slots.value[idx].fileName = img.fileName || null
-      slots.value[idx].filename = img.fileName || null
-      slots.value[idx].url = null
-      slots.value[idx].file = null
-      slots.value[idx].position = idx + 1
-      slots.value[idx].isDeleted = false
-      slots.value[idx].deletedFileName = null
-      slots.value[idx].deletedOrder = null
+      const s = slots.value[idx]
+      s.fileName = img.fileName || null
+      s.filename = img.fileName || null
+      s.url = null
+      s.file = null
+      s.position = idx + 1
+      s.isDeleted = false
+      s.deletedFileName = null
+      s.deletedOrder = null
       if (img.fileName) m[img.fileName] = order1
     }
   })
@@ -101,16 +96,14 @@ const mapFromSaleItemImages = (images = []) => {
   selectedIndex.value = firstHas >= 0 ? firstHas : 0
   emitImagesPayload()
 }
-
 watch(() => props.saleItemImages, v => mapFromSaleItemImages(v || []), { immediate: true, deep: true })
 
 const fileInput = ref(null)
 const currentFilesCount = computed(() =>
   slots.value.filter(s => (s.file || s.fileName) && !s.isDeleted).length
 )
-
 const triggerUpload = () => fileInput.value?.click()
-const canMoveUp = (idx) => idx > 0
+const canMoveUp   = (idx) => idx > 0
 const canMoveDown = (idx) => idx < slots.value.length - 1
 
 const handleUpload = (e) => {
@@ -135,23 +128,26 @@ const handleUpload = (e) => {
     .filter(i => i !== -1)
 
   const targetIndexes = [...deletedSlots, ...emptySlots]
-
+  if (!targetIndexes.length) {
+    showAlert('error', 'Maximum 4 pictures are allowed.')
+    e.target.value = ''
+    return
+  }
   if (valid.length > targetIndexes.length) {
     showAlert('error', 'Maximum 4 pictures are allowed.')
   }
 
   const willTake = valid.slice(0, targetIndexes.length)
-
   willTake.forEach((file, i) => {
     const idx = targetIndexes[i]
     const s = slots.value[idx]
 
     if (s.isDeleted && s.fileName) {
-      s.isDeleted = false
       s.deletedFileName = s.deletedFileName || s.fileName
-      s.deletedOrder = s.deletedOrder || s.position
-      s.fileName = null
-      s.filename = null
+      s.deletedOrder    = s.deletedOrder    || s.position
+      s.isDeleted = false
+      s.fileName  = null
+      s.filename  = null
     }
 
     s.file = file

@@ -158,11 +158,10 @@ const saveSaleItem = async () => {
     fd.append('color', String(product.value.color ?? ''))
     if (product.value.brand?.id != null) fd.append('brand.id', String(product.value.brand.id))
 
-    // สร้างใช้รูปแบบเก่า images[] + imageViewOrders[] (ตาม BE สร้าง)
     const ordered = [...imagesPayload.value]
       .filter(x => x.status === 'NEW' && x.imageFile)
       .sort((a, b) => a.order - b.order)
-      .map((x, idx) => ({ file: x.imageFile, order: idx })) // 0..3 ต่อเนื่อง
+      .map((x, idx) => ({ file: x.imageFile, order: idx }))
 
     ordered.forEach(({ file, order }) => {
       fd.append('images', file, file.name)
@@ -182,7 +181,6 @@ const saveSaleItem = async () => {
       alertMessage.value = { type: 'error', message: 'Network error: cannot create sale item', visible: true, duration: 3000 }
     }
   } else {
-    // UPDATE + status
     try {
       const fd = new FormData()
       if (product.value.brand?.id != null) fd.append('saleItem.brand.id', String(product.value.brand.id))
@@ -195,20 +193,19 @@ const saveSaleItem = async () => {
       fd.append('saleItem.storageGb', String(product.value.storageGb ?? ''))
       fd.append('saleItem.color', String(product.value.color ?? ''))
 
-      // imagesPayload จาก ProductImage: [{status, order(1-based), fileName?, imageFile?}]
-      const list = [...imagesPayload.value]
-        .filter(x => x && (x.status === 'DELETE' || x.imageFile || x.fileName))
-        .sort((a, b) => a.order - b.order)
+const list = [...imagesPayload.value]
+  .sort((a, b) => a.order - b.order)
 
-      list.forEach((info, i) => {
-        const base = `imageInfos[${i}]`
-        fd.append(`${base}.status`, info.status)
-        fd.append(`${base}.order`,  String(info.order))
-        if (info.fileName)  fd.append(`${base}.fileName`, info.fileName)
-        if (info.status === 'NEW' && info.imageFile) {
-          fd.append(`${base}.imageFile`, info.imageFile, info.imageFile.name)
-        }
-      })
+list.forEach((info, i) => {
+  const base = `imageInfos[${i}]`
+  fd.append(`${base}.status`, info.status)
+  fd.append(`${base}.order`,  String(info.order))
+  if (info.fileName) fd.append(`${base}.fileName`, info.fileName)
+  if (info.imageFile || info.file) {
+    const file = info.imageFile || info.file
+    fd.append(`${base}.imageFile`, file, file.name)
+  }
+})
 
       const res = await fetch(`${apiBase}/v2/sale-items/${params}`, { method: 'PUT', body: fd })
       if (!res.ok) {
@@ -216,6 +213,10 @@ const saveSaleItem = async () => {
         alertMessage.value = { type: 'error', message: `Update failed: ${msg}`, visible: true, duration: 3000 }
         return
       }
+      const updatedItem = await saleStore.fetchSaleItemById(params)
+      saleItemImages.value = updatedItem.saleItemImages || []
+      console.log('Updated item:', updatedItem)
+
 
       isEditProduct.value = false
       isEditImages.value = false

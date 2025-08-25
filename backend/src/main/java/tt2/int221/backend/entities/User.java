@@ -1,61 +1,50 @@
 package tt2.int221.backend.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import tt2.int221.backend.enums.Role;
 
-@Getter
-@Setter
 @Entity
 @Table(name = "users")
+@Getter
+@Setter
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
     private Integer id;
 
-    @Column(name = "nickname",nullable = false)
-    @NotNull
-    private String nickname;
+    @Column(nullable = false)
+    private String nickName;
 
-    @Column(name = "email" ,nullable = false, unique = true)
-    @NotNull
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(name = "password", nullable = false)
-    @Size(min = 8)
-    @NotNull
+    @Column(nullable = false)
     private String password;
 
-    @Column(name = "fullName", nullable = false, length = 40)
-    @NotNull
-    @Size(min = 4, max = 40)
+    @Column(nullable = false, length = 40)
     private String fullName;
 
+    @Column
+    private String phoneNumber;
+
+    @Column
+    private String bankAccount;
+
+    @Column
+    private String idCardNumber;
+
     @Enumerated(EnumType.STRING)
-    @NotNull
-    @Column(name = "role",nullable = false)
-    private Role role;
+    @Column(nullable = false)
+    private Role userType;
 
-    @Column(name = "mobileNumber")
-    private String mobileNumber;
+    @Column(nullable = false)
+    private Boolean isActive = false;
 
-    @Column(name = "bankName")
-    private String bankName;
+    @Column
+    private String idCardImageFront;
 
-    @Column(name = "bankAccountNumber")
-    private String bankAccountNumber;
-
-    @Column(name = "nationalIdNumber")
-    private String nationalIdNumber;
-
-    @Column(name = "nationalFrontUrl")
-    private String nationalFrontUrl;
-
-    @Column(name = "nationalBackUrl")
-    private String nationalBackUrl;
-
+    @Column
+    private String idCardImageBack;
 }

@@ -14,9 +14,10 @@ export const useGalleryStateStore = defineStore('saleGalleryState', () => {
    const sortField = ref(saved.sortField || 'id');
    const sortDirection = ref(saved.sortDirection || 'none');
    const pageSize = ref(saved.pageSize || 10);
+   const keywords = ref(saved.keywords || null)
 
    watch(
-      [filterBrandLists, filterStorageSize, minPrice, maxPrice, page, totalPages, sortField, sortDirection, pageSize],
+      [filterBrandLists, filterStorageSize, minPrice, maxPrice, page, totalPages, keywords, sortField, sortDirection, pageSize],
       () => {
          sessionStorage.setItem('saleGalleryState', JSON.stringify({
             filterBrandLists: filterBrandLists.value,
@@ -27,6 +28,7 @@ export const useGalleryStateStore = defineStore('saleGalleryState', () => {
             totalPages: totalPages.value,
             sortField: sortField.value,
             sortDirection: sortDirection.value,
+            keywords: keywords.value,
             pageSize: pageSize.value,
          }));
       },
@@ -40,6 +42,7 @@ export const useGalleryStateStore = defineStore('saleGalleryState', () => {
       maxPrice.value = null;
       page.value = 1;
       totalPages.value = 1;
+      keywords.value = ''
       sortField.value = 'id';
       sortDirection.value = 'none';
       pageSize.value = 10;
@@ -56,6 +59,7 @@ export const useGalleryStateStore = defineStore('saleGalleryState', () => {
       minPrice,
       maxPrice,
       page,
+      keywords,
       totalPages,
       sortField,
       sortDirection,

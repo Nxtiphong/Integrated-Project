@@ -4,6 +4,8 @@ import lombok.Data;
 import tt2.int221.backend.entities.User;
 import tt2.int221.backend.enums.Role;
 
+import java.io.File;
+
 @Data
 public class CreateUserResponseDTO {
     private Integer id;
@@ -11,7 +13,6 @@ public class CreateUserResponseDTO {
     private String email;
     private String fullName;
     private Role role;
-
     private String mobileNumber;
     private String bankName;
     private String bankAccountNumber;

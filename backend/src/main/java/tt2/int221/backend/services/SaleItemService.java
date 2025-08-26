@@ -41,7 +41,6 @@ public class SaleItemService {
                 .orElseThrow(() -> new NotfoundException("Sale-Item not found with id: " + id));
     }
 
-
     public Page<SaleItem> findAll(int page, int size, String sortField,
                                   List<String> filterBrands, Integer filterPriceLower, Integer filterPriceUpper,
                                   List<Integer> filterStorages, String searchKeyword, String sortDirection) {

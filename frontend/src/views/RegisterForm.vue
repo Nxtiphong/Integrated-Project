@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, nextTick } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { httpRequest } from '@/utils/fetchUtils';
 import { useRegisterFormStore } from '@/stores/useRegisterFormStore';
@@ -60,7 +60,9 @@ const isFormValid = computed(() => {
       form.value.mobile &&
       form.value.bankAccountNumber &&
       form.value.bankName &&
-      form.value.nationalIdNumber
+      form.value.nationalIdNumber &&
+      form.value.nationalFrontFile &&
+      form.value.nationalBackFile
     );
   }
   return true;
@@ -156,21 +158,36 @@ const handleSubmit = async () => {
       <!-- buyer + seller -->
       <div>
         <label class="block font-medium">Full name</label>
-        <input v-model="form.fullName" type="text" class="input input-bordered w-full" required />
+        <input
+          v-model.trim="form.fullName"
+          type="text"
+          class="input input-bordered w-full"
+          required
+        />
         <span v-if="fullNameError" class="text-red-500 text-sm mt-1">{{ fullNameError }}</span>
       </div>
       <div>
         <label class="block font-medium">NickName</label>
-        <input v-model="form.nickName" type="text" class="input input-bordered w-full" required />
+        <input
+          v-model.trim="form.nickName"
+          type="text"
+          class="input input-bordered w-full"
+          required
+        />
       </div>
       <div>
         <label class="block font-medium">Email</label>
-        <input v-model="form.email" type="email" class="input input-bordered w-full" required />
+        <input
+          v-model.trim="form.email"
+          type="email"
+          class="input input-bordered w-full"
+          required
+        />
       </div>
       <div>
         <label class="block font-medium">Password</label>
         <input
-          v-model="form.password"
+          v-model.trim="form.password"
           type="password"
           class="input input-bordered w-full"
           required
@@ -182,12 +199,17 @@ const handleSubmit = async () => {
       <template v-if="accountType === 'SELLER'">
         <div>
           <label class="block font-medium">Mobile</label>
-          <input v-model="form.mobile" type="text" class="input input-bordered w-full" required />
+          <input
+            v-model.trim="form.mobile"
+            type="text"
+            class="input input-bordered w-full"
+            required
+          />
         </div>
         <div>
           <label class="block font-medium">Bank Account No</label>
           <input
-            v-model="form.bankAccountNumber"
+            v-model.trim="form.bankAccountNumber"
             type="text"
             class="input input-bordered w-full"
             required
@@ -195,12 +217,17 @@ const handleSubmit = async () => {
         </div>
         <div>
           <label class="block font-medium">Bank Name</label>
-          <input v-model="form.bankName" type="text" class="input input-bordered w-full" required />
+          <input
+            v-model.trim="form.bankName"
+            type="text"
+            class="input input-bordered w-full"
+            required
+          />
         </div>
         <div>
           <label class="block font-medium">National ID No</label>
           <input
-            v-model="form.nationalIdNumber"
+            v-model.trim="form.nationalIdNumber"
             type="text"
             class="input input-bordered w-full"
             required
@@ -228,7 +255,7 @@ const handleSubmit = async () => {
         {{ isSubmitting ? 'Registering...' : 'Submit' }}
       </button>
       <button type="reset" class="btn btn-primary w-full" :disabled="isSubmitting">
-        {{ isSubmitting ? 'Registering...' : 'Cancel' }}
+        {{ isSubmitting ? 'Cancel' : 'Cancel' }}
       </button>
     </form>
   </div>

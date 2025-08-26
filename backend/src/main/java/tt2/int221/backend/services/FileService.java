@@ -11,6 +11,7 @@ import tt2.int221.backend.exceptions.NotfoundException;
 import tt2.int221.backend.utils.FileStorageProperties;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,11 +32,9 @@ public class FileService {
     public FileService(FileStorageProperties fileStorageProperties) {
         this.fileStorageProperties = fileStorageProperties;
         //sale item
-        this.fileStoragePath = Paths.get(fileStorageProperties.getUploadDir())
-                .toAbsolutePath().normalize();
+        this.fileStoragePath = Paths.get(fileStorageProperties.getUploadDir()).toAbsolutePath().normalize();
         // user id card
-        this.userStoragePath = Paths.get(fileStorageProperties.getUserUploadDir())
-                .toAbsolutePath().normalize();
+        this.userStoragePath = Paths.get(fileStorageProperties.getUserUploadDir()).toAbsolutePath().normalize();
 
         try {
             if (!Files.exists(this.fileStoragePath)) {
@@ -58,7 +57,9 @@ public class FileService {
         }
         try {
             Path targetFile = this.userStoragePath.resolve(fileName);
-            Files.copy(file.getInputStream(), targetFile, StandardCopyOption.REPLACE_EXISTING);
+            try (InputStream inputStream = file.getInputStream()) {
+                Files.copy(inputStream, targetFile, StandardCopyOption.REPLACE_EXISTING);
+            }
             return fileName;
         } catch (IOException e) {
             throw new RuntimeException("Could not upload user file: " + fileName, e);
@@ -80,7 +81,7 @@ public class FileService {
     }
 
 
-        private boolean isValidContentType(MultipartFile file) throws IOException {
+    private boolean isValidContentType(MultipartFile file){
         String contentType = file.getContentType();
         List<String> supportedContentTypes = Arrays.stream(fileStorageProperties.getSupportFileTypes()).toList();
         return supportedContentTypes.contains(contentType);
@@ -116,7 +117,9 @@ public class FileService {
                 counter++;
             }
 
-            Files.copy(file.getInputStream(), targetFile, StandardCopyOption.REPLACE_EXISTING);
+            try (InputStream inputStream = file.getInputStream()) {
+                Files.copy(inputStream, targetFile, StandardCopyOption.REPLACE_EXISTING);
+            }
 
             return saleItemId + "/" + fileName;
         } catch (IOException e) {
@@ -147,14 +150,16 @@ public class FileService {
             if (!Files.exists(filePath)) {
                 throw new NotfoundException("File not found: " + saleItemId + "/" + fileName);
             }
+
             Files.delete(filePath);
 
             if (Files.isDirectory(saleItemDir) && Files.list(saleItemDir).findAny().isEmpty()) {
-                Files.delete(saleItemDir); // delete dir if empty
+                Files.delete(saleItemDir);
             }
 
         } catch (IOException e) {
-            throw new RuntimeException("Could not remove file: " + saleItemId + "/" + fileName, e);
+            System.out.println(e.getMessage());
+            throw new RuntimeException("Could not remove file: " + saleItemId + "/" + fileName, e.getCause());
         }
     }
 

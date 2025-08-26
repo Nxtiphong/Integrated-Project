@@ -63,7 +63,7 @@ const fetchSaleItems = async (params = {}) => {
     .filter((size) => size !== null && size !== undefined)
     .forEach((size) => urlParams.append('filterStorages', size));
 
-  if (keywords) urlParams.append('searchKeyword', keywords);
+  if (keywords) urlParams.append('searchKeyWord', keywords);
   if (sortField) urlParams.append('sortField', sortField);
   if (sortDirection !== 'none') urlParams.append('sortDirection', sortDirection);
   const response = await httpRequest('GET', `v2/sale-items?${urlParams.toString()}`);

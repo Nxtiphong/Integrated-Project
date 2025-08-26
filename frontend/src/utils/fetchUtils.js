@@ -2,16 +2,16 @@ export const httpRequest = async (method, path, data = null, headers = {}) => {
    const options = {
       method: method.toUpperCase(),
       headers: {
-      ...headers, // ให้ user override ได้
+      ...headers,
    },
 };
 
    if (data) {
       if (data instanceof FormData) {
-      // 👉 ถ้าเป็น FormData ไม่ต้อง set Content-Type
+      // FormData 
       options.body = data;
    } else {
-      // 👉 ถ้าเป็น object ธรรมดา ใช้ JSON
+      // JSON
       options.headers['Content-Type'] = 'application/json';
       options.body = JSON.stringify(data);
    }

@@ -40,20 +40,7 @@ public class UserController {
             @RequestParam(required = false) MultipartFile idCardImageBack
     ) throws IOException {
 
-        // 1) สร้าง user
         User createdUser = userService.createUser(userForm, idCardImageFront, idCardImageBack);
-
-        // 2) สร้าง JWT token
-        String token = ConfigJWT.generateToken(createdUser.getId(), createdUser.getEmail());
-
-        String verifyLink = baseUrl+"/tt2/verify-email?token=" + token;
-
-        emailService.sendVerificationEmail(
-                createdUser.getEmail(),
-                createdUser.getNickName(),
-                verifyLink
-        );
-
         CreateUserResponseDTO response = CreateUserResponseDTO.from(createdUser);
         return ResponseEntity.status(201).body(response);
     }

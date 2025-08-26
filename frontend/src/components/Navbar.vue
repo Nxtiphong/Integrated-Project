@@ -40,6 +40,7 @@ const onInputChange = (event) => {
       </div>
       <button
         class="itbms-search-clear-button bg-[#F5F5F5] hover:bg-gray-200 text-gray-600 px-3 py-2 rounded-md text-sm transition duration-200"
+        @click="saleGalleryState.keywords = ''"
       >
         Clear
       </button>

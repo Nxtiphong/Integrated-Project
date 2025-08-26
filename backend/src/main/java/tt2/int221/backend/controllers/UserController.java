@@ -46,10 +46,8 @@ public class UserController {
         // 2) สร้าง JWT token
         String token = ConfigJWT.generateToken(createdUser.getId(), createdUser.getEmail());
 
-        // 3) สร้าง verify link
         String verifyLink = baseUrl+"/tt2/verify-email?token=" + token;
 
-        // 4) ส่งอีเมล
         emailService.sendVerificationEmail(
                 createdUser.getEmail(),
                 createdUser.getNickName(),

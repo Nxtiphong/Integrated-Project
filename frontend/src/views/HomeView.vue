@@ -1,12 +1,22 @@
 <script setup>
 import HomeBanner from '@/components/home/HomeBanner.vue';
 import ServiceCard from '@/components/home/ServiceCard.vue';
+import Alert from '@/components/share/Alert.vue';
+import { useRegisterFormStore } from '@/stores/useRegisterFormStore';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
 const isVisible = ref(false);
 const phoneVisible = ref(false);
 const buttonVisible = ref(false);
+
+const registerStore = useRegisterFormStore();
+
+const alertMessage = ref({
+  type: 'error',
+  message: '',
+  visible: false,
+});
 
 const router = useRouter();
 
@@ -28,6 +38,15 @@ onMounted(() => {
   setTimeout(() => (isVisible.value = true), 400);
   setTimeout(() => (phoneVisible.value = true), 800);
   setTimeout(() => (buttonVisible.value = true), 1200);
+
+  if (registerStore.isCreateSuccess) {
+    alertMessage.value = {
+      type: 'success',
+      message: 'The user account has been successfully registered.',
+      visible: true,
+    };
+    registerStore.isCreateSuccess = false;
+  }
 });
 </script>
 
@@ -154,6 +173,16 @@ onMounted(() => {
   </div>
   <ServiceCard />
   <HomeBanner />
+
+  <div class="itbms-message">
+    <Alert
+      :show="alertMessage.visible"
+      :type="alertMessage.type"
+      :message="alertMessage.message"
+      @update:show="alertMessage.visible = $event"
+      :duration="alertMessage.duration"
+    />
+  </div>
 </template>
 
 <style scoped>

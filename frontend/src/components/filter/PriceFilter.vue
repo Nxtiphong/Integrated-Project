@@ -35,18 +35,6 @@ const clearPriceRange = () => {
   handleFilter();
 };
 
-// To do Later
-// const isError = computed(() => ({
-//   minPrice:
-//     saleGalleryState.minPrice !== null &&
-//     saleGalleryState.maxPrice !== null &&
-//     saleGalleryState.minPrice > saleGalleryState.maxPrice,
-//   maxPrice:
-//     saleGalleryState.maxPrice !== null &&
-//     saleGalleryState.minPrice !== null &&
-//     saleGalleryState.maxPrice < saleGalleryState.minPrice,
-// }));
-
 const displayPrice = computed(() => {
   const match = priceRange.find(
     (p) =>

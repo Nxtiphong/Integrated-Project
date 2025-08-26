@@ -12,6 +12,7 @@ import tt2.int221.backend.dto.CreateUserDTO;
 import tt2.int221.backend.entities.User;
 import tt2.int221.backend.enums.Role;
 import tt2.int221.backend.repositories.UserRepository;
+import tt2.int221.backend.utils.HashUtil;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
@@ -42,7 +43,7 @@ public class UserService {
         User u = new User();
         u.setNickName(dto.getNickName());
         u.setEmail(dto.getEmail());
-        u.setPassword(dto.getPassword()); // ยังไม่ hash รอ sprint ต่อไป
+        u.setPassword(HashUtil.sha256(dto.getPassword()));
         u.setFullName(dto.getFullName());
         u.setUserType(dto.getUserType());
         u.setIsActive(false);

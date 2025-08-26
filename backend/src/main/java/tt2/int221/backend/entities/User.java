@@ -33,6 +33,12 @@ public class User {
     private String bankAccount;
 
     @Column
+    private String BankName;
+
+    @Column(name = "latestVerifyToken")
+    private String latestVerifyToken;
+
+    @Column
     private String idCardNumber;
 
     @Enumerated(EnumType.STRING)

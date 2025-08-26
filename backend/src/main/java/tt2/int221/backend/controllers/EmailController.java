@@ -28,13 +28,17 @@ public class EmailController {
                     .body(Map.of("message", "Invalid or expired token"));
         }
 
-        String email = ConfigJWT.getEmailFromToken(token);
         Integer userId = ConfigJWT.getUserIdFromToken(token);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-        if (user.getIsActive()) {
+        if (!token.equals(user.getLatestVerifyToken())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", "Invalid or expired token"));
+        }
+
+        if (Boolean.TRUE.equals(user.getIsActive())) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of("message", "Email already verified"));
         }

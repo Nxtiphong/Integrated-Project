@@ -31,6 +31,7 @@ public class CreateUserDTO {
     private Role userType;
     private String phoneNumber;
     private String bankAccount;
+    private String bankName;
     private String idCardNumber;
     private MultipartFile idCardImageFront;
     private MultipartFile idCardImageBack;
@@ -40,6 +41,7 @@ public class CreateUserDTO {
         if (userType != Role.SELLER) return true;
         return isNotBlank(phoneNumber)
                 && isNotBlank(bankAccount)
+                && isNotBlank(bankName)
                 && isNotBlank(idCardNumber);
     }
 

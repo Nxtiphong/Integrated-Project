@@ -66,9 +66,7 @@ const fetchSaleItems = async (params = {}) => {
   if (keywords) urlParams.append('searchKeyword', keywords);
   if (sortField) urlParams.append('sortField', sortField);
   if (sortDirection !== 'none') urlParams.append('sortDirection', sortDirection);
-
   const response = await httpRequest('GET', `v2/sale-items?${urlParams.toString()}`);
-
   return response.data;
 };
 

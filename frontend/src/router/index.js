@@ -1,13 +1,15 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@/views/HomeView.vue'
-import SaleItemGallery from '@/views/SaleItemGallery.vue'
-import SaleItemDetails from '@/views/SaleItemDetails.vue'
-import Favorite from '@/views/Favorite.vue'
-import AddSaleItem from '@/views/AddSaleItem.vue'
-import NotFoundPage from '@/components/share/NotFoundPage.vue'
-import SaleItemList from '@/views/SaleItemList.vue'
-import BrandList from '@/views/BrandList.vue'
-import AddBrand from '@/views/AddBrand.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+import HomeView from '@/views/HomeView.vue';
+import SaleItemGallery from '@/views/SaleItemGallery.vue';
+import SaleItemDetails from '@/views/SaleItemDetails.vue';
+import Favorite from '@/views/Favorite.vue';
+import AddSaleItem from '@/views/AddSaleItem.vue';
+import NotFoundPage from '@/components/share/NotFoundPage.vue';
+import SaleItemList from '@/views/SaleItemList.vue';
+import BrandList from '@/views/BrandList.vue';
+import AddBrand from '@/views/AddBrand.vue';
+import RegisterForm from '@/views/RegisterForm.vue';
+import VerifyEmail from '@/views/VerifyEmail.vue'; 
 
 const router = createRouter({
   history: createWebHistory('/tt2'),
@@ -19,48 +21,48 @@ const router = createRouter({
     },
     {
       path: '/sale-items',
-      name: "saleItems",
-      component: SaleItemGallery
+      name: 'saleItems',
+      component: SaleItemGallery,
     },
     {
       path: '/sale-items/:id',
-      name: "saleItemDetail",
-      component: SaleItemDetails
+      name: 'saleItemDetail',
+      component: SaleItemDetails,
     },
     {
       path: '/favorites',
-      name: "favorites",
-      component: Favorite
+      name: 'favorites',
+      component: Favorite,
     },
     {
       path: '/sale-items/add',
-      name: "addSaleItem",
-      component: AddSaleItem
+      name: 'addSaleItem',
+      component: AddSaleItem,
     },
     {
       path: '/sale-items/:id/edit',
-      name: "editSaleItem",
-      component: AddSaleItem
+      name: 'editSaleItem',
+      component: AddSaleItem,
     },
     {
       path: '/sale-items/list',
-      name: "saleItemList",
-      component: SaleItemList
+      name: 'saleItemList',
+      component: SaleItemList,
     },
     {
       path: '/brands',
-      name: "brandList",
-      component: BrandList
+      name: 'brandList',
+      component: BrandList,
     },
     {
       path: '/brands/add',
-      name: "addBrand",
-      component: AddBrand
+      name: 'addBrand',
+      component: AddBrand,
     },
     {
       path: '/brands/:id/edit',
-      name: "editBrand",
-      component: AddBrand
+      name: 'editBrand',
+      component: AddBrand,
     },
     {
       path: '/brands/:pathMatch(.*)*',
@@ -68,13 +70,23 @@ const router = createRouter({
       component: NotFoundPage,
     },
     {
+      path: '/register',
+      name: 'RegisterForm',
+      component: RegisterForm,
+    },
+    {
+      path: '/verify-email',
+      name: 'VerifyEmail',
+      component: VerifyEmail
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
       component: NotFoundPage,
       //   meta: { hideLayout: true } <-- Add this if you want to hide Navbar and Footer
-    }
+    },
   ],
-  linkActiveClass: "text-black font-semibold"
-})
+  linkActiveClass: 'text-black font-semibold',
+});
 
-export default router
+export default router;

@@ -30,6 +30,7 @@ export const useGalleryStateStore = defineStore('saleGalleryState', () => {
             sortDirection: sortDirection.value,
             keywords: keywords.value,
             pageSize: pageSize.value,
+            keywords: keywords.value,
          }));
       },
       { deep: true }
@@ -46,6 +47,7 @@ export const useGalleryStateStore = defineStore('saleGalleryState', () => {
       sortField.value = 'id';
       sortDirection.value = 'none';
       pageSize.value = 10;
+      keywords.value = '';
       sessionStorage.removeItem('saleGalleryState');
    }
 
@@ -66,5 +68,6 @@ export const useGalleryStateStore = defineStore('saleGalleryState', () => {
       pageSize,
       resetAll,
       resetPageOnly,
+      keywords
    };
 });

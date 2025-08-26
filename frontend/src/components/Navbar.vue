@@ -32,10 +32,10 @@ const onInputChange = (event) => {
         />
         <input
           type="text"
+          :value="saleGalleryState.keywords"
           placeholder="Search"
           class="itbms-search-text bg-[#F5F5F5] focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/50 pl-10 pr-4 py-2 rounded-md w-40 lg:w-64 xl:w-96 transition duration-200"
           @change="onInputChange"
-          :value="saleGalleryState.keywords"
         />
       </div>
       <button

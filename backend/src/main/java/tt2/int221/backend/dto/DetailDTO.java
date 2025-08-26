@@ -7,6 +7,7 @@ import tt2.int221.backend.serializers.InstantNoZSerializer;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 
 @Data
 public class DetailDTO {
@@ -20,7 +21,7 @@ public class DetailDTO {
     private Integer quantity;
     private Integer storageGb;
     private String color;
-    private List<ImageDTO> saleItemImages;
+    private Set<ImageDTO> saleItemImages;
     @JsonSerialize(using = InstantNoZSerializer.class)
     private Instant createdOn;
     @JsonSerialize(using = InstantNoZSerializer.class)

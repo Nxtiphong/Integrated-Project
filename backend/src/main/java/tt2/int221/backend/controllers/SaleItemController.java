@@ -17,6 +17,7 @@ import tt2.int221.backend.services.SaleItemImageService;
 import tt2.int221.backend.services.SaleItemService;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.List;
 
@@ -183,8 +184,10 @@ public class SaleItemController {
             contentType = "application/octet-stream";
         }
 
-        byte[] fileBytes = resource.getInputStream().readAllBytes();
-
+        byte[] fileBytes;
+        try (InputStream inputStream = resource.getInputStream()) {
+            fileBytes = inputStream.readAllBytes();
+        }
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(contentType))
                 .contentLength(fileBytes.length)

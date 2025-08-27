@@ -26,8 +26,10 @@ public class UserController {
 
     @Autowired
     private EmailService emailService;
+
     @Value("${app.base-url}")
     private String baseUrl;
+
     @PostMapping("/register")
     @Operation(summary = "Create new user w/ files", description = "Register a new user with national ID images")
     @ApiResponse(responseCode = "201", description = "User created")

@@ -30,9 +30,6 @@ public class SaleItemController {
     private SaleItemService service;
 
     @Autowired
-    private SaleItemImageService imageService;
-
-    @Autowired
     private ModelMapper modelMapper;
 
     @Operation(summary = "Get all sale items", description = "Return all sale items")

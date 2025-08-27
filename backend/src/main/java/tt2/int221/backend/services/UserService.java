@@ -77,17 +77,16 @@ public class UserService {
 
         User saveUser = userRepository.save(u);
 
-        CompletableFuture.runAsync(() -> {
-            String verifyToken = ConfigJWT.generateToken(saveUser.getId(), saveUser.getEmail());
-            saveUser.setLatestVerifyToken(verifyToken);
-            userRepository.save(saveUser);
+        
+        String verifyToken = ConfigJWT.generateToken(saveUser.getId(), saveUser.getEmail());
+         saveUser.setLatestVerifyToken(verifyToken);
+        userRepository.save(saveUser);
 
-            emailService.sendVerificationEmail(
-                saveUser.getEmail(),
-                saveUser.getNickName(),
-                baseUrl + "/tt2/verify-email?token=" + verifyToken
-            );
-        });
+        emailService.sendVerificationEmail(
+            saveUser.getEmail(),
+            saveUser.getNickName(),
+            baseUrl + "/tt2/verify-email?token=" + verifyToken
+        );
 
         return saveUser;
     }

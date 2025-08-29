@@ -6,4 +6,5 @@ import lombok.Data;
 public class MatchPasswordResponseDTO {
     private String access_token;
     private String refresh_token;
+    private String nickname;
 }

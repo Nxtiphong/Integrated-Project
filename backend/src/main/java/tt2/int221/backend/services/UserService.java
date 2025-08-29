@@ -9,13 +9,15 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import tt2.int221.backend.config.ConfigJWT;
 import tt2.int221.backend.dto.CreateUserDTO;
+import tt2.int221.backend.dto.MatchPasswordRequestDTO;
+import tt2.int221.backend.dto.MatchPasswordResponseDTO;
 import tt2.int221.backend.entities.User;
 import tt2.int221.backend.enums.Role;
+import tt2.int221.backend.exceptions.NotfoundException;
 import tt2.int221.backend.repositories.UserRepository;
 import tt2.int221.backend.utils.HashUtil;
 
 import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
 
 @Service
 public class UserService {
@@ -77,17 +79,16 @@ public class UserService {
 
         User saveUser = userRepository.save(u);
 
-        CompletableFuture.runAsync(() -> {
-            String verifyToken = ConfigJWT.generateToken(saveUser.getId(), saveUser.getEmail());
-            saveUser.setLatestVerifyToken(verifyToken);
-            userRepository.save(saveUser);
 
-            emailService.sendVerificationEmail(
+        String verifyToken = ConfigJWT.generateToken(saveUser.getId(), saveUser.getEmail());
+        saveUser.setLatestVerifyToken(verifyToken);
+        userRepository.save(saveUser);
+
+        emailService.sendVerificationEmail(
                 saveUser.getEmail(),
                 saveUser.getNickName(),
                 baseUrl + "/tt2/verify-email?token=" + verifyToken
-            );
-        });
+        );
 
         return saveUser;
     }
@@ -99,4 +100,29 @@ public class UserService {
         return "";
     }
 
+    public String matchPassword(MatchPasswordRequestDTO dto) {
+        if (dto.getPassword() == null || dto.getPassword().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password is empty");
+        }
+
+        if (dto.getEmail() == null || dto.getEmail().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is empty");
+        }
+
+        User existsUser = userRepository.findByEmail(dto.getEmail());
+
+        if (existsUser == null) {
+            throw new NotfoundException("No user found with email: " + dto.getEmail());
+        }
+
+        String hashedPassword = existsUser.getPassword();
+
+        String loginPassword = HashUtil.sha256(dto.getPassword());
+
+        if(!hashedPassword.equals(loginPassword)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Incorrect Password, Try again");
+        }
+
+        return "Password matched";
+    }
 }

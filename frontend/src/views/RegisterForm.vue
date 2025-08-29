@@ -167,7 +167,7 @@ const handleSubmit = async () => {
         <span v-if="fullNameError" class="text-red-500 text-sm mt-1">{{ fullNameError }}</span>
       </div>
       <div>
-        <label class="block font-medium">NickName</label>
+        <label class="block font-medium">Nickname</label>
         <input
           v-model.trim="form.nickName"
           type="text"

@@ -2,6 +2,7 @@ package tt2.int221.backend.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.mail.AuthenticationFailedException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,11 +11,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import tt2.int221.backend.dto.CreateUserDTO;
 import tt2.int221.backend.dto.CreateUserResponseDTO;
+import tt2.int221.backend.dto.MatchPasswordRequestDTO;
+import tt2.int221.backend.dto.MatchPasswordResponseDTO;
 import tt2.int221.backend.entities.User;
 import tt2.int221.backend.services.UserService;
 import tt2.int221.backend.services.EmailService;
-import tt2.int221.backend.config.ConfigJWT;
 
+import javax.security.sasl.AuthenticationException;
 import java.io.IOException;
 
 @RestController
@@ -26,8 +29,10 @@ public class UserController {
 
     @Autowired
     private EmailService emailService;
+
     @Value("${app.base-url}")
     private String baseUrl;
+
     @PostMapping("/register")
     @Operation(summary = "Create new user w/ files", description = "Register a new user with national ID images")
     @ApiResponse(responseCode = "201", description = "User created")
@@ -43,5 +48,18 @@ public class UserController {
         User createdUser = userService.createUser(userForm, idCardImageFront, idCardImageBack);
         CreateUserResponseDTO response = CreateUserResponseDTO.from(createdUser);
         return ResponseEntity.status(201).body(response);
+    }
+
+    @GetMapping("/authentications")
+    @Operation(summary = "Match Password")
+    @ApiResponse(responseCode = "200", description = "Password matches with Email provided")
+    @ApiResponse(responseCode = "401", description = "Username or Password incorrect")
+    public ResponseEntity<String> matchPassword(
+            @RequestBody MatchPasswordRequestDTO passwordRequestDTO
+            )  {
+
+        String response = userService.matchPassword(passwordRequestDTO);
+
+        return ResponseEntity.status(200).body(response);
     }
 }

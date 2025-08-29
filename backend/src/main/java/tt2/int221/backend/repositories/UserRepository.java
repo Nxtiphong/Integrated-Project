@@ -7,4 +7,6 @@ import tt2.int221.backend.entities.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
     boolean existsByEmail(String email);
+
+    User findByEmail(String email);
 }

@@ -1,4 +1,5 @@
 package tt2.int221.backend.config;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -8,13 +9,21 @@ import java.util.Date;
 
 public class ConfigJWT {
     private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private static final String ISSUER = "http://intproj24.sit.kmutt.ac.th/tt2/";
 
-    public static String generateToken(Integer userId, String email) {
+    public static String generateToken(Integer userId, String email, String nickname, String role, long durationMillis) {
+        long nowMillis = System.currentTimeMillis();
+        Date now = new Date(nowMillis);
+        Date exp = new Date(nowMillis + durationMillis);
+
         return Jwts.builder()
-                .setSubject(email)
-                .claim("userId", userId)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 24h
+                .setIssuer(ISSUER)                 // iss
+                .setIssuedAt(now)                  // iat
+                .setExpiration(exp)                // exp
+                .claim("id", userId)               // id
+                .claim("email", email)             // email
+                .claim("nickname", nickname)       // nickname
+                .claim("role", role)               // role
                 .signWith(key)
                 .compact();
     }
@@ -28,13 +37,13 @@ public class ConfigJWT {
         }
     }
 
-    public static String getEmailFromToken(String token) {
+    public static Integer getUserIdFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build()
-                .parseClaimsJws(token).getBody().getSubject();
+                .parseClaimsJws(token).getBody().get("id", Integer.class);
     }
 
-    public static Integer getUserIdFromToken(String token) {
-        return (Integer) Jwts.parserBuilder().setSigningKey(key).build()
-                .parseClaimsJws(token).getBody().get("userId");
+    public static String getRoleFromToken(String token) {
+        return Jwts.parserBuilder().setSigningKey(key).build()
+                .parseClaimsJws(token).getBody().get("role", String.class);
     }
 }

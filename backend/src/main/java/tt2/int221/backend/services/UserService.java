@@ -80,7 +80,13 @@ public class UserService {
         User saveUser = userRepository.save(u);
 
 
-        String verifyToken = ConfigJWT.generateToken(saveUser.getId(), saveUser.getEmail());
+        String verifyToken = ConfigJWT.generateToken(
+                saveUser.getId(),
+                saveUser.getEmail(),
+                saveUser.getNickName(),
+                saveUser.getUserType().name(),
+                24 * 60 * 60 * 1000
+        );
         saveUser.setLatestVerifyToken(verifyToken);
         userRepository.save(saveUser);
 
